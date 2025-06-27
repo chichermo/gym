@@ -12,7 +12,9 @@ import {
   X,
   Calendar,
   Target,
-  Settings
+  Settings,
+  Apple,
+  Trophy
 } from 'lucide-react';
 import NotificationSystem from './NotificationSystem';
 
@@ -26,8 +28,10 @@ const NavBar: React.FC = () => {
     { name: 'Dashboard', href: '/', icon: Home },
     { name: 'Entrenamientos', href: '/workouts', icon: Dumbbell },
     { name: 'Calendario', href: '/calendar', icon: Calendar },
+    { name: 'Nutrición', href: '/nutrition', icon: Apple },
     { name: 'Progreso', href: '/progress', icon: TrendingUp },
     { name: 'Plan IA', href: '/plan', icon: Target },
+    { name: 'Gamificación', href: '/gamification', icon: Trophy },
     { name: 'Perfil', href: '/profile', icon: User },
   ];
 

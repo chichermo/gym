@@ -8,6 +8,7 @@ import ProfilePage from './pages/Profile/ProfilePage';
 import PlanPage from './pages/Plan/PlanPage';
 import CalendarPage from './pages/Calendar/CalendarPage';
 import NutritionPage from './pages/Nutrition/NutritionPage';
+import GamificationPage from './pages/Gamification/GamificationPage';
 import NotFoundPage from './pages/NotFoundPage';
 import NavBar from './components/NavBar';
 
@@ -25,6 +26,7 @@ function App() {
               <Route path="/nutrition" element={<NutritionPage />} />
               <Route path="/progress" element={<ProgressPage />} />
               <Route path="/plan" element={<PlanPage />} />
+              <Route path="/gamification" element={<GamificationPage />} />
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
