@@ -9,6 +9,9 @@ import PlanPage from './pages/Plan/PlanPage';
 import CalendarPage from './pages/Calendar/CalendarPage';
 import NutritionPage from './pages/Nutrition/NutritionPage';
 import GamificationPage from './pages/Gamification/GamificationPage';
+import AnalyticsPage from './pages/Analytics/AnalyticsPage';
+import CommunityPage from './pages/Community/CommunityPage';
+import WearablesPage from './pages/Wearables/WearablesPage';
 import NotFoundPage from './pages/NotFoundPage';
 import NavBar from './components/NavBar';
 
@@ -27,6 +30,9 @@ function App() {
               <Route path="/progress" element={<ProgressPage />} />
               <Route path="/plan" element={<PlanPage />} />
               <Route path="/gamification" element={<GamificationPage />} />
+              <Route path="/analytics" element={<AnalyticsPage />} />
+              <Route path="/community" element={<CommunityPage />} />
+              <Route path="/wearables" element={<WearablesPage />} />
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>

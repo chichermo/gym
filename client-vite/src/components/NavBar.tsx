@@ -14,7 +14,10 @@ import {
   Target,
   Settings,
   Apple,
-  Trophy
+  Trophy,
+  BarChart3,
+  Users,
+  Watch
 } from 'lucide-react';
 import NotificationSystem from './NotificationSystem';
 
@@ -32,6 +35,9 @@ const NavBar: React.FC = () => {
     { name: 'Progreso', href: '/progress', icon: TrendingUp },
     { name: 'Plan IA', href: '/plan', icon: Target },
     { name: 'Gamificación', href: '/gamification', icon: Trophy },
+    { name: 'Análisis', href: '/analytics', icon: BarChart3 },
+    { name: 'Comunidad', href: '/community', icon: Users },
+    { name: 'Wearables', href: '/wearables', icon: Watch },
     { name: 'Perfil', href: '/profile', icon: User },
   ];
 

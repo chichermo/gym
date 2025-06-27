@@ -591,3 +591,323 @@ export const mockStats = {
   monthlyGoal: 20,
   monthlyCompleted: 16
 };
+
+// Interfaces para Analytics
+export interface AnalyticsData {
+  weightProgress: {
+    date: string;
+    weight: number;
+    target: number;
+    bodyFat: number;
+  }[];
+  workoutStats: {
+    totalWorkouts: number;
+    totalDuration: number;
+    totalCalories: number;
+    avgRating: number;
+  };
+  performanceMetrics: {
+    strength: number;
+    endurance: number;
+    flexibility: number;
+    speed: number;
+    balance: number;
+  };
+  insights: {
+    type: 'success' | 'warning' | 'info';
+    title: string;
+    description: string;
+    metric: string;
+  }[];
+}
+
+// Interfaces para Community
+export interface CommunityPost {
+  id: string;
+  user: {
+    name: string;
+    avatar: string;
+    level: string;
+    verified: boolean;
+  };
+  content: string;
+  image?: string;
+  likes: number;
+  comments: number;
+  shares: number;
+  timeAgo: string;
+  tags: string[];
+}
+
+export interface CommunityChallenge {
+  id: string;
+  title: string;
+  description: string;
+  participants: number;
+  daysLeft: number;
+  difficulty: 'Fácil' | 'Intermedio' | 'Difícil';
+  category: string;
+  image: string;
+}
+
+export interface CommunityGroup {
+  id: string;
+  name: string;
+  members: number;
+  description: string;
+  category: string;
+  isPrivate: boolean;
+  image: string;
+}
+
+export interface CommunityEvent {
+  id: string;
+  title: string;
+  date: string;
+  time: string;
+  location: string;
+  participants: number;
+  maxParticipants: number;
+  category: string;
+  image: string;
+}
+
+// Interfaces para Wearables
+export interface WearableDevice {
+  id: string;
+  name: string;
+  type: string;
+  brand: string;
+  status: 'connected' | 'disconnected' | 'syncing';
+  battery: number;
+  lastSync: string;
+  image: string;
+  features: string[];
+}
+
+export interface RealTimeMetrics {
+  heartRate: number;
+  steps: number;
+  calories: number;
+  activeMinutes: number;
+  distance: number;
+  sleepHours: number;
+  stressLevel: string;
+  oxygenSaturation: number;
+}
+
+export interface SleepData {
+  day: string;
+  deep: number;
+  light: number;
+  rem: number;
+  awake: number;
+}
+
+// Datos simulados para Analytics
+export const mockAnalyticsData: AnalyticsData = {
+  weightProgress: [
+    { date: '2024-01-01', weight: 80, target: 75, bodyFat: 18 },
+    { date: '2024-01-08', weight: 79.5, target: 75, bodyFat: 17.5 },
+    { date: '2024-01-15', weight: 79, target: 75, bodyFat: 17 },
+    { date: '2024-01-22', weight: 78.5, target: 75, bodyFat: 16.5 },
+    { date: '2024-01-29', weight: 78, target: 75, bodyFat: 16 },
+    { date: '2024-02-05', weight: 77.5, target: 75, bodyFat: 15.5 },
+    { date: '2024-02-12', weight: 77, target: 75, bodyFat: 15 },
+  ],
+  workoutStats: {
+    totalWorkouts: 24,
+    totalDuration: 1920,
+    totalCalories: 12450,
+    avgRating: 4.7
+  },
+  performanceMetrics: {
+    strength: 85,
+    endurance: 78,
+    flexibility: 65,
+    speed: 72,
+    balance: 88
+  },
+  insights: [
+    {
+      type: 'success',
+      title: 'Progreso Excelente',
+      description: 'Has perdido 3kg en las últimas 4 semanas, superando tu objetivo del 20%.',
+      metric: '+15%'
+    },
+    {
+      type: 'warning',
+      title: 'Intensidad Baja',
+      description: 'Tu intensidad promedio ha bajado un 10% esta semana. Considera aumentar la dificultad.',
+      metric: '-10%'
+    },
+    {
+      type: 'info',
+      title: 'Recuperación Óptima',
+      description: 'Tu tiempo de recuperación entre entrenamientos es ideal para tu nivel de fitness.',
+      metric: '95%'
+    }
+  ]
+};
+
+// Datos simulados para Community
+export const mockCommunityPosts: CommunityPost[] = [
+  {
+    id: '1',
+    user: {
+      name: 'María García',
+      avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face',
+      level: 'Avanzado',
+      verified: true
+    },
+    content: '¡Completé mi primer maratón! 🏃‍♀️ 42km en 3:45. Gracias a todos por el apoyo durante el entrenamiento.',
+    image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&h=400&fit=crop',
+    likes: 124,
+    comments: 23,
+    shares: 8,
+    timeAgo: '2h',
+    tags: ['maratón', 'running', 'logro']
+  },
+  {
+    id: '2',
+    user: {
+      name: 'Carlos Rodríguez',
+      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
+      level: 'Intermedio',
+      verified: false
+    },
+    content: 'Nueva rutina de fuerza para principiantes. 3 series de 12 repeticiones cada ejercicio. ¡Comenten si la prueban! 💪',
+    likes: 89,
+    comments: 15,
+    shares: 12,
+    timeAgo: '5h',
+    tags: ['fuerza', 'principiantes', 'rutina']
+  }
+];
+
+export const mockCommunityChallenges: CommunityChallenge[] = [
+  {
+    id: '1',
+    title: 'Desafío 30 Días de Yoga',
+    description: 'Practica yoga todos los días durante 30 días',
+    participants: 1247,
+    daysLeft: 15,
+    difficulty: 'Fácil',
+    category: 'Flexibilidad',
+    image: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=300&h=200&fit=crop'
+  },
+  {
+    id: '2',
+    title: 'Reto de Fuerza',
+    description: 'Aumenta tu peso máximo en press de banca en 4 semanas',
+    participants: 892,
+    daysLeft: 28,
+    difficulty: 'Difícil',
+    category: 'Fuerza',
+    image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=300&h=200&fit=crop'
+  }
+];
+
+export const mockCommunityGroups: CommunityGroup[] = [
+  {
+    id: '1',
+    name: 'Runners México',
+    members: 15420,
+    description: 'Comunidad de corredores en México',
+    category: 'Running',
+    isPrivate: false,
+    image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=100&h=100&fit=crop'
+  },
+  {
+    id: '2',
+    name: 'Gym Buddies CDMX',
+    members: 8923,
+    description: 'Encuentra tu compañero de entrenamiento',
+    category: 'Fuerza',
+    isPrivate: true,
+    image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=100&h=100&fit=crop'
+  }
+];
+
+export const mockCommunityEvents: CommunityEvent[] = [
+  {
+    id: '1',
+    title: 'Carrera Nocturna CDMX',
+    date: '2024-02-15',
+    time: '20:00',
+    location: 'Bosque de Chapultepec',
+    participants: 450,
+    maxParticipants: 1000,
+    category: 'Running',
+    image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=200&h=150&fit=crop'
+  },
+  {
+    id: '2',
+    title: 'Clase de Yoga al Aire Libre',
+    date: '2024-02-18',
+    time: '07:00',
+    location: 'Parque México',
+    participants: 85,
+    maxParticipants: 100,
+    category: 'Yoga',
+    image: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=200&h=150&fit=crop'
+  }
+];
+
+// Datos simulados para Wearables
+export const mockWearableDevices: WearableDevice[] = [
+  {
+    id: 'apple-watch',
+    name: 'Apple Watch Series 8',
+    type: 'Smartwatch',
+    brand: 'Apple',
+    status: 'connected',
+    battery: 85,
+    lastSync: '2 min ago',
+    image: 'https://images.unsplash.com/photo-1544117519-31a4b719223d?w=100&h=100&fit=crop',
+    features: ['Heart Rate', 'GPS', 'ECG', 'Blood Oxygen']
+  },
+  {
+    id: 'fitbit',
+    name: 'Fitbit Charge 5',
+    type: 'Fitness Tracker',
+    brand: 'Fitbit',
+    status: 'connected',
+    battery: 92,
+    lastSync: '5 min ago',
+    image: 'https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=100&h=100&fit=crop',
+    features: ['Heart Rate', 'Sleep Tracking', 'Stress Management']
+  },
+  {
+    id: 'garmin',
+    name: 'Garmin Forerunner 945',
+    type: 'Sports Watch',
+    brand: 'Garmin',
+    status: 'disconnected',
+    battery: 0,
+    lastSync: '2 days ago',
+    image: 'https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=100&h=100&fit=crop',
+    features: ['GPS', 'Heart Rate', 'Training Load', 'Recovery Time']
+  }
+];
+
+export const mockRealTimeMetrics: RealTimeMetrics = {
+  heartRate: 72,
+  steps: 8432,
+  calories: 2450,
+  activeMinutes: 45,
+  distance: 6.2,
+  sleepHours: 7.5,
+  stressLevel: 'Low',
+  oxygenSaturation: 98
+};
+
+export const mockSleepData: SleepData[] = [
+  { day: 'Lun', deep: 2.5, light: 4.2, rem: 1.8, awake: 0.5 },
+  { day: 'Mar', deep: 2.8, light: 4.0, rem: 1.9, awake: 0.3 },
+  { day: 'Mie', deep: 2.2, light: 4.5, rem: 1.7, awake: 0.6 },
+  { day: 'Jue', deep: 3.0, light: 3.8, rem: 2.0, awake: 0.2 },
+  { day: 'Vie', deep: 2.7, light: 4.1, rem: 1.8, awake: 0.4 },
+  { day: 'Sab', deep: 2.9, light: 4.3, rem: 1.9, awake: 0.3 },
+  { day: 'Dom', deep: 2.6, light: 4.0, rem: 1.7, awake: 0.5 }
+];
