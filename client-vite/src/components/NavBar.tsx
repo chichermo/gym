@@ -1,43 +1,38 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { AuthContext } from '../contexts/AuthContext';
 import { 
   Home, 
   Dumbbell, 
+  Calendar, 
   TrendingUp, 
   User, 
-  Bell, 
-  LogOut, 
+  Settings, 
   Menu, 
   X,
-  Calendar,
-  Target,
-  Settings,
-  Apple,
   Trophy,
+  Target,
   BarChart3,
   Users,
-  Watch
+  Smartphone,
+  BookOpen
 } from 'lucide-react';
-import NotificationSystem from './NotificationSystem';
 
 const NavBar: React.FC = () => {
-  const { user, logout } = useContext(AuthContext);
+  const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [showNotifications, setShowNotifications] = useState(false);
 
   const navigation = [
     { name: 'Dashboard', href: '/', icon: Home },
-    { name: 'Entrenamientos', href: '/workouts', icon: Dumbbell },
-    { name: 'Calendario', href: '/calendar', icon: Calendar },
-    { name: 'Nutrición', href: '/nutrition', icon: Apple },
+    { name: 'Entrenamiento', href: '/entrenamiento', icon: Dumbbell },
+    { name: 'Tus Entrenamientos', href: '/entrenamientos', icon: Calendar },
+    { name: 'Tus Registros', href: '/registros', icon: BarChart3 },
     { name: 'Progreso', href: '/progress', icon: TrendingUp },
-    { name: 'Plan IA', href: '/plan', icon: Target },
-    { name: 'Gamificación', href: '/gamification', icon: Trophy },
-    { name: 'Análisis', href: '/analytics', icon: BarChart3 },
+    { name: 'Plan', href: '/plan', icon: Target },
+    { name: 'Trofeos', href: '/trofeos', icon: Trophy },
+    { name: 'Gamificación', href: '/gamification', icon: BookOpen },
+    { name: 'Analytics', href: '/analytics', icon: BarChart3 },
     { name: 'Comunidad', href: '/community', icon: Users },
-    { name: 'Wearables', href: '/wearables', icon: Watch },
+    { name: 'Wearables', href: '/wearables', icon: Smartphone },
     { name: 'Perfil', href: '/profile', icon: User },
   ];
 
@@ -50,180 +45,101 @@ const NavBar: React.FC = () => {
 
   return (
     <>
-      {/* NavBar móvil */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200">
-        <div className="flex items-center justify-between px-4 py-3">
-          <div className="flex items-center gap-3">
-            <Dumbbell className="w-6 h-6 text-blue-600" />
-            <span className="text-lg font-bold text-gray-900">FitApp</span>
-          </div>
-          
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => setShowNotifications(!showNotifications)}
-              className="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              <Bell className="w-5 h-5" />
-              <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></span>
-            </button>
-            
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-            </button>
-          </div>
-        </div>
+      {/* Overlay para móvil */}
+      {isOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden"
+          onClick={() => setIsOpen(false)}
+        />
+      )}
 
-        {/* Menú móvil */}
-        {isMenuOpen && (
-          <div className="bg-white border-t border-gray-200 px-4 py-2">
-            <nav className="space-y-1">
-              {navigation.map((item) => {
-                const Icon = item.icon;
-                return (
-                  <Link
-                    key={item.name}
-                    to={item.href}
-                    onClick={() => setIsMenuOpen(false)}
-                    className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                      isActive(item.href)
-                        ? 'bg-blue-50 text-blue-700'
-                        : 'text-gray-700 hover:bg-gray-50'
-                    }`}
-                  >
-                    <Icon className="w-5 h-5" />
-                    {item.name}
-                  </Link>
-                );
-              })}
-            </nav>
-            
-            <div className="mt-4 pt-4 border-t border-gray-200">
-              <div className="flex items-center gap-3 px-3 py-2">
-                <img
-                  src={user?.avatar || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiNlNWU3ZWYiLz4KPHBhdGggZD0iTTIwIDE4QzIxLjEwNDYgMTggMjIgMTcuMTA0NiAyMiAxNkMyMiAxNC44OTU0IDIxLjEwNDYgMTQgMjAgMTRDMTguODk1NCAxNCAxOCAxNC44OTU0IDE4IDE2QzE4IDE3LjEwNDYgMTguODk1NCAxOCAyMCAxOFoiIGZpbGw9IiM5Y2EzYWYiLz4KPHBhdGggZD0iTTI4IDI4QzI4IDI0LjY4NjMgMjQuNDE0MiAyMiAyMCAyMkMxNS41ODU4IDIyIDEyIDI0LjY4NjMgMTIgMjgiIGZpbGw9IiM5Y2EzYWYiLz4KPC9zdmc+Cg=='}
-                  alt="Avatar"
-                  className="w-8 h-8 rounded-full"
-                />
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-gray-900">{user?.name}</p>
-                  <p className="text-xs text-gray-500">Nivel {user?.level}</p>
+      {/* Sidebar */}
+      <nav className={`fixed left-0 top-0 h-full w-64 bg-white shadow-2xl transform transition-transform duration-300 z-50 lg:translate-x-0 ${
+        isOpen ? 'translate-x-0' : '-translate-x-full'
+      }`}>
+        <div className="flex flex-col h-full">
+          {/* Header */}
+          <div className="flex items-center justify-between p-6 border-b border-gray-100">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center">
+                <Dumbbell className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h1 className="text-xl font-bold text-gradient">FitTrack</h1>
+                <p className="text-xs text-gray-500">Tu compañero fitness</p>
+              </div>
+            </div>
+            <button
+              onClick={() => setIsOpen(false)}
+              className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
+            >
+              <X className="w-5 h-5 text-gray-600" />
+            </button>
+          </div>
+
+          {/* Navigation Links */}
+          <div className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+            {navigation.map((item) => {
+              const Icon = item.icon;
+              const active = isActive(item.href);
+              
+              return (
+                <Link
+                  key={item.name}
+                  to={item.href}
+                  onClick={() => setIsOpen(false)}
+                  className={`nav-link ${active ? 'nav-link-active' : ''}`}
+                >
+                  <Icon className={`w-5 h-5 mr-3 ${active ? 'text-blue-600' : 'text-gray-500'}`} />
+                  <span className="font-medium">{item.name}</span>
+                  {active && (
+                    <div className="ml-auto w-2 h-2 bg-blue-600 rounded-full animate-pulse-slow" />
+                  )}
+                </Link>
+              );
+            })}
+          </div>
+
+          {/* Footer */}
+          <div className="p-4 border-t border-gray-100">
+            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4">
+              <div className="flex items-center space-x-3 mb-2">
+                <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg flex items-center justify-center">
+                  <Trophy className="w-4 h-4 text-white" />
                 </div>
+                <div>
+                  <p className="text-sm font-semibold text-gray-800">¡Mantén la racha!</p>
+                  <p className="text-xs text-gray-600">7 días consecutivos</p>
+                </div>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div className="bg-gradient-to-r from-green-500 to-emerald-500 h-2 rounded-full" style={{ width: '70%' }} />
               </div>
             </div>
           </div>
-        )}
-
-        {/* Notificaciones móviles */}
-        {showNotifications && (
-          <div className="absolute top-full left-0 right-0 bg-white border-b border-gray-200 shadow-lg">
-            <NotificationSystem />
-          </div>
-        )}
-      </div>
-
-      {/* NavBar desktop */}
-      <div className="hidden lg:flex fixed top-0 left-0 h-full w-64 bg-white border-r border-gray-200 flex-col">
-        {/* Logo */}
-        <div className="flex items-center gap-3 px-6 py-6 border-b border-gray-200">
-          <Dumbbell className="w-8 h-8 text-blue-600" />
-          <span className="text-xl font-bold text-gray-900">FitApp</span>
         </div>
+      </nav>
 
-        {/* Navegación */}
-        <nav className="flex-1 px-4 py-6 space-y-2">
-          {navigation.map((item) => {
-            const Icon = item.icon;
-            return (
-              <Link
-                key={item.name}
-                to={item.href}
-                className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  isActive(item.href)
-                    ? 'bg-blue-50 text-blue-700'
-                    : 'text-gray-700 hover:bg-gray-50'
-                }`}
-              >
-                <Icon className="w-5 h-5" />
-                {item.name}
-              </Link>
-            );
-          })}
-        </nav>
-
-        {/* Perfil del usuario */}
-        <div className="p-4 border-t border-gray-200">
-          <div className="flex items-center gap-3 mb-4">
-            <img
-              src={user?.avatar || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiNlNWU3ZWYiLz4KPHBhdGggZD0iTTIwIDE4QzIxLjEwNDYgMTggMjIgMTcuMTA0NiAyMiAxNkMyMiAxNC44OTU0IDIxLjEwNDYgMTQgMjAgMTRDMTguODk1NCAxNCAxOCAxNC44OTU0IDE4IDE2QzE4IDE3LjEwNDYgMTguODk1NCAxOCAyMCAxOFoiIGZpbGw9IiM5Y2EzYWYiLz4KPHBhdGggZD0iTTI4IDI4QzI4IDI0LjY4NjMgMjQuNDE0MiAyMiAyMCAyMkMxNS41ODU4IDIyIDEyIDI0LjY4NjMgMTIgMjgiIGZpbGw9IiM5Y2EzYWYiLz4KPC9zdmc+Cg=='}
-              alt="Avatar"
-              className="w-10 h-10 rounded-full"
-            />
-            <div className="flex-1">
-              <p className="text-sm font-medium text-gray-900">{user?.name}</p>
-              <p className="text-xs text-gray-500">Nivel {user?.level}</p>
+      {/* Mobile Header */}
+      <div className="lg:hidden fixed top-0 left-0 right-0 bg-white shadow-lg z-30 px-4 py-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
+              <Dumbbell className="w-5 h-5 text-white" />
             </div>
+            <h1 className="text-lg font-bold text-gradient">FitTrack</h1>
           </div>
-          
-          {/* Barra de progreso de XP */}
-          <div className="mb-4">
-            <div className="flex justify-between text-xs text-gray-500 mb-1">
-              <span>XP: {user?.xp}</span>
-              <span>{user?.nextLevelXp}</span>
-            </div>
-            <div className="w-full bg-gray-200 rounded-full h-2">
-              <div 
-                className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                style={{ 
-                  width: `${((user?.xp || 0) / (user?.nextLevelXp || 1)) * 100}%` 
-                }}
-              ></div>
-            </div>
-          </div>
-
-          {/* Acciones del usuario */}
-          <div className="space-y-2">
-            <button
-              onClick={() => setShowNotifications(!showNotifications)}
-              className="relative w-full flex items-center gap-3 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
-            >
-              <Bell className="w-4 h-4" />
-              <span>Notificaciones</span>
-              <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-            </button>
-            
-            <Link
-              to="/profile"
-              className="flex items-center gap-3 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
-            >
-              <Settings className="w-4 h-4" />
-              <span>Configuración</span>
-            </Link>
-          </div>
+          <button
+            onClick={() => setIsOpen(true)}
+            className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+          >
+            <Menu className="w-6 h-6 text-gray-600" />
+          </button>
         </div>
       </div>
 
-      {/* Notificaciones desktop */}
-      {showNotifications && (
-        <div className="hidden lg:block fixed top-20 left-64 w-80 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
-          <NotificationSystem />
-        </div>
-      )}
-
-      {/* Overlay para cerrar notificaciones */}
-      {showNotifications && (
-        <div 
-          className="fixed inset-0 z-40"
-          onClick={() => setShowNotifications(false)}
-        ></div>
-      )}
-
-      {/* Espacio para el contenido */}
-      <div className="lg:ml-64 pt-16 lg:pt-0">
-        {/* El contenido de la página se renderiza aquí */}
-      </div>
+      {/* Main content margin for desktop */}
+      <div className="lg:ml-64" />
     </>
   );
 };
