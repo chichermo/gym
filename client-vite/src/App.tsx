@@ -14,6 +14,8 @@ import CommunityPage from './pages/Community/CommunityPage';
 import WearablesPage from './pages/Wearables/WearablesPage';
 import NotFoundPage from './pages/NotFoundPage';
 import NavBar from './components/NavBar';
+import EntrenamientoPage from './pages/Entrenamiento/EntrenamientoPage';
+import EntrenamientosHistPage from './pages/Entrenamientos/EntrenamientosHistPage';
 
 function App() {
   return (
@@ -34,6 +36,8 @@ function App() {
               <Route path="/community" element={<CommunityPage />} />
               <Route path="/wearables" element={<WearablesPage />} />
               <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/entrenamiento" element={<EntrenamientoPage />} />
+              <Route path="/entrenamientos" element={<EntrenamientosHistPage />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </main>

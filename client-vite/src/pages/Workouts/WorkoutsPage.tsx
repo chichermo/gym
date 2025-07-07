@@ -4,6 +4,7 @@ import NavBar from '../../components/NavBar';
 import ExerciseList from '../../components/ExerciseList';
 import { ejercicios } from '../../data/ejercicios';
 import { Ejercicio } from '../../types';
+import { useNavigate } from 'react-router-dom';
 
 // Datos simulados de entrenamientos
 const mockWorkouts = [
@@ -74,6 +75,7 @@ const WorkoutsPage: React.FC = () => {
   const [etiquetaSeleccionada, setEtiquetaSeleccionada] = useState('Todas');
   const [accesoriosSeleccionados, setAccesoriosSeleccionados] = useState<string[]>([]);
   const [workout, setWorkout] = useState<Ejercicio[]>([]);
+  const navigate = useNavigate();
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty.toLowerCase()) {
@@ -135,6 +137,21 @@ const WorkoutsPage: React.FC = () => {
   // Quitar ejercicio del workout
   const handleRemoveExercise = (id: string) => {
     setWorkout(prev => prev.filter(e => e.id !== id));
+  };
+
+  // Guardar workout en localStorage y redirigir
+  const handleSaveWorkout = () => {
+    if (workout.length === 0) return;
+    const prev = JSON.parse(localStorage.getItem('workouts_hist') || '[]');
+    const nuevo = {
+      id: Date.now().toString(),
+      nombre: `Rutina ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`,
+      fecha: new Date().toISOString(),
+      ejercicios: workout
+    };
+    localStorage.setItem('workouts_hist', JSON.stringify([nuevo, ...prev]));
+    setWorkout([]);
+    navigate('/entrenamientos');
   };
 
   return (
@@ -212,7 +229,10 @@ const WorkoutsPage: React.FC = () => {
                 </li>
               ))}
             </ul>
-            <button className="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+            <button
+              className="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+              onClick={handleSaveWorkout}
+            >
               Guardar rutina
             </button>
           </aside>
