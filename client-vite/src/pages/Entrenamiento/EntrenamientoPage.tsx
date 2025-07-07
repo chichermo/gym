@@ -30,6 +30,13 @@ const EntrenamientoPage: React.FC = () => {
           <span className="text-blue-100">Arma tu rutina personalizada</span>
         </button>
         <button
+          className="bg-yellow-100 text-yellow-700 shadow-lg rounded-2xl p-8 flex flex-col items-center hover:bg-yellow-200 transition-colors border border-yellow-200"
+          onClick={() => navigate('/trofeos')}
+        >
+          <span className="text-2xl font-bold mb-2">Trofeos</span>
+          <span className="text-yellow-700">Logros y medallas</span>
+        </button>
+        <button
           className="bg-gray-100 text-gray-400 shadow-lg rounded-2xl p-8 flex flex-col items-center border border-gray-200 cursor-not-allowed"
           disabled
         >

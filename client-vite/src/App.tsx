@@ -16,6 +16,7 @@ import NotFoundPage from './pages/NotFoundPage';
 import NavBar from './components/NavBar';
 import EntrenamientoPage from './pages/Entrenamiento/EntrenamientoPage';
 import EntrenamientosHistPage from './pages/Entrenamientos/EntrenamientosHistPage';
+import TrofeosPage from './pages/Trofeos/TrofeosPage';
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/entrenamiento" element={<EntrenamientoPage />} />
               <Route path="/entrenamientos" element={<EntrenamientosHistPage />} />
+              <Route path="/trofeos" element={<TrofeosPage />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </main>

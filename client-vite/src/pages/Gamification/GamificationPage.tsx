@@ -19,6 +19,7 @@ import {
   RotateCcw,
   Sparkles
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface Challenge {
   id: string;
@@ -66,6 +67,7 @@ const GamificationPage: React.FC = () => {
   const [userXp, setUserXp] = useState(2450);
   const [userCoins, setUserCoins] = useState(1250);
   const [userStreak, setUserStreak] = useState(12);
+  const navigate = useNavigate();
 
   const [challenges, setChallenges] = useState<Challenge[]>([
     {
@@ -275,7 +277,15 @@ const GamificationPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-white flex flex-col items-center py-12">
+      <div className="w-full flex justify-end mb-4 pr-8">
+        <button
+          className="bg-yellow-100 text-yellow-700 px-4 py-2 rounded-full font-semibold border border-yellow-300 hover:bg-yellow-200 transition-colors"
+          onClick={() => navigate('/trofeos')}
+        >
+          Ver trofeos
+        </button>
+      </div>
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
