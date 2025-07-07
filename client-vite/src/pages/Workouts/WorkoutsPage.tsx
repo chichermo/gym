@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Plus, Filter, Search, Calendar, Clock, Target, Star, Play, Edit, Trash2 } from "lucide-react";
 import NavBar from '../../components/NavBar';
+import ExerciseList from '../../components/ExerciseList';
+import { ejercicios } from '../../data/ejercicios';
+import { Ejercicio } from '../../types';
 
 // Datos simulados de entrenamientos
 const mockWorkouts = [
@@ -54,10 +57,23 @@ const mockWorkouts = [
   }
 ];
 
+// Grupos musculares ampliados
+const gruposMusculares = [
+  'Todos',
+  'Pectoral', 'Espalda', 'Piernas', 'Bíceps', 'Tríceps', 'Hombros', 'Glúteos', 'Core', 'Pantorrillas', 'Antebrazos', 'Trapecio', 'Oblicuos', 'Cardio', 'Funcional'
+];
+
+// Obtener todas las etiquetas únicas de los ejercicios
+const etiquetasUnicas = Array.from(new Set(ejercicios.flatMap(e => e.etiquetas)));
+
 const WorkoutsPage: React.FC = () => {
   const [workouts, setWorkouts] = useState(mockWorkouts);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('all');
+  const [grupoSeleccionado, setGrupoSeleccionado] = useState('Todos');
+  const [etiquetaSeleccionada, setEtiquetaSeleccionada] = useState('Todas');
+  const [accesoriosSeleccionados, setAccesoriosSeleccionados] = useState<string[]>([]);
+  const [workout, setWorkout] = useState<Ejercicio[]>([]);
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty.toLowerCase()) {
@@ -74,6 +90,53 @@ const WorkoutsPage: React.FC = () => {
     return matchesSearch && matchesType;
   });
 
+  // Accesorios únicos del grupo muscular seleccionado
+  const accesoriosGrupo = grupoSeleccionado === 'Todos'
+    ? []
+    : Array.from(new Set(
+        ejercicios
+          .filter(e => e.grupoMuscular.toLowerCase() === grupoSeleccionado.toLowerCase())
+          .flatMap(e => e.accesorio.split(/[ /]+/).map(a => a.trim()).filter(Boolean))
+      ));
+
+  // Filtrado de ejercicios
+  const ejerciciosFiltrados = ejercicios.filter(e => {
+    const grupoOk = grupoSeleccionado === 'Todos' || e.grupoMuscular.toLowerCase() === grupoSeleccionado.toLowerCase();
+    const etiquetaOk = etiquetaSeleccionada === 'Todas' || e.etiquetas.includes(etiquetaSeleccionada);
+    let accesorioOk = true;
+    if (grupoSeleccionado !== 'Todos' && accesoriosSeleccionados.length > 0) {
+      const accesoriosEjercicio = e.accesorio.split(/[ /]+/).map(a => a.trim());
+      accesorioOk = accesoriosSeleccionados.some(acc => accesoriosEjercicio.includes(acc));
+    }
+    return grupoOk && etiquetaOk && accesorioOk;
+  });
+
+  // Manejo de checkboxes de accesorios
+  const handleAccesorioChange = (accesorio: string) => {
+    setAccesoriosSeleccionados(prev =>
+      prev.includes(accesorio)
+        ? prev.filter(a => a !== accesorio)
+        : [...prev, accesorio]
+    );
+  };
+
+  // Reset accesorios al cambiar grupo muscular
+  React.useEffect(() => {
+    setAccesoriosSeleccionados([]);
+  }, [grupoSeleccionado]);
+
+  // Agregar ejercicio al workout
+  const handleAddExercise = (ejercicio: Ejercicio) => {
+    if (!workout.find(e => e.id === ejercicio.id)) {
+      setWorkout(prev => [...prev, ejercicio]);
+    }
+  };
+
+  // Quitar ejercicio del workout
+  const handleRemoveExercise = (id: string) => {
+    setWorkout(prev => prev.filter(e => e.id !== id));
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-white flex flex-col">
       <NavBar />
@@ -83,130 +146,77 @@ const WorkoutsPage: React.FC = () => {
         <span className="text-yellow-800 text-sm font-medium">Modo DEMO: Datos simulados</span>
       </div>
 
-      <main className="flex-1 w-full max-w-7xl mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
-          <div>
-            <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 leading-tight mb-2">
-              Mis Entrenamientos
-            </h1>
-            <p className="text-gray-600 text-lg">Gestiona tus rutinas y sigue tu progreso</p>
+      <main className="flex-1 w-full max-w-7xl mx-auto px-4 py-8 flex flex-col md:flex-row gap-8">
+        <div className="flex-1">
+          <h1 className="text-3xl font-bold mb-6">Ejercicios</h1>
+          {/* Grupos musculares como chips */}
+          <div className="flex flex-wrap gap-2 mb-6">
+            {gruposMusculares.map(grupo => (
+              <button
+                key={grupo}
+                className={`px-4 py-2 rounded-full border font-medium transition-colors ${
+                  grupoSeleccionado === grupo
+                    ? 'bg-blue-600 text-white border-blue-600'
+                    : 'bg-white text-blue-600 border-blue-300 hover:bg-blue-50'
+                }`}
+                onClick={() => setGrupoSeleccionado(grupo)}
+              >
+                {grupo}
+              </button>
+            ))}
           </div>
-          <button className="flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-xl shadow-lg hover:bg-blue-700 transition-colors font-semibold">
-            <Plus className="w-5 h-5" />
-            Nuevo Entrenamiento
-          </button>
-        </div>
-
-        {/* Filtros y búsqueda */}
-        <div className="bg-white rounded-2xl shadow-lg p-6 mb-8">
-          <div className="flex flex-col lg:flex-row gap-4">
-            <div className="flex-1">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <input
-                  type="text"
-                  placeholder="Buscar entrenamientos..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
+          {/* Filtro de accesorios solo si hay grupo muscular seleccionado */}
+          {grupoSeleccionado !== 'Todos' && accesoriosGrupo.length > 0 && (
+            <div className="mb-6">
+              <label className="block mb-2 font-medium text-gray-700">Accesorio</label>
+              <div className="flex flex-wrap gap-4">
+                {accesoriosGrupo.map(acc => (
+                  <label key={acc} className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={accesoriosSeleccionados.includes(acc)}
+                      onChange={() => handleAccesorioChange(acc)}
+                      className="form-checkbox h-4 w-4 text-blue-600"
+                    />
+                    <span className="text-gray-700">{acc}</span>
+                  </label>
+                ))}
               </div>
             </div>
-            <select
-              value={filterType}
-              onChange={(e) => setFilterType(e.target.value)}
-              className="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            >
-              <option value="all">Todos los tipos</option>
-              <option value="strength">Fuerza</option>
-              <option value="cardio">Cardio</option>
-            </select>
-          </div>
+          )}
+          <ExerciseList
+            ejercicios={ejerciciosFiltrados}
+            onAddExercise={handleAddExercise}
+            onRemoveExercise={handleRemoveExercise}
+            ejerciciosEnWorkout={workout.map(e => e.id)}
+          />
         </div>
-
-        {/* Lista de entrenamientos */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredWorkouts.map((workout) => (
-            <div key={workout._id} className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
-              <div className="p-6 border-b border-gray-100">
-                <div className="flex items-start justify-between mb-3">
-                  <div className="flex items-center gap-2">
-                    <Target className="w-4 h-4 text-blue-600" />
-                    <span className="text-sm font-medium text-gray-500 capitalize">
-                      {workout.type}
-                    </span>
+        {/* Panel lateral de workout en construcción */}
+        {workout.length > 0 && (
+          <aside className="w-full md:w-96 bg-white rounded-2xl shadow-lg p-6 h-fit sticky top-8">
+            <h2 className="text-xl font-bold mb-4">Workout en construcción</h2>
+            <ul className="space-y-3 mb-4">
+              {workout.map(ejercicio => (
+                <li key={ejercicio.id} className="flex items-center justify-between gap-2 border-b pb-2">
+                  <div>
+                    <span className="font-medium text-gray-900">{ejercicio.nombre}</span>
+                    <span className="ml-2 text-xs text-gray-500">({ejercicio.grupoMuscular})</span>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                    <span className="text-sm font-medium">{workout.rating}</span>
-                  </div>
-                </div>
-                
-                <h3 className="text-xl font-bold text-gray-900 mb-2">{workout.name}</h3>
-                
-                <div className="flex items-center gap-4 text-sm text-gray-600 mb-3">
-                  <div className="flex items-center gap-1">
-                    <Clock className="w-4 h-4" />
-                    <span>{workout.duration} min</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Calendar className="w-4 h-4" />
-                    <span>{new Date(workout.date).toLocaleDateString()}</span>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${getDifficultyColor(workout.difficulty)}`}>
-                    {workout.difficulty}
-                  </span>
-                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                    workout.completed 
-                      ? 'bg-green-100 text-green-800' 
-                      : 'bg-yellow-100 text-yellow-800'
-                  }`}>
-                    {workout.completed ? 'Completado' : 'Pendiente'}
-                  </span>
-                </div>
-              </div>
-
-              <div className="p-6">
-                <div className="mb-4">
-                  <h4 className="font-semibold text-gray-900 mb-2">Ejercicios ({workout.exercises.length})</h4>
-                  <div className="space-y-2">
-                    {workout.exercises.slice(0, 3).map((exercise, index) => (
-                      <div key={index} className="flex items-center justify-between text-sm">
-                        <span className="text-gray-700">{exercise.name}</span>
-                        <span className="text-gray-500">{exercise.sets} x {exercise.reps}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {workout.notes && (
-                  <div className="mb-4 p-3 bg-gray-50 rounded-lg">
-                    <p className="text-sm text-gray-700">{workout.notes}</p>
-                  </div>
-                )}
-
-                <div className="flex gap-2">
-                  <button className="flex-1 flex items-center justify-center gap-2 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors font-medium">
-                    <Play className="w-4 h-4" />
-                    {workout.completed ? 'Repetir' : 'Iniciar'}
+                  <button
+                    className="text-red-500 hover:text-red-700 text-lg font-bold px-2"
+                    onClick={() => handleRemoveExercise(ejercicio.id)}
+                    title="Quitar"
+                  >
+                    ×
                   </button>
-                  
-                  <button className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
-                    <Edit className="w-4 h-4" />
-                  </button>
-                  
-                  <button className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+                </li>
+              ))}
+            </ul>
+            <button className="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+              Guardar rutina
+            </button>
+          </aside>
+        )}
       </main>
     </div>
   );
