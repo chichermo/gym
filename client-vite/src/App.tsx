@@ -17,6 +17,7 @@ import NavBar from './components/NavBar';
 import EntrenamientoPage from './pages/Entrenamiento/EntrenamientoPage';
 import EntrenamientosHistPage from './pages/Entrenamientos/EntrenamientosHistPage';
 import TrofeosPage from './pages/Trofeos/TrofeosPage';
+import RegistrosPage from './pages/Registros/RegistrosPage';
 
 function App() {
   return (
@@ -40,6 +41,7 @@ function App() {
               <Route path="/entrenamiento" element={<EntrenamientoPage />} />
               <Route path="/entrenamientos" element={<EntrenamientosHistPage />} />
               <Route path="/trofeos" element={<TrofeosPage />} />
+              <Route path="/registros" element={<RegistrosPage />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </main>

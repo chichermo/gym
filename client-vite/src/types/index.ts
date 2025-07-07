@@ -284,4 +284,12 @@ export interface FormField {
   min?: number;
   max?: number;
   step?: number;
+}
+
+export interface Ejercicio {
+  id: string;
+  nombre: string;
+  grupoMuscular: string;
+  accesorio: string;
+  etiquetas: string[];
 } 
