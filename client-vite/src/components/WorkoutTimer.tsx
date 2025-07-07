@@ -43,7 +43,7 @@ const WorkoutTimer: React.FC = () => {
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [selectedPreset, setSelectedPreset] = useState<string>('custom');
 
-  const intervalRef = useRef<number | null>(null);
+  const intervalRef = useRef<number | NodeJS.Timeout | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const presets = {

@@ -30,7 +30,7 @@ const NutritionTracker: React.FC<NutritionTrackerProps> = ({
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedEntry, setSelectedEntry] = useState<Nutrition | null>(null);
   const [newEntry, setNewEntry] = useState({
-    meal: 'breakfast' as const,
+    meal: 'breakfast' as 'breakfast' | 'lunch' | 'dinner' | 'snack',
     name: '',
     calories: 0,
     protein: 0,

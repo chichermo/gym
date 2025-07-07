@@ -51,8 +51,8 @@ const ProgressPage: React.FC = () => {
     { id: 'charts', label: 'Gráficos', icon: BarChart3 }
   ];
 
-  const getWeightChange = () => {
-    if (progressData.weight.length < 2) return 0;
+  const getWeightChange = (): string => {
+    if (progressData.weight.length < 2) return '0';
     const first = progressData.weight[0].value;
     const last = progressData.weight[progressData.weight.length - 1].value;
     return (last - first).toFixed(1);

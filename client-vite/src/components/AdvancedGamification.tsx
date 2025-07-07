@@ -15,7 +15,8 @@ import {
   BarChart3,
   Play,
   Pause,
-  RotateCcw
+  RotateCcw,
+  Dumbbell
 } from 'lucide-react';
 
 interface Challenge {

@@ -45,7 +45,7 @@ const WorkoutCalendar: React.FC<WorkoutCalendarProps> = ({
   const [selectedEvent, setSelectedEvent] = useState<WorkoutEvent | null>(null);
   const [newEvent, setNewEvent] = useState({
     title: '',
-    type: 'strength' as const,
+    type: 'strength' as 'strength' | 'cardio' | 'flexibility' | 'rest',
     duration: 60,
     notes: ''
   });

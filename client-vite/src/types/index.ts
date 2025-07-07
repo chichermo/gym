@@ -24,6 +24,11 @@ export interface User {
     equipmentAvailable: string[];
   };
   profileImage?: string;
+  avatar?: string;
+  name?: string;
+  level?: number;
+  xp?: number;
+  nextLevelXp?: number;
   isActive: boolean;
   lastLogin: string;
   createdAt: string;
