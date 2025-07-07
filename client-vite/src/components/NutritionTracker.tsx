@@ -11,24 +11,12 @@ import {
   Target,
   Flame
 } from 'lucide-react';
-
-interface NutritionEntry {
-  id: string;
-  date: string;
-  meal: 'breakfast' | 'lunch' | 'dinner' | 'snack';
-  name: string;
-  calories: number;
-  protein: number;
-  carbs: number;
-  fat: number;
-  fiber: number;
-  notes?: string;
-}
+import type { Nutrition } from '../types/nutrition';
 
 interface NutritionTrackerProps {
-  entries?: NutritionEntry[];
-  onAddEntry?: (entry: NutritionEntry) => void;
-  onEditEntry?: (entry: NutritionEntry) => void;
+  entries?: Nutrition[];
+  onAddEntry?: (entry: Nutrition) => void;
+  onEditEntry?: (entry: Nutrition) => void;
   onDeleteEntry?: (id: string) => void;
 }
 
@@ -40,7 +28,7 @@ const NutritionTracker: React.FC<NutritionTrackerProps> = ({
 }) => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [selectedEntry, setSelectedEntry] = useState<NutritionEntry | null>(null);
+  const [selectedEntry, setSelectedEntry] = useState<Nutrition | null>(null);
   const [newEntry, setNewEntry] = useState({
     meal: 'breakfast' as const,
     name: '',
@@ -93,7 +81,7 @@ const NutritionTracker: React.FC<NutritionTrackerProps> = ({
 
   const handleAddEntry = () => {
     if (newEntry.name && newEntry.calories > 0) {
-      const entry: NutritionEntry = {
+      const entry: Nutrition = {
         id: Date.now().toString(),
         date: today,
         ...newEntry
@@ -116,7 +104,7 @@ const NutritionTracker: React.FC<NutritionTrackerProps> = ({
 
   const handleEditEntry = () => {
     if (selectedEntry && newEntry.name) {
-      const updatedEntry: NutritionEntry = {
+      const updatedEntry: Nutrition = {
         ...selectedEntry,
         ...newEntry
       };
@@ -141,7 +129,7 @@ const NutritionTracker: React.FC<NutritionTrackerProps> = ({
     onDeleteEntry?.(id);
   };
 
-  const openEditModal = (entry: NutritionEntry) => {
+  const openEditModal = (entry: Nutrition) => {
     setSelectedEntry(entry);
     setNewEntry({
       meal: entry.meal,

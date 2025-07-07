@@ -32,7 +32,14 @@ const progressSchema = new mongoose.Schema({
     thighs: { type: Number, min: 30, max: 150, default: null },
     calves: { type: Number, min: 20, max: 100, default: null },
     neck: { type: Number, min: 20, max: 100, default: null },
-    shoulders: { type: Number, min: 50, max: 200, default: null }
+    shoulders: { type: Number, min: 50, max: 200, default: null },
+    pectoral: { type: Number, min: 50, max: 200, default: null },
+    brazoRelajado: { type: Number, min: 20, max: 100, default: null },
+    brazoContraido: { type: Number, min: 20, max: 100, default: null },
+    cintura: { type: Number, min: 50, max: 200, default: null },
+    gluteo: { type: Number, min: 50, max: 200, default: null },
+    muslo: { type: Number, min: 30, max: 150, default: null },
+    pantorrilla: { type: Number, min: 20, max: 100, default: null }
   },
   // Datos de entrenamiento
   workout: {

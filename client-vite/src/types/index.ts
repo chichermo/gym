@@ -1,18 +1,22 @@
-// Tipos de usuario
+// Tipos básicos
 export interface User {
   _id: string;
   username: string;
   email: string;
   firstName: string;
   lastName: string;
+  alias?: string;
   gender: 'masculino' | 'femenino' | 'otro';
   dateOfBirth: string;
   height: number;
   weight: number;
+  phone?: string;
+  instagram?: string;
+  facebook?: string;
   fitnessLevel: 'principiante' | 'intermedio' | 'avanzado';
   fitnessGoals: string[];
   activityLevel: 'sedentario' | 'ligeramente_activo' | 'moderadamente_activo' | 'muy_activo' | 'extremadamente_activo';
-  medicalConditions: string[];
+  medicalConditions?: string[];
   preferences: {
     workoutDuration: number;
     workoutDays: number;
@@ -28,140 +32,173 @@ export interface User {
 
 // Tipos de ejercicio
 export interface Exercise {
-  _id: string;
+  id: string;
   name: string;
-  description: string;
+  category: string;
+  muscleGroup: string[];
+  equipment: string;
+  difficulty: 'beginner' | 'intermediate' | 'advanced';
   instructions: string;
-  category: 'fuerza' | 'cardio' | 'flexibilidad' | 'equilibrio' | 'funcional' | 'calistenia' | 'peso_libre' | 'máquina' | 'bandas' | 'yoga';
-  primaryMuscles: string[];
-  secondaryMuscles: string[];
-  difficulty: 'principiante' | 'intermedio' | 'avanzado';
-  equipment: string[];
-  bodyPart: 'superior' | 'inferior' | 'core' | 'full_body' | 'cardio';
-  movementType: 'empuje' | 'tirón' | 'sentadilla' | 'bisagra' | 'lunge' | 'rotación' | 'isométrico';
-  forceType: 'push' | 'pull' | 'static' | 'dynamic';
-  mechanics: 'compound' | 'isolation';
-  targetReps: {
-    min: number;
-    max: number;
-  };
-  targetSets: {
-    min: number;
-    max: number;
-  };
-  restTime: number;
-  duration?: number;
-  caloriesPerMinute: number;
   videoUrl?: string;
   imageUrl?: string;
-  tips: string[];
-  variations: Array<{
-    name: string;
-    description: string;
-    difficulty: 'principiante' | 'intermedio' | 'avanzado';
-  }>;
-  isPublic: boolean;
-  createdBy?: string;
-  tags: string[];
-  rating: {
-    average: number;
-    count: number;
-  };
-  isActive: boolean;
-  createdAt: string;
-  updatedAt: string;
 }
 
 // Tipos de entrenamiento
 export interface Workout {
-  _id: string;
+  id: string;
   name: string;
-  description?: string;
-  type: 'fuerza' | 'cardio' | 'flexibilidad' | 'equilibrio' | 'funcional' | 'hiit' | 'yoga' | 'pilates';
-  difficulty: 'principiante' | 'intermedio' | 'avanzado';
+  type: 'strength' | 'cardio' | 'flexibility' | 'hiit';
   duration: number;
-  exercises: Array<{
-    exercise: Exercise | string;
+  difficulty: 'beginner' | 'intermediate' | 'advanced';
+  exercises: {
+    exercise: Exercise;
     sets: number;
     reps: number;
+    weight?: number;
     duration?: number;
     rest: number;
-    weight?: number;
-    notes?: string;
-  }>;
-  targetMuscles: string[];
-  equipment: string[];
-  calories?: number;
-  isPublic: boolean;
-  createdBy: string | User;
+  }[];
+  calories: number;
+  description: string;
   tags: string[];
-  rating: {
-    average: number;
-    count: number;
-  };
-  isActive: boolean;
-  createdAt: string;
-  updatedAt: string;
+  isCompleted: boolean;
+  completedAt?: string;
+  rating?: number;
 }
 
 // Tipos de progreso
 export interface Progress {
-  _id: string;
-  user: string | User;
-  date: string;
+  id: string;
   type: 'weight' | 'measurements' | 'workout' | 'photo' | 'goal';
+  date: string;
   weight?: number;
   measurements?: {
-    chest?: number;
-    waist?: number;
-    hips?: number;
-    biceps?: number;
-    thighs?: number;
-    calves?: number;
-    neck?: number;
-    shoulders?: number;
+    chest: number;
+    waist: number;
+    hips: number;
+    arms: number;
+    thighs: number;
   };
   workout?: {
-    workoutId?: string | Workout;
-    duration?: number;
-    calories?: number;
-    exercises?: Array<{
-      exerciseId: string | Exercise;
-      sets: Array<{
-        reps: number;
-        weight?: number;
-        duration?: number;
-        rest?: number;
-        completed: boolean;
-      }>;
-      notes?: string;
-    }>;
-    rating?: number;
-    difficulty?: 'fácil' | 'moderado' | 'difícil';
+    workoutId: string;
+    duration: number;
+    calories: number;
+    rating: number;
   };
-  photos?: Array<{
-    url: string;
-    type: 'front' | 'back' | 'side' | 'other';
-    description?: string;
-  }>;
-  goals?: Array<{
-    type: 'weight_loss' | 'weight_gain' | 'muscle_gain' | 'endurance' | 'strength' | 'flexibility';
+  photos?: string[];
+  goals?: {
+    type: string;
     target: number;
     current: number;
-    unit: 'kg' | 'lbs' | 'cm' | 'inches' | 'minutes' | 'reps';
-    deadline?: string;
-    completed: boolean;
-  }>;
-  bodyFat?: number;
-  muscleMass?: number;
-  hydration?: number;
-  sleep?: number;
-  stress?: number;
-  energy?: number;
+    unit: string;
+  };
   notes?: string;
-  isPrivate: boolean;
+}
+
+// Tipos de logros
+export interface Achievement {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+  category: 'workout' | 'streak' | 'goal' | 'social' | 'special';
+  points: number;
+  isUnlocked: boolean;
+  unlockedAt?: string;
+  progress?: number;
+  target?: number;
+}
+
+// Tipos de notificaciones
+export interface Notification {
+  id: string;
+  type: 'workout' | 'achievement' | 'reminder' | 'social' | 'system';
+  title: string;
+  message: string;
+  isRead: boolean;
   createdAt: string;
-  updatedAt: string;
+  actionUrl?: string;
+}
+
+// Tipos de recomendaciones de IA
+export interface AIRecommendation {
+  id: string;
+  type: 'workout' | 'nutrition' | 'recovery' | 'goal';
+  title: string;
+  description: string;
+  priority: 'low' | 'medium' | 'high';
+  isApplied: boolean;
+  createdAt: string;
+}
+
+// Tipos de nutrición
+export interface Nutrition {
+  id: string;
+  date: string;
+  meal: 'breakfast' | 'lunch' | 'dinner' | 'snack';
+  name: string;
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+  fiber: number;
+  notes?: string;
+}
+
+// Tipos de calendario
+export interface CalendarEvent {
+  id: string;
+  title: string;
+  type: 'workout' | 'nutrition' | 'goal' | 'reminder';
+  date: string;
+  time?: string;
+  duration?: number;
+  description?: string;
+  isCompleted: boolean;
+}
+
+// Tipos de comunidad
+export interface CommunityPost {
+  id: string;
+  userId: string;
+  userName: string;
+  userAvatar: string;
+  content: string;
+  type: 'workout' | 'achievement' | 'question' | 'motivation';
+  likes: number;
+  comments: number;
+  createdAt: string;
+  media?: string[];
+}
+
+// Tipos de wearables
+export interface WearableData {
+  id: string;
+  type: 'heart_rate' | 'steps' | 'sleep' | 'calories' | 'activity';
+  value: number;
+  unit: string;
+  timestamp: string;
+  source: string;
+}
+
+// Tipos de análisis
+export interface Analytics {
+  period: string;
+  workouts: {
+    total: number;
+    duration: number;
+    calories: number;
+    avgRating: number;
+  };
+  progress: {
+    weight: number[];
+    measurements: number[];
+    goals: number[];
+  };
+  trends: {
+    weekly: any[];
+    monthly: any[];
+  };
 }
 
 // Tipos de plan de entrenamiento
@@ -242,13 +279,4 @@ export interface FormField {
   min?: number;
   max?: number;
   step?: number;
-}
-
-// Tipos de notificaciones
-export interface Notification {
-  id: string;
-  type: 'success' | 'error' | 'warning' | 'info';
-  title: string;
-  message: string;
-  duration?: number;
 } 

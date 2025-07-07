@@ -35,6 +35,12 @@ const userSchema = new mongoose.Schema({
     trim: true,
     maxlength: [50, 'El apellido no puede exceder 50 caracteres']
   },
+  alias: {
+    type: String,
+    trim: true,
+    maxlength: [30, 'El alias no puede exceder 30 caracteres'],
+    default: null
+  },
   gender: {
     type: String,
     enum: ['masculino', 'femenino', 'otro'],
@@ -55,6 +61,24 @@ const userSchema = new mongoose.Schema({
     required: [true, 'El peso es requerido'],
     min: [30, 'El peso debe ser al menos 30 kg'],
     max: [300, 'El peso no puede exceder 300 kg']
+  },
+  phone: {
+    type: String,
+    trim: true,
+    maxlength: [20, 'El número de teléfono no puede exceder 20 caracteres'],
+    default: null
+  },
+  instagram: {
+    type: String,
+    trim: true,
+    maxlength: [50, 'El usuario de Instagram no puede exceder 50 caracteres'],
+    default: null
+  },
+  facebook: {
+    type: String,
+    trim: true,
+    maxlength: [50, 'El usuario de Facebook no puede exceder 50 caracteres'],
+    default: null
   },
   fitnessLevel: {
     type: String,

@@ -103,7 +103,7 @@ const NavBar: React.FC = () => {
             <div className="mt-4 pt-4 border-t border-gray-200">
               <div className="flex items-center gap-3 px-3 py-2">
                 <img
-                  src={user?.avatar || 'https://via.placeholder.com/32'}
+                  src={user?.avatar || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiNlNWU3ZWYiLz4KPHBhdGggZD0iTTIwIDE4QzIxLjEwNDYgMTggMjIgMTcuMTA0NiAyMiAxNkMyMiAxNC44OTU0IDIxLjEwNDYgMTQgMjAgMTRDMTguODk1NCAxNCAxOCAxNC44OTU0IDE4IDE2QzE4IDE3LjEwNDYgMTguODk1NCAxOCAyMCAxOFoiIGZpbGw9IiM5Y2EzYWYiLz4KPHBhdGggZD0iTTI4IDI4QzI4IDI0LjY4NjMgMjQuNDE0MiAyMiAyMCAyMkMxNS41ODU4IDIyIDEyIDI0LjY4NjMgMTIgMjgiIGZpbGw9IiM5Y2EzYWYiLz4KPC9zdmc+Cg=='}
                   alt="Avatar"
                   className="w-8 h-8 rounded-full"
                 />
@@ -157,7 +157,7 @@ const NavBar: React.FC = () => {
         <div className="p-4 border-t border-gray-200">
           <div className="flex items-center gap-3 mb-4">
             <img
-              src={user?.avatar || 'https://via.placeholder.com/40'}
+              src={user?.avatar || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiNlNWU3ZWYiLz4KPHBhdGggZD0iTTIwIDE4QzIxLjEwNDYgMTggMjIgMTcuMTA0NiAyMiAxNkMyMiAxNC44OTU0IDIxLjEwNDYgMTQgMjAgMTRDMTguODk1NCAxNCAxOCAxNC44OTU0IDE4IDE2QzE4IDE3LjEwNDYgMTguODk1NCAxOCAyMCAxOFoiIGZpbGw9IiM5Y2EzYWYiLz4KPHBhdGggZD0iTTI4IDI4QzI4IDI0LjY4NjMgMjQuNDE0MiAyMiAyMCAyMkMxNS41ODU4IDIyIDEyIDI0LjY4NjMgMTIgMjgiIGZpbGw9IiM5Y2EzYWYiLz4KPC9zdmc+Cg=='}
               alt="Avatar"
               className="w-10 h-10 rounded-full"
             />

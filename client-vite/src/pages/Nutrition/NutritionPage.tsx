@@ -11,10 +11,11 @@ import {
   Download,
   Share2
 } from 'lucide-react';
-import { mockNutrition, Nutrition } from '../../data/mockData';
+import type { Nutrition } from '../../types/nutrition';
+import { nutritionData } from '../../data/nutritionData';
 
 const NutritionPage: React.FC = () => {
-  const [entries, setEntries] = useState<Nutrition[]>(mockNutrition);
+  const [entries, setEntries] = useState<Nutrition[]>(nutritionData);
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [showHistory, setShowHistory] = useState(false);
 
@@ -203,65 +204,80 @@ const NutritionPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Controles */}
+        {/* Selector de fecha */}
         <div className="bg-white rounded-2xl p-6 shadow-sm mb-8">
           <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-gray-900">Entradas del Día</h3>
             <div className="flex items-center gap-4">
-              <Calendar className="w-5 h-5 text-gray-600" />
-              <h3 className="text-lg font-semibold text-gray-900">Fecha</h3>
-            </div>
-            <div className="flex items-center gap-3">
+              <input
+                type="date"
+                value={selectedDate}
+                onChange={(e) => setSelectedDate(e.target.value)}
+                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              />
               <button
                 onClick={() => setShowHistory(!showHistory)}
-                className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
               >
-                <Filter className="w-4 h-4" />
+                <Calendar className="w-4 h-4" />
                 Historial
-              </button>
-              <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
-                <Download className="w-4 h-4" />
-                Exportar
-              </button>
-              <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
-                <Share2 className="w-4 h-4" />
-                Compartir
               </button>
             </div>
           </div>
-          
-          <input
-            type="date"
-            value={selectedDate}
-            onChange={(e) => setSelectedDate(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-          />
+
+          {/* Lista de entradas */}
+          <div className="space-y-4">
+            {todayEntries.length === 0 ? (
+              <div className="text-center py-8 text-gray-500">
+                <Apple className="w-12 h-12 mx-auto mb-4 text-gray-300" />
+                <p>No hay entradas para este día</p>
+                <p className="text-sm">Agrega tu primera comida del día</p>
+              </div>
+            ) : (
+              todayEntries.map((entry) => (
+                <div key={entry.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3">
+                      <span className="px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">
+                        {entry.meal}
+                      </span>
+                      <h4 className="font-medium text-gray-900">{entry.name}</h4>
+                    </div>
+                    <div className="mt-2 grid grid-cols-5 gap-4 text-sm text-gray-600">
+                      <span>{entry.calories} cal</span>
+                      <span>{entry.protein}g proteína</span>
+                      <span>{entry.carbs}g carbos</span>
+                      <span>{entry.fat}g grasas</span>
+                      <span>{entry.fiber}g fibra</span>
+                    </div>
+                    {entry.notes && (
+                      <p className="mt-2 text-sm text-gray-500">{entry.notes}</p>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => handleEditEntry(entry)}
+                      className="p-2 text-gray-400 hover:text-blue-600 transition-colors"
+                    >
+                      Editar
+                    </button>
+                    <button
+                      onClick={() => handleDeleteEntry(entry.id)}
+                      className="p-2 text-gray-400 hover:text-red-600 transition-colors"
+                    >
+                      Eliminar
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
         </div>
 
-        {/* Tracker de nutrición */}
-        <NutritionTracker
-          entries={todayEntries}
-          onAddEntry={handleAddEntry}
-          onEditEntry={handleEditEntry}
-          onDeleteEntry={handleDeleteEntry}
-        />
-
-        {/* Consejos nutricionales */}
-        <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl p-6 text-white">
-            <h3 className="text-lg font-semibold mb-3">💡 Consejo del Día</h3>
-            <p className="text-sm opacity-90">
-              "Para maximizar la síntesis de proteínas, distribuye tu consumo de proteína 
-              uniformemente a lo largo del día, con 20-30g por comida."
-            </p>
-          </div>
-
-          <div className="bg-gradient-to-br from-green-500 to-teal-600 rounded-2xl p-6 text-white">
-            <h3 className="text-lg font-semibold mb-3">🎯 Objetivo Semanal</h3>
-            <p className="text-sm opacity-90">
-              "Mantén un déficit calórico de 500 calorías diarias para perder 0.5kg por semana 
-              de manera saludable y sostenible."
-            </p>
-          </div>
+        {/* Componente de seguimiento nutricional */}
+        <div className="bg-white rounded-2xl p-6 shadow-sm">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Agregar Nueva Entrada</h3>
+          <NutritionTracker onAddEntry={handleAddEntry} />
         </div>
       </div>
     </div>
