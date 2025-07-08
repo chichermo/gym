@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>en</string>
+	<key>CFBundleDisplayName</key>
+	<string>FitnessApp</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>$(PRODUCT_NAME)</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.0</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSExceptionDomains</key>
+		<dict>
+			<key>localhost</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+			</dict>
+		</dict>
+	</dict>
+	
+	<!-- HealthKit Permissions -->
+	<key>NSHealthShareUsageDescription</key>
+	<string>FitnessApp necesita acceso a tus datos de salud para sincronizar información de tu Apple Watch y otros dispositivos fitness.</string>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>FitnessApp necesita escribir datos de salud para guardar tus entrenamientos y métricas de fitness.</string>
+	
+	<!-- Bluetooth Permissions -->
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>FitnessApp usa Bluetooth para conectar con dispositivos wearables como relojes inteligentes y bandas fitness.</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>FitnessApp necesita conectar con dispositivos Bluetooth para sincronizar datos de fitness.</string>
+	
+	<!-- Location Permissions for GPS tracking -->
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>FitnessApp usa tu ubicación para registrar rutas de entrenamiento y métricas de distancia.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>FitnessApp usa tu ubicación para registrar rutas de entrenamiento incluso cuando la app está en segundo plano.</string>
+	
+	<!-- Camera Permissions for QR code scanning -->
+	<key>NSCameraUsageDescription</key>
+	<string>FitnessApp usa la cámara para escanear códigos QR de dispositivos wearables.</string>
+	
+	<!-- Microphone Permissions for voice notes -->
+	<key>NSMicrophoneUsageDescription</key>
+	<string>FitnessApp usa el micrófono para grabar notas de voz en tus entrenamientos.</string>
+	
+	<!-- Background Modes -->
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>background-fetch</string>
+		<string>background-processing</string>
+		<string>remote-notification</string>
+		<string>bluetooth-central</string>
+		<string>location</string>
+	</array>
+	
+	<!-- Required device capabilities -->
+	<key>UIRequiredDeviceCapabilities</key>
+	<array>
+		<string>armv7</string>
+		<string>bluetooth-le</string>
+	</array>
+	
+	<!-- Supported interface orientations -->
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	
+	<!-- App Icons -->
+	<key>CFBundleIcons</key>
+	<dict>
+		<key>CFBundlePrimaryIcon</key>
+		<dict>
+			<key>CFBundleIconFiles</key>
+			<array>
+				<string>AppIcon</string>
+			</array>
+			<key>UIPrerenderedIcon</key>
+			<false/>
+		</dict>
+	</dict>
+	
+	<!-- Launch Screen -->
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
+	
+	<!-- Status bar appearance -->
+	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<false/>
+	
+	<!-- Enable HealthKit -->
+	<key>UIRequiredDeviceCapabilities</key>
+	<array>
+		<string>healthkit</string>
+	</array>
+</dict>
+</plist> 

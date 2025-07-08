@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import WorkoutCalendar from '../../components/WorkoutCalendar';
 import { 
   Calendar, 
@@ -8,8 +8,10 @@ import {
   CheckCircle,
   BarChart3,
   Plus,
-  Filter
+  Filter,
+  Zap
 } from 'lucide-react';
+import NavBar from '../../components/NavBar';
 
 interface WorkoutEvent {
   id: string;
@@ -126,65 +128,81 @@ const CalendarPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex flex-col">
+      <NavBar />
+      
+      {/* Banner Demo Mejorado */}
+      <div className="w-full bg-gradient-to-r from-amber-200 via-yellow-100 to-orange-100 border-b border-amber-300 py-3 px-4 flex items-center justify-center shadow-sm">
+        <div className="flex items-center gap-2">
+          <Zap className="w-4 h-4 text-amber-700" />
+          <span className="text-amber-800 text-sm font-semibold">Modo DEMO: Datos simulados de calendario</span>
+        </div>
+      </div>
+
+      <main className="flex-1 w-full max-w-7xl mx-auto px-4 py-8">
+        {/* Header Mejorado */}
         <div className="mb-8">
-          <div className="flex items-center gap-3 mb-2">
-            <Calendar className="w-8 h-8 text-blue-600" />
-            <h1 className="text-3xl font-bold text-gray-900">Calendario de Entrenamientos</h1>
+          <div className="flex items-center gap-4 mb-4">
+            <div className="p-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl shadow-lg">
+              <Calendar className="w-8 h-8 text-white" />
+            </div>
+            <div>
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
+                Calendario de Entrenamientos
+              </h1>
+              <p className="text-slate-600 mt-1">Planifica y organiza tus rutinas de entrenamiento</p>
+            </div>
           </div>
-          <p className="text-gray-600">Planifica y organiza tus rutinas de entrenamiento</p>
         </div>
 
-        {/* Estadísticas */}
+        {/* Estadísticas mejoradas */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white rounded-2xl p-6 shadow-sm">
-            <div className="flex items-center gap-3">
-              <div className="p-3 bg-blue-100 rounded-xl">
-                <Target className="w-6 h-6 text-blue-600" />
+          <div className="bg-gradient-to-br from-white to-blue-50/50 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-white/30 hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl">
+                <Target className="w-6 h-6 text-white" />
               </div>
               <div>
-                <p className="text-sm text-gray-600">Total Entrenamientos</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
+                <p className="text-sm text-slate-600 font-medium">Total Entrenamientos</p>
+                <p className="text-2xl font-bold text-slate-800">{stats.total}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl p-6 shadow-sm">
-            <div className="flex items-center gap-3">
-              <div className="p-3 bg-green-100 rounded-xl">
-                <CheckCircle className="w-6 h-6 text-green-600" />
+          <div className="bg-gradient-to-br from-white to-blue-50/50 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-white/30 hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl">
+                <CheckCircle className="w-6 h-6 text-white" />
               </div>
               <div>
-                <p className="text-sm text-gray-600">Completados</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.completed}</p>
+                <p className="text-sm text-slate-600 font-medium">Completados</p>
+                <p className="text-2xl font-bold text-slate-800">{stats.completed}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl p-6 shadow-sm">
-            <div className="flex items-center gap-3">
-              <div className="p-3 bg-purple-100 rounded-xl">
-                <Clock className="w-6 h-6 text-purple-600" />
+          <div className="bg-gradient-to-br from-white to-blue-50/50 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-white/30 hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl">
+                <Clock className="w-6 h-6 text-white" />
               </div>
               <div>
-                <p className="text-sm text-gray-600">Horas Totales</p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-sm text-slate-600 font-medium">Horas Totales</p>
+                <p className="text-2xl font-bold text-slate-800">
                   {Math.round(stats.totalDuration / 60 * 10) / 10}h
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl p-6 shadow-sm">
-            <div className="flex items-center gap-3">
-              <div className="p-3 bg-orange-100 rounded-xl">
-                <TrendingUp className="w-6 h-6 text-orange-600" />
+          <div className="bg-gradient-to-br from-white to-blue-50/50 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-white/30 hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl">
+                <TrendingUp className="w-6 h-6 text-white" />
               </div>
               <div>
-                <p className="text-sm text-gray-600">Progreso</p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-sm text-slate-600 font-medium">Progreso</p>
+                <p className="text-2xl font-bold text-slate-800">
                   {stats.total > 0 ? Math.round((stats.completed / stats.total) * 100) : 0}%
                 </p>
               </div>
@@ -192,20 +210,25 @@ const CalendarPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Filtros */}
-        <div className="bg-white rounded-2xl p-6 shadow-sm mb-8">
-          <div className="flex items-center gap-4 mb-4">
-            <Filter className="w-5 h-5 text-gray-600" />
-            <h3 className="text-lg font-semibold text-gray-900">Filtros</h3>
+        {/* Filtros mejorados */}
+        <div className="bg-gradient-to-br from-white to-blue-50/50 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-white/30 mb-8">
+          <div className="flex items-center gap-4 mb-6">
+            <div className="p-2 bg-gradient-to-br from-slate-500 to-slate-600 rounded-xl">
+              <Filter className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h3 className="text-2xl font-bold text-slate-800">Filtros</h3>
+              <p className="text-slate-600">Personaliza tu vista del calendario</p>
+            </div>
           </div>
           
-          <div className="flex flex-wrap gap-4">
-            <div className="flex items-center gap-2">
-              <label className="text-sm font-medium text-gray-700">Tipo:</label>
+          <div className="flex flex-wrap gap-6">
+            <div className="flex items-center gap-3">
+              <label className="text-sm font-semibold text-slate-700">Tipo:</label>
               <select
                 value={filterType}
                 onChange={(e) => setFilterType(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="px-4 py-3 border-2 border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 bg-white/80 backdrop-blur-sm"
               >
                 <option value="all">Todos</option>
                 <option value="strength">Fuerza</option>
@@ -215,49 +238,59 @@ const CalendarPage: React.FC = () => {
               </select>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               <input
                 type="checkbox"
                 id="showCompleted"
                 checked={showCompleted}
                 onChange={(e) => setShowCompleted(e.target.checked)}
-                className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                className="w-5 h-5 text-blue-600 border-2 border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:ring-offset-0"
               />
-              <label htmlFor="showCompleted" className="text-sm text-gray-700">
+              <label htmlFor="showCompleted" className="text-sm font-semibold text-slate-700">
                 Mostrar completados
               </label>
             </div>
           </div>
         </div>
 
-        {/* Calendario */}
+        {/* Calendario y panel lateral */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
-            <WorkoutCalendar
-              events={filteredEvents}
-              onAddEvent={handleAddEvent}
-              onEditEvent={handleEditEvent}
-              onDeleteEvent={handleDeleteEvent}
-              onToggleComplete={handleToggleComplete}
-            />
+            <div className="bg-gradient-to-br from-white to-blue-50/50 backdrop-blur-sm rounded-3xl shadow-xl border border-white/30 p-8">
+              <WorkoutCalendar
+                events={filteredEvents}
+                onAddEvent={handleAddEvent}
+                onEditEvent={handleEditEvent}
+                onDeleteEvent={handleDeleteEvent}
+                onToggleComplete={handleToggleComplete}
+              />
+            </div>
           </div>
 
-          {/* Panel lateral */}
+          {/* Panel lateral mejorado */}
           <div className="space-y-6">
             {/* Próximos entrenamientos */}
-            <div className="bg-white rounded-2xl p-6 shadow-sm">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Próximos Entrenamientos</h3>
-              <div className="space-y-3">
+            <div className="bg-gradient-to-br from-white to-blue-50/50 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-white/30">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="p-2 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl">
+                  <Target className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-slate-800">Próximos Entrenamientos</h3>
+                  <p className="text-slate-600">Tu agenda fitness</p>
+                </div>
+              </div>
+              <div className="space-y-4">
                 {events
                   .filter(e => !e.completed)
                   .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
                   .slice(0, 5)
                   .map(event => (
-                    <div key={event.id} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                      <div className={`w-3 h-3 rounded-full ${getTypeColor(event.type)}`} />
+                    <div key={event.id} className="flex items-center gap-4 p-4 bg-white/60 backdrop-blur-sm rounded-2xl border border-white/30 hover:shadow-lg transition-all duration-300 transform hover:scale-105">
+                      <div className={`w-4 h-4 rounded-full ${getTypeColor(event.type)}`} />
                       <div className="flex-1">
-                        <p className="text-sm font-medium text-gray-900">{event.title}</p>
-                        <p className="text-xs text-gray-500">
+                        <p className="text-sm font-bold text-slate-800">{event.title}</p>
+                        <p className="text-xs text-slate-600">
                           {new Date(event.date).toLocaleDateString('es-ES', {
                             weekday: 'short',
                             month: 'short',
@@ -265,58 +298,74 @@ const CalendarPage: React.FC = () => {
                           })}
                         </p>
                       </div>
-                      <span className="text-xs text-gray-500">{event.duration}min</span>
+                      <span className="text-xs font-semibold text-slate-600 bg-white/50 backdrop-blur-sm px-2 py-1 rounded-lg">{event.duration}min</span>
                     </div>
                   ))}
               </div>
             </div>
 
             {/* Resumen por tipo */}
-            <div className="bg-white rounded-2xl p-6 shadow-sm">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Resumen por Tipo</h3>
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 bg-blue-500 rounded-full" />
-                    <span className="text-sm text-gray-700">Fuerza</span>
-                  </div>
-                  <span className="text-sm font-medium text-gray-900">{stats.strength}</span>
+            <div className="bg-gradient-to-br from-white to-blue-50/50 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-white/30">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="p-2 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl">
+                  <BarChart3 className="w-6 h-6 text-white" />
                 </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 bg-red-500 rounded-full" />
-                    <span className="text-sm text-gray-700">Cardio</span>
-                  </div>
-                  <span className="text-sm font-medium text-gray-900">{stats.cardio}</span>
+                <div>
+                  <h3 className="text-xl font-bold text-slate-800">Resumen por Tipo</h3>
+                  <p className="text-slate-600">Distribución de entrenamientos</p>
                 </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 bg-green-500 rounded-full" />
-                    <span className="text-sm text-gray-700">Flexibilidad</span>
+              </div>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between p-3 bg-white/60 backdrop-blur-sm rounded-2xl border border-white/30">
+                  <div className="flex items-center gap-3">
+                    <div className="w-4 h-4 bg-blue-500 rounded-full" />
+                    <span className="text-sm font-semibold text-slate-700">Fuerza</span>
                   </div>
-                  <span className="text-sm font-medium text-gray-900">{stats.flexibility}</span>
+                  <span className="text-sm font-bold text-slate-800 bg-white/50 backdrop-blur-sm px-3 py-1 rounded-lg">{stats.strength}</span>
                 </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 bg-gray-500 rounded-full" />
-                    <span className="text-sm text-gray-700">Descanso</span>
+                <div className="flex items-center justify-between p-3 bg-white/60 backdrop-blur-sm rounded-2xl border border-white/30">
+                  <div className="flex items-center gap-3">
+                    <div className="w-4 h-4 bg-rose-500 rounded-full" />
+                    <span className="text-sm font-semibold text-slate-700">Cardio</span>
                   </div>
-                  <span className="text-sm font-medium text-gray-900">{stats.rest}</span>
+                  <span className="text-sm font-bold text-slate-800 bg-white/50 backdrop-blur-sm px-3 py-1 rounded-lg">{stats.cardio}</span>
+                </div>
+                <div className="flex items-center justify-between p-3 bg-white/60 backdrop-blur-sm rounded-2xl border border-white/30">
+                  <div className="flex items-center gap-3">
+                    <div className="w-4 h-4 bg-emerald-500 rounded-full" />
+                    <span className="text-sm font-semibold text-slate-700">Flexibilidad</span>
+                  </div>
+                  <span className="text-sm font-bold text-slate-800 bg-white/50 backdrop-blur-sm px-3 py-1 rounded-lg">{stats.flexibility}</span>
+                </div>
+                <div className="flex items-center justify-between p-3 bg-white/60 backdrop-blur-sm rounded-2xl border border-white/30">
+                  <div className="flex items-center gap-3">
+                    <div className="w-4 h-4 bg-slate-500 rounded-full" />
+                    <span className="text-sm font-semibold text-slate-700">Descanso</span>
+                  </div>
+                  <span className="text-sm font-bold text-slate-800 bg-white/50 backdrop-blur-sm px-3 py-1 rounded-lg">{stats.rest}</span>
                 </div>
               </div>
             </div>
 
-            {/* Consejos rápidos */}
-            <div className="bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl p-6 text-white">
-              <h3 className="text-lg font-semibold mb-3">💡 Consejo del Día</h3>
-              <p className="text-sm opacity-90">
+            {/* Consejos rápidos mejorados */}
+            <div className="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-3xl p-8 text-white shadow-xl">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-2 bg-white/20 rounded-xl">
+                  <Zap className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold">💡 Consejo del Día</h3>
+                  <p className="text-sm opacity-90">Maximiza tu progreso</p>
+                </div>
+              </div>
+              <p className="text-sm opacity-90 leading-relaxed">
                 "La consistencia es más importante que la intensidad. Es mejor entrenar 30 minutos 
                 todos los días que 3 horas una vez por semana."
               </p>
             </div>
           </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 };
@@ -324,9 +373,9 @@ const CalendarPage: React.FC = () => {
 const getTypeColor = (type: string) => {
   switch (type) {
     case 'strength': return 'bg-blue-500';
-    case 'cardio': return 'bg-red-500';
-    case 'flexibility': return 'bg-green-500';
-    case 'rest': return 'bg-gray-500';
+    case 'cardio': return 'bg-rose-500';
+    case 'flexibility': return 'bg-emerald-500';
+    case 'rest': return 'bg-slate-500';
     default: return 'bg-blue-500';
   }
 };

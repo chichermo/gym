@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import AdvancedGamification from '../../components/AdvancedGamification';
 import { 
   Trophy, 
@@ -20,6 +20,7 @@ import {
   Sparkles
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import NavBar from '../../components/NavBar';
 
 interface Challenge {
   id: string;
@@ -277,97 +278,123 @@ const GamificationPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-white flex flex-col items-center py-12">
-      <div className="w-full flex justify-end mb-4 pr-8">
-        <button
-          className="bg-yellow-100 text-yellow-700 px-4 py-2 rounded-full font-semibold border border-yellow-300 hover:bg-yellow-200 transition-colors"
-          onClick={() => navigate('/trofeos')}
-        >
-          Ver trofeos
-        </button>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex flex-col">
+      <NavBar />
+      
+      {/* Banner Demo Mejorado */}
+      <div className="w-full bg-gradient-to-r from-amber-200 via-yellow-100 to-orange-100 border-b border-amber-300 py-3 px-4 flex items-center justify-center shadow-sm">
+        <div className="flex items-center gap-2">
+          <Zap className="w-4 h-4 text-amber-700" />
+          <span className="text-amber-800 text-sm font-semibold">Modo DEMO: Datos simulados de gamificación</span>
+        </div>
       </div>
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
+
+      <main className="flex-1 w-full max-w-7xl mx-auto px-4 py-8">
+        {/* Header Mejorado */}
         <div className="mb-8">
-          <div className="flex items-center gap-3 mb-2">
-            <Trophy className="w-8 h-8 text-yellow-600" />
-            <h1 className="text-3xl font-bold text-gray-900">Gamificación</h1>
+          <div className="flex items-center gap-4 mb-4">
+            <div className="p-3 bg-gradient-to-br from-amber-500 to-orange-600 rounded-2xl shadow-lg">
+              <Trophy className="w-8 h-8 text-white" />
+            </div>
+            <div>
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
+                Gamificación
+              </h1>
+              <p className="text-slate-600 mt-1">Completa desafíos, gana badges y compite con otros usuarios</p>
+            </div>
           </div>
-          <p className="text-gray-600">Completa desafíos, gana badges y compite con otros usuarios</p>
         </div>
 
-        {/* Estadísticas principales */}
+        {/* Estadísticas principales mejoradas */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div className="bg-gradient-to-br from-yellow-500 to-orange-600 rounded-2xl p-6 text-white">
-            <div className="flex items-center gap-3 mb-2">
-              <Crown className="w-6 h-6" />
-              <span className="text-sm font-medium">Nivel</span>
+          <div className="bg-gradient-to-br from-amber-500 to-orange-600 rounded-2xl p-6 text-white shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="p-2 bg-white/20 rounded-xl">
+                <Crown className="w-5 h-5" />
+              </div>
+              <span className="text-sm font-semibold">Nivel</span>
             </div>
-            <div className="text-3xl font-bold">{userLevel}</div>
+            <div className="text-3xl font-bold mb-1">{userLevel}</div>
             <div className="text-sm opacity-90">XP: {userXp}</div>
           </div>
 
-          <div className="bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl p-6 text-white">
-            <div className="flex items-center gap-3 mb-2">
-              <Star className="w-6 h-6" />
-              <span className="text-sm font-medium">Monedas</span>
+          <div className="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl p-6 text-white shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="p-2 bg-white/20 rounded-xl">
+                <Star className="w-5 h-5" />
+              </div>
+              <span className="text-sm font-semibold">Monedas</span>
             </div>
-            <div className="text-3xl font-bold">{userCoins}</div>
+            <div className="text-3xl font-bold mb-1">{userCoins}</div>
             <div className="text-sm opacity-90">Disponibles</div>
           </div>
 
-          <div className="bg-gradient-to-br from-red-500 to-pink-600 rounded-2xl p-6 text-white">
-            <div className="flex items-center gap-3 mb-2">
-              <Flame className="w-6 h-6" />
-              <span className="text-sm font-medium">Racha</span>
+          <div className="bg-gradient-to-br from-rose-500 to-pink-600 rounded-2xl p-6 text-white shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="p-2 bg-white/20 rounded-xl">
+                <Flame className="w-5 h-5" />
+              </div>
+              <span className="text-sm font-semibold">Racha</span>
             </div>
-            <div className="text-3xl font-bold">{userStreak}</div>
+            <div className="text-3xl font-bold mb-1">{userStreak}</div>
             <div className="text-sm opacity-90">días consecutivos</div>
           </div>
 
-          <div className="bg-gradient-to-br from-green-500 to-teal-600 rounded-2xl p-6 text-white">
-            <div className="flex items-center gap-3 mb-2">
-              <Award className="w-6 h-6" />
-              <span className="text-sm font-medium">Badges</span>
+          <div className="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl p-6 text-white shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="p-2 bg-white/20 rounded-xl">
+                <Award className="w-5 h-5" />
+              </div>
+              <span className="text-sm font-semibold">Badges</span>
             </div>
-            <div className="text-3xl font-bold">{badges.filter(b => b.unlocked).length}</div>
+            <div className="text-3xl font-bold mb-1">{badges.filter(b => b.unlocked).length}</div>
             <div className="text-sm opacity-90">de {badges.length} total</div>
           </div>
         </div>
 
         {/* Componente principal de gamificación */}
-        <AdvancedGamification
-          userLevel={userLevel}
-          userXp={userXp}
-          userCoins={userCoins}
-          userStreak={userStreak}
-          challenges={challenges}
-          badges={badges}
-          leaderboard={leaderboard}
-          onChallengeComplete={handleChallengeComplete}
-          onBadgeUnlock={handleBadgeUnlock}
-        />
+        <div className="bg-gradient-to-br from-white to-blue-50/50 backdrop-blur-sm rounded-3xl shadow-xl border border-white/30 p-8 mb-8">
+          <AdvancedGamification
+            userLevel={userLevel}
+            userXp={userXp}
+            userCoins={userCoins}
+            userStreak={userStreak}
+            challenges={challenges}
+            badges={badges}
+            leaderboard={leaderboard}
+            onChallengeComplete={handleChallengeComplete}
+            onBadgeUnlock={handleBadgeUnlock}
+          />
+        </div>
 
-        {/* Sección de próximos logros */}
-        <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-white rounded-2xl p-6 shadow-sm">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Próximos Logros</h3>
+        {/* Sección de próximos logros mejorada */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="bg-gradient-to-br from-white to-blue-50/50 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-white/30">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="p-2 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl">
+                <Target className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h3 className="text-2xl font-bold text-slate-800">Próximos Logros</h3>
+                <p className="text-slate-600">Badges que puedes desbloquear</p>
+              </div>
+            </div>
             <div className="space-y-4">
               {badges.filter(b => !b.unlocked).slice(0, 3).map(badge => (
-                <div key={badge.id} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                  <div className="text-2xl opacity-50">{badge.icon}</div>
+                <div key={badge.id} className="flex items-center gap-4 p-4 bg-white/60 backdrop-blur-sm rounded-2xl border border-white/30 hover:shadow-lg transition-all duration-300 transform hover:scale-105">
+                  <div className="text-3xl opacity-50">{badge.icon}</div>
                   <div className="flex-1">
-                    <p className="font-medium text-gray-900">{badge.name}</p>
-                    <p className="text-sm text-gray-500">{badge.description}</p>
+                    <p className="font-bold text-slate-800">{badge.name}</p>
+                    <p className="text-sm text-slate-600">{badge.description}</p>
                     {badge.progress !== undefined && badge.maxProgress !== undefined && (
-                      <div className="mt-2">
-                        <div className="flex justify-between text-xs text-gray-500 mb-1">
-                          <span>Progreso</span>
-                          <span>{badge.progress} / {badge.maxProgress}</span>
+                      <div className="mt-3">
+                        <div className="flex justify-between text-sm text-slate-600 mb-2">
+                          <span className="font-medium">Progreso</span>
+                          <span className="font-bold">{badge.progress} / {badge.maxProgress}</span>
                         </div>
-                        <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div className="w-full bg-slate-200 rounded-full h-3 overflow-hidden">
                           <div 
-                            className="bg-blue-500 h-2 rounded-full transition-all duration-300"
+                            className="bg-gradient-to-r from-emerald-500 to-teal-600 h-3 rounded-full transition-all duration-500 shadow-sm"
                             style={{ width: `${(badge.progress / badge.maxProgress) * 100}%` }}
                           ></div>
                         </div>
@@ -379,52 +406,60 @@ const GamificationPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl p-6 shadow-sm">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Consejos para Ganar XP</h3>
-            <div className="space-y-4">
-              <div className="flex items-start gap-3">
-                <div className="p-2 bg-blue-100 rounded-lg">
-                  <Target className="w-4 h-4 text-blue-600" />
+          <div className="bg-gradient-to-br from-white to-blue-50/50 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-white/30">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="p-2 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl">
+                <Sparkles className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h3 className="text-2xl font-bold text-slate-800">Consejos para Ganar XP</h3>
+                <p className="text-slate-600">Maximiza tu progreso</p>
+              </div>
+            </div>
+            <div className="space-y-6">
+              <div className="flex items-start gap-4 p-4 bg-white/60 backdrop-blur-sm rounded-2xl border border-white/30">
+                <div className="p-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl">
+                  <Target className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <p className="font-medium text-gray-900">Completa desafíos diarios</p>
-                  <p className="text-sm text-gray-600">Los desafíos diarios te dan XP extra</p>
+                  <p className="font-bold text-slate-800">Completa desafíos diarios</p>
+                  <p className="text-sm text-slate-600">Los desafíos diarios te dan XP extra</p>
                 </div>
               </div>
               
-              <div className="flex items-start gap-3">
-                <div className="p-2 bg-green-100 rounded-lg">
-                  <Flame className="w-4 h-4 text-green-600" />
+              <div className="flex items-start gap-4 p-4 bg-white/60 backdrop-blur-sm rounded-2xl border border-white/30">
+                <div className="p-3 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl">
+                  <Flame className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <p className="font-medium text-gray-900">Mantén tu racha</p>
-                  <p className="text-sm text-gray-600">Cada día consecutivo te da más XP</p>
+                  <p className="font-bold text-slate-800">Mantén tu racha</p>
+                  <p className="text-sm text-slate-600">Cada día consecutivo te da más XP</p>
                 </div>
               </div>
               
-              <div className="flex items-start gap-3">
-                <div className="p-2 bg-purple-100 rounded-lg">
-                  <Users className="w-4 h-4 text-purple-600" />
+              <div className="flex items-start gap-4 p-4 bg-white/60 backdrop-blur-sm rounded-2xl border border-white/30">
+                <div className="p-3 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl">
+                  <Users className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <p className="font-medium text-gray-900">Conecta con amigos</p>
-                  <p className="text-sm text-gray-600">Compartir entrenamientos te da bonificaciones</p>
+                  <p className="font-bold text-slate-800">Conecta con amigos</p>
+                  <p className="text-sm text-slate-600">Compartir entrenamientos te da bonificaciones</p>
                 </div>
               </div>
               
-              <div className="flex items-start gap-3">
-                <div className="p-2 bg-yellow-100 rounded-lg">
-                  <Sparkles className="w-4 h-4 text-yellow-600" />
+              <div className="flex items-start gap-4 p-4 bg-white/60 backdrop-blur-sm rounded-2xl border border-white/30">
+                <div className="p-3 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl">
+                  <Sparkles className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <p className="font-medium text-gray-900">Usa boosts</p>
-                  <p className="text-sm text-gray-600">Los boosts temporales multiplican tu XP</p>
+                  <p className="font-bold text-slate-800">Usa boosts</p>
+                  <p className="text-sm text-slate-600">Los boosts temporales multiplican tu XP</p>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 };

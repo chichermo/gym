@@ -1,362 +1,528 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
-  Watch, Smartphone, Heart, Activity, Battery, Wifi, 
-  Bluetooth, Download, Upload, Settings, Plus, Trash2,
-  TrendingUp, TrendingDown, Target, Zap, Clock
+  Watch, 
+  Bluetooth, 
+  Wifi, 
+  Battery, 
+  Heart, 
+  Activity, 
+  TrendingUp, 
+  Zap,
+  Plus,
+  Settings,
+  AlertCircle,
+  CheckCircle,
+  X,
+  RefreshCw,
+  Download,
+  Upload,
+  Smartphone,
+  Tablet
 } from 'lucide-react';
 
+interface WearableDevice {
+  id: string;
+  name: string;
+  deviceType: 'apple_watch' | 'fitbit' | 'garmin' | 'google_fit' | 'samsung_health' | 'generic';
+  status: 'connected' | 'disconnected' | 'connecting' | 'error';
+  batteryLevel: number;
+  lastSync: Date;
+  realTimeData?: RealTimeData;
+}
+
+interface RealTimeData {
+  heartRate: number;
+  steps: number;
+  calories: number;
+  battery: number;
+  connected: boolean;
+  timestamp: Date;
+}
+
+interface WearableStats {
+  totalSteps: number;
+  totalCalories: number;
+  avgHeartRate: number;
+  sleepHours: number;
+  workouts: number;
+}
+
 const Wearables: React.FC = () => {
-  const [activeDevice, setActiveDevice] = useState('apple-watch');
-  const [syncStatus, setSyncStatus] = useState('synced');
+  const [devices, setDevices] = useState<WearableDevice[]>([]);
+  const [isConnecting, setIsConnecting] = useState(false);
+  const [selectedDevice, setSelectedDevice] = useState<string | null>(null);
+  const [stats, setStats] = useState<WearableStats>({
+    totalSteps: 0,
+    totalCalories: 0,
+    avgHeartRate: 0,
+    sleepHours: 0,
+    workouts: 0
+  });
+  const [showConnectionModal, setShowConnectionModal] = useState(false);
+  const [connectionError, setConnectionError] = useState<string | null>(null);
 
-  // Datos simulados de dispositivos
-  const devices = [
+  // Dispositivos disponibles para conectar
+  const availableDevices = [
     {
-      id: 'apple-watch',
-      name: 'Apple Watch Series 8',
-      type: 'Smartwatch',
-      brand: 'Apple',
-      status: 'connected',
-      battery: 85,
-      lastSync: '2 min ago',
-      image: 'https://images.unsplash.com/photo-1544117519-31a4b719223d?w=100&h=100&fit=crop',
-      features: ['Heart Rate', 'GPS', 'ECG', 'Blood Oxygen']
+      type: 'apple_watch',
+      name: 'Apple Watch',
+      icon: Watch,
+      description: 'Sincroniza con HealthKit',
+      color: 'from-blue-500 to-indigo-600'
     },
     {
-      id: 'fitbit',
-      name: 'Fitbit Charge 5',
-      type: 'Fitness Tracker',
-      brand: 'Fitbit',
-      status: 'connected',
-      battery: 92,
-      lastSync: '5 min ago',
-      image: 'https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=100&h=100&fit=crop',
-      features: ['Heart Rate', 'Sleep Tracking', 'Stress Management']
+      type: 'fitbit',
+      name: 'Fitbit',
+      icon: Activity,
+      description: 'Conecta con tu Fitbit',
+      color: 'from-emerald-500 to-teal-600'
     },
     {
-      id: 'garmin',
-      name: 'Garmin Forerunner 945',
-      type: 'Sports Watch',
-      brand: 'Garmin',
-      status: 'disconnected',
-      battery: 0,
-      lastSync: '2 days ago',
-      image: 'https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=100&h=100&fit=crop',
-      features: ['GPS', 'Heart Rate', 'Training Load', 'Recovery Time']
+      type: 'garmin',
+      name: 'Garmin',
+      icon: TrendingUp,
+      description: 'Sincroniza con Garmin Connect',
+      color: 'from-purple-500 to-pink-600'
+    },
+    {
+      type: 'google_fit',
+      name: 'Google Fit',
+      icon: Smartphone,
+      description: 'Integra con Google Fit',
+      color: 'from-amber-500 to-orange-600'
+    },
+    {
+      type: 'samsung_health',
+      name: 'Samsung Health',
+      icon: Tablet,
+      description: 'Conecta con Samsung Health',
+      color: 'from-rose-500 to-pink-600'
     }
   ];
 
-  // Datos de métricas en tiempo real
-  const realTimeMetrics = {
-    heartRate: 72,
-    steps: 8432,
-    calories: 2450,
-    activeMinutes: 45,
-    distance: 6.2,
-    sleepHours: 7.5,
-    stressLevel: 'Low',
-    oxygenSaturation: 98
-  };
+  useEffect(() => {
+    loadConnectedDevices();
+    loadStats();
+  }, []);
 
-  // Datos históricos
-  const heartRateData = [
-    { time: '00:00', value: 65 },
-    { time: '04:00', value: 58 },
-    { time: '08:00', value: 72 },
-    { time: '12:00', value: 85 },
-    { time: '16:00', value: 78 },
-    { time: '20:00', value: 70 },
-    { time: '24:00', value: 68 }
-  ];
-
-  const sleepData = [
-    { day: 'Lun', deep: 2.5, light: 4.2, rem: 1.8, awake: 0.5 },
-    { day: 'Mar', deep: 2.8, light: 4.0, rem: 1.9, awake: 0.3 },
-    { day: 'Mie', deep: 2.2, light: 4.5, rem: 1.7, awake: 0.6 },
-    { day: 'Jue', deep: 3.0, light: 3.8, rem: 2.0, awake: 0.2 },
-    { day: 'Vie', deep: 2.7, light: 4.1, rem: 1.8, awake: 0.4 },
-    { day: 'Sab', deep: 2.9, light: 4.3, rem: 1.9, awake: 0.3 },
-    { day: 'Dom', deep: 2.6, light: 4.0, rem: 1.7, awake: 0.5 }
-  ];
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'connected': return 'text-green-600 bg-green-100';
-      case 'disconnected': return 'text-red-600 bg-red-100';
-      case 'syncing': return 'text-yellow-600 bg-yellow-100';
-      default: return 'text-gray-600 bg-gray-100';
+  // Cargar dispositivos conectados
+  const loadConnectedDevices = async () => {
+    try {
+      const response = await fetch('/api/wearables/devices', {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        setDevices(data.data || []);
+      }
+    } catch (error) {
+      console.error('Error cargando dispositivos:', error);
     }
   };
 
-  const getBatteryColor = (level: number) => {
-    if (level > 50) return 'text-green-600';
-    if (level > 20) return 'text-yellow-600';
-    return 'text-red-600';
+  // Cargar estadísticas
+  const loadStats = async () => {
+    try {
+      // Simular datos de estadísticas
+      setStats({
+        totalSteps: 12500,
+        totalCalories: 850,
+        avgHeartRate: 72,
+        sleepHours: 7.5,
+        workouts: 4
+      });
+    } catch (error) {
+      console.error('Error cargando estadísticas:', error);
+    }
+  };
+
+  // Conectar dispositivo
+  const connectDevice = async (deviceType: string) => {
+    setIsConnecting(true);
+    setConnectionError(null);
+    
+    try {
+      // Obtener URL de autorización
+      const authResponse = await fetch(`/api/wearables/auth-url/${deviceType}`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      
+      if (authResponse.ok) {
+        const authData = await authResponse.json();
+        
+        // Abrir ventana de autorización
+        const authWindow = window.open(
+          authData.data.authUrl,
+          'wearable_auth',
+          'width=500,height=600'
+        );
+        
+        // Escuchar mensaje de callback
+        window.addEventListener('message', async (event) => {
+          if (event.data.type === 'wearable_auth_success') {
+            const { authData } = event.data;
+            
+            // Conectar dispositivo con los datos de autorización
+            const connectResponse = await fetch('/api/wearables/connect', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+              },
+              body: JSON.stringify({
+                deviceType,
+                authData
+              })
+            });
+            
+            if (connectResponse.ok) {
+              const result = await connectResponse.json();
+              setDevices(prev => [...prev, {
+                id: result.data.deviceId,
+                name: `${deviceType.charAt(0).toUpperCase() + deviceType.slice(1)} Device`,
+                deviceType: deviceType as any,
+                status: 'connected',
+                batteryLevel: 85,
+                lastSync: new Date()
+              }]);
+              
+              setShowConnectionModal(false);
+              showNotification('Dispositivo conectado exitosamente', 'success');
+            } else {
+              throw new Error('Error conectando dispositivo');
+            }
+          }
+        });
+        
+      } else {
+        throw new Error('Error obteniendo URL de autorización');
+      }
+      
+    } catch (error) {
+      console.error('Error conectando dispositivo:', error);
+      setConnectionError('Error conectando dispositivo. Inténtalo de nuevo.');
+    } finally {
+      setIsConnecting(false);
+    }
+  };
+
+  // Desconectar dispositivo
+  const disconnectDevice = async (deviceId: string) => {
+    try {
+      const response = await fetch(`/api/wearables/disconnect/${deviceId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      
+      if (response.ok) {
+        setDevices(prev => prev.filter(device => device.id !== deviceId));
+        showNotification('Dispositivo desconectado exitosamente', 'success');
+      }
+    } catch (error) {
+      console.error('Error desconectando dispositivo:', error);
+      showNotification('Error desconectando dispositivo', 'error');
+    }
+  };
+
+  // Sincronizar datos
+  const syncDeviceData = async (deviceId: string) => {
+    try {
+      const response = await fetch('/api/wearables/sync', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({ deviceId })
+      });
+      
+      if (response.ok) {
+        showNotification('Datos sincronizados exitosamente', 'success');
+        loadStats(); // Recargar estadísticas
+      }
+    } catch (error) {
+      console.error('Error sincronizando datos:', error);
+      showNotification('Error sincronizando datos', 'error');
+    }
+  };
+
+  // Mostrar notificación
+  const showNotification = (message: string, type: 'success' | 'error') => {
+    // Aquí se mostraría una notificación
+    console.log(`${type}: ${message}`);
+  };
+
+  // Obtener icono del dispositivo
+  const getDeviceIcon = (deviceType: string) => {
+    switch (deviceType) {
+      case 'apple_watch':
+        return Watch;
+      case 'fitbit':
+        return Activity;
+      case 'garmin':
+        return TrendingUp;
+      case 'google_fit':
+        return Smartphone;
+      case 'samsung_health':
+        return Tablet;
+      default:
+        return Watch;
+    }
+  };
+
+  // Obtener color del dispositivo
+  const getDeviceColor = (deviceType: string) => {
+    switch (deviceType) {
+      case 'apple_watch':
+        return 'from-blue-500 to-indigo-600';
+      case 'fitbit':
+        return 'from-emerald-500 to-teal-600';
+      case 'garmin':
+        return 'from-purple-500 to-pink-600';
+      case 'google_fit':
+        return 'from-amber-500 to-orange-600';
+      case 'samsung_health':
+        return 'from-rose-500 to-pink-600';
+      default:
+        return 'from-slate-500 to-slate-600';
+    }
   };
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="space-y-8">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Wearables</h1>
-          <p className="text-gray-600">Conecta y sincroniza tus dispositivos fitness</p>
+          <h2 className="text-3xl font-bold text-slate-800">Wearables</h2>
+          <p className="text-slate-600">Conecta y gestiona tus dispositivos fitness</p>
         </div>
-        <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center">
-          <Plus className="w-4 h-4 mr-2" />
-          Agregar Dispositivo
+        <button
+          onClick={() => setShowConnectionModal(true)}
+          className="flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-2xl hover:from-emerald-600 hover:to-teal-700 transition-all duration-300 font-semibold shadow-lg"
+        >
+          <Plus className="w-5 h-5" />
+          Conectar Dispositivo
         </button>
       </div>
 
-      {/* Dispositivos Conectados */}
-      <div className="bg-white rounded-xl shadow-sm border p-6">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">Dispositivos Conectados</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {devices.map((device) => (
-            <div
-              key={device.id}
-              className={`p-4 rounded-lg border-2 cursor-pointer transition-colors ${
-                activeDevice === device.id
-                  ? 'border-blue-500 bg-blue-50'
-                  : 'border-gray-200 hover:border-gray-300'
-              }`}
-              onClick={() => setActiveDevice(device.id)}
+      {/* Estadísticas principales */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+        <div className="bg-gradient-to-br from-white to-blue-50/50 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-white/30">
+          <div className="flex items-center gap-4 mb-4">
+            <div className="p-3 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl">
+              <Activity className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <p className="text-sm text-slate-600 font-medium">Pasos Totales</p>
+              <p className="text-2xl font-bold text-slate-800">{stats.totalSteps.toLocaleString()}</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-gradient-to-br from-white to-blue-50/50 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-white/30">
+          <div className="flex items-center gap-4 mb-4">
+            <div className="p-3 bg-gradient-to-br from-rose-500 to-pink-600 rounded-xl">
+              <Heart className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <p className="text-sm text-slate-600 font-medium">Frecuencia Cardíaca</p>
+              <p className="text-2xl font-bold text-slate-800">{stats.avgHeartRate} BPM</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-gradient-to-br from-white to-blue-50/50 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-white/30">
+          <div className="flex items-center gap-4 mb-4">
+            <div className="p-3 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl">
+              <Zap className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <p className="text-sm text-slate-600 font-medium">Calorías</p>
+              <p className="text-2xl font-bold text-slate-800">{stats.totalCalories}</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-gradient-to-br from-white to-blue-50/50 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-white/30">
+          <div className="flex items-center gap-4 mb-4">
+            <div className="p-3 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl">
+              <TrendingUp className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <p className="text-sm text-slate-600 font-medium">Entrenamientos</p>
+              <p className="text-2xl font-bold text-slate-800">{stats.workouts}</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-gradient-to-br from-white to-blue-50/50 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-white/30">
+          <div className="flex items-center gap-4 mb-4">
+            <div className="p-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl">
+              <Watch className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <p className="text-sm text-slate-600 font-medium">Sueño</p>
+              <p className="text-2xl font-bold text-slate-800">{stats.sleepHours}h</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Dispositivos conectados */}
+      <div className="bg-gradient-to-br from-white to-blue-50/50 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-white/30">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="p-2 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl">
+            <Bluetooth className="w-6 h-6 text-white" />
+          </div>
+          <div>
+            <h3 className="text-2xl font-bold text-slate-800">Dispositivos Conectados</h3>
+            <p className="text-slate-600">Gestiona tus wearables</p>
+          </div>
+        </div>
+
+        {devices.length === 0 ? (
+          <div className="text-center py-12">
+            <div className="p-4 bg-gradient-to-br from-slate-500 to-slate-600 rounded-2xl w-20 h-20 mx-auto mb-6 flex items-center justify-center">
+              <Watch className="w-10 h-10 text-white" />
+            </div>
+            <h3 className="text-xl font-bold text-slate-800 mb-2">No hay dispositivos conectados</h3>
+            <p className="text-slate-600 mb-6">Conecta tu primer dispositivo para comenzar</p>
+            <button
+              onClick={() => setShowConnectionModal(true)}
+              className="px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-xl hover:from-emerald-600 hover:to-teal-700 transition-all duration-300 font-semibold"
             >
-              <div className="flex items-center space-x-3 mb-3">
-                <img
-                  src={device.image}
-                  alt={device.name}
-                  className="w-12 h-12 rounded-lg object-cover"
-                />
-                <div className="flex-1">
-                  <h3 className="font-semibold text-gray-900 text-sm">{device.name}</h3>
-                  <p className="text-xs text-gray-500">{device.brand}</p>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(device.status)}`}>
-                    {device.status}
-                  </span>
-                  <div className={`flex items-center ${getBatteryColor(device.battery)}`}>
-                    <Battery className="w-4 h-4 mr-1" />
-                    <span className="text-xs">{device.battery}%</span>
-                  </div>
-                </div>
-              </div>
+              Conectar Dispositivo
+            </button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {devices.map((device) => {
+              const DeviceIcon = getDeviceIcon(device.deviceType);
+              const deviceColor = getDeviceColor(device.deviceType);
               
-              <div className="space-y-2">
-                <div className="flex items-center justify-between text-xs text-gray-500">
-                  <span>Última sincronización:</span>
-                  <span>{device.lastSync}</span>
-                </div>
-                <div className="flex flex-wrap gap-1">
-                  {device.features.slice(0, 2).map((feature) => (
-                    <span
-                      key={feature}
-                      className="bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-xs"
-                    >
-                      {feature}
-                    </span>
-                  ))}
-                  {device.features.length > 2 && (
-                    <span className="bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-xs">
-                      +{device.features.length - 2}
-                    </span>
-                  )}
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between mt-3 pt-3 border-t">
-                <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
-                  Configurar
-                </button>
-                <button className="text-red-600 hover:text-red-700 text-sm">
-                  <Trash2 className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Métricas en Tiempo Real */}
-      <div className="bg-white rounded-xl shadow-sm border p-6">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-semibold text-gray-900">Métricas en Tiempo Real</h2>
-          <div className="flex items-center space-x-2">
-            <div className={`w-2 h-2 rounded-full ${
-              syncStatus === 'synced' ? 'bg-green-500' : 'bg-yellow-500'
-            }`}></div>
-            <span className="text-sm text-gray-500">
-              {syncStatus === 'synced' ? 'Sincronizado' : 'Sincronizando...'}
-            </span>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="text-center p-4 bg-red-50 rounded-lg">
-            <Heart className="w-8 h-8 text-red-600 mx-auto mb-2" />
-            <div className="text-2xl font-bold text-gray-900">{realTimeMetrics.heartRate}</div>
-            <div className="text-sm text-gray-600">BPM</div>
-          </div>
-          
-          <div className="text-center p-4 bg-blue-50 rounded-lg">
-            <Activity className="w-8 h-8 text-blue-600 mx-auto mb-2" />
-            <div className="text-2xl font-bold text-gray-900">{realTimeMetrics.steps.toLocaleString()}</div>
-            <div className="text-sm text-gray-600">Pasos</div>
-          </div>
-          
-          <div className="text-center p-4 bg-green-50 rounded-lg">
-            <Zap className="w-8 h-8 text-green-600 mx-auto mb-2" />
-            <div className="text-2xl font-bold text-gray-900">{realTimeMetrics.calories}</div>
-            <div className="text-sm text-gray-600">Calorías</div>
-          </div>
-          
-          <div className="text-center p-4 bg-purple-50 rounded-lg">
-            <Clock className="w-8 h-8 text-purple-600 mx-auto mb-2" />
-            <div className="text-2xl font-bold text-gray-900">{realTimeMetrics.activeMinutes}</div>
-            <div className="text-sm text-gray-600">Min Activos</div>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-          <div className="p-4 bg-gray-50 rounded-lg">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-gray-700">Distancia</span>
-              <span className="text-sm text-gray-500">{realTimeMetrics.distance} km</span>
-            </div>
-            <div className="w-full bg-gray-200 rounded-full h-2">
-              <div 
-                className="bg-blue-600 h-2 rounded-full" 
-                style={{ width: `${(realTimeMetrics.distance / 10) * 100}%` }}
-              ></div>
-            </div>
-          </div>
-          
-          <div className="p-4 bg-gray-50 rounded-lg">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-gray-700">Saturación de Oxígeno</span>
-              <span className="text-sm text-gray-500">{realTimeMetrics.oxygenSaturation}%</span>
-            </div>
-            <div className="w-full bg-gray-200 rounded-full h-2">
-              <div 
-                className="bg-green-600 h-2 rounded-full" 
-                style={{ width: `${realTimeMetrics.oxygenSaturation}%` }}
-              ></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Análisis de Sueño */}
-      <div className="bg-white rounded-xl shadow-sm border p-6">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">Análisis de Sueño</h2>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div>
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="font-semibold text-gray-800">Última Noche</h3>
-              <span className="text-sm text-gray-500">{realTimeMetrics.sleepHours}h</span>
-            </div>
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Sueño Profundo</span>
-                <div className="flex items-center space-x-2">
-                  <div className="w-16 bg-blue-200 rounded-full h-2">
-                    <div className="bg-blue-600 h-2 rounded-full" style={{ width: '25%' }}></div>
-                  </div>
-                  <span className="text-sm font-medium">2.5h</span>
-                </div>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Sueño Ligero</span>
-                <div className="flex items-center space-x-2">
-                  <div className="w-16 bg-green-200 rounded-full h-2">
-                    <div className="bg-green-600 h-2 rounded-full" style={{ width: '45%' }}></div>
-                  </div>
-                  <span className="text-sm font-medium">4.2h</span>
-                </div>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">REM</span>
-                <div className="flex items-center space-x-2">
-                  <div className="w-16 bg-purple-200 rounded-full h-2">
-                    <div className="bg-purple-600 h-2 rounded-full" style={{ width: '20%' }}></div>
-                  </div>
-                  <span className="text-sm font-medium">1.8h</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <div>
-            <h3 className="font-semibold text-gray-800 mb-4">Tendencia Semanal</h3>
-            <div className="space-y-2">
-              {sleepData.slice(-7).map((day, index) => (
-                <div key={index} className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600 w-8">{day.day}</span>
-                  <div className="flex-1 mx-3">
-                    <div className="flex h-4 rounded-full overflow-hidden">
-                      <div className="bg-blue-600" style={{ width: `${(day.deep / 8) * 100}%` }}></div>
-                      <div className="bg-green-600" style={{ width: `${(day.light / 8) * 100}%` }}></div>
-                      <div className="bg-purple-600" style={{ width: `${(day.rem / 8) * 100}%` }}></div>
+              return (
+                <div key={device.id} className="bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-white/30 hover:shadow-lg transition-all duration-300">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                      <div className={`p-3 bg-gradient-to-br ${deviceColor} rounded-xl`}>
+                        <DeviceIcon className="w-6 h-6 text-white" />
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-slate-800">{device.name}</h4>
+                        <p className="text-sm text-slate-600 capitalize">{device.deviceType.replace('_', ' ')}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {device.status === 'connected' ? (
+                        <CheckCircle className="w-5 h-5 text-emerald-500" />
+                      ) : device.status === 'connecting' ? (
+                        <RefreshCw className="w-5 h-5 text-amber-500 animate-spin" />
+                      ) : (
+                        <AlertCircle className="w-5 h-5 text-rose-500" />
+                      )}
                     </div>
                   </div>
-                  <span className="text-sm font-medium w-12 text-right">
-                    {(day.deep + day.light + day.rem).toFixed(1)}h
-                  </span>
+
+                  <div className="space-y-3 mb-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-slate-600">Batería</span>
+                      <div className="flex items-center gap-2">
+                        <Battery className="w-4 h-4 text-slate-500" />
+                        <span className="text-sm font-semibold text-slate-800">{device.batteryLevel}%</span>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-slate-600">Última sincronización</span>
+                      <span className="text-sm text-slate-800">
+                        {device.lastSync.toLocaleTimeString()}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => syncDeviceData(device.id)}
+                      className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl hover:from-blue-600 hover:to-indigo-700 transition-all duration-300 text-sm font-semibold"
+                    >
+                      <RefreshCw className="w-4 h-4" />
+                      Sincronizar
+                    </button>
+                    <button
+                      onClick={() => disconnectDevice(device.id)}
+                      className="px-4 py-2 text-rose-600 hover:bg-rose-50 rounded-xl transition-all duration-300"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
-              ))}
-            </div>
+              );
+            })}
           </div>
-        </div>
+        )}
       </div>
 
-      {/* Configuración de Sincronización */}
-      <div className="bg-white rounded-xl shadow-sm border p-6">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">Configuración de Sincronización</h2>
-        <div className="space-y-4">
-          <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-            <div className="flex items-center space-x-3">
-              <Wifi className="w-5 h-5 text-gray-600" />
-              <div>
-                <h3 className="font-medium text-gray-900">Sincronización Automática</h3>
-                <p className="text-sm text-gray-600">Sincroniza datos cada 5 minutos</p>
-              </div>
+      {/* Modal de conexión */}
+      {showConnectionModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white rounded-3xl p-8 max-w-2xl w-full mx-4 shadow-2xl">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-2xl font-bold text-slate-800">Conectar Dispositivo</h3>
+              <button
+                onClick={() => setShowConnectionModal(false)}
+                className="p-2 text-slate-500 hover:text-slate-700 transition-colors"
+              >
+                <X className="w-6 h-6" />
+              </button>
             </div>
-            <label className="relative inline-flex items-center cursor-pointer">
-              <input type="checkbox" className="sr-only peer" defaultChecked />
-              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-            </label>
-          </div>
-          
-          <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-            <div className="flex items-center space-x-3">
-              <Bluetooth className="w-5 h-5 text-gray-600" />
-              <div>
-                <h3 className="font-medium text-gray-900">Conexión Bluetooth</h3>
-                <p className="text-sm text-gray-600">Mantener conexión en segundo plano</p>
+
+            {connectionError && (
+              <div className="mb-6 p-4 bg-rose-50 border border-rose-200 rounded-xl">
+                <div className="flex items-center gap-2">
+                  <AlertCircle className="w-5 h-5 text-rose-500" />
+                  <span className="text-rose-700 font-medium">{connectionError}</span>
+                </div>
               </div>
+            )}
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {availableDevices.map((device) => {
+                const DeviceIcon = device.icon;
+                
+                return (
+                  <button
+                    key={device.type}
+                    onClick={() => connectDevice(device.type)}
+                    disabled={isConnecting}
+                    className="flex items-center gap-4 p-6 bg-gradient-to-br from-white to-blue-50/50 backdrop-blur-sm rounded-2xl border border-white/30 hover:shadow-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <div className={`p-3 bg-gradient-to-br ${device.color} rounded-xl`}>
+                      <DeviceIcon className="w-6 h-6 text-white" />
+                    </div>
+                    <div className="text-left">
+                      <h4 className="font-bold text-slate-800">{device.name}</h4>
+                      <p className="text-sm text-slate-600">{device.description}</p>
+                    </div>
+                  </button>
+                );
+              })}
             </div>
-            <label className="relative inline-flex items-center cursor-pointer">
-              <input type="checkbox" className="sr-only peer" defaultChecked />
-              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-            </label>
-          </div>
-          
-          <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-            <div className="flex items-center space-x-3">
-              <Upload className="w-5 h-5 text-gray-600" />
-              <div>
-                <h3 className="font-medium text-gray-900">Respaldo en la Nube</h3>
-                <p className="text-sm text-gray-600">Guardar datos en la nube</p>
-              </div>
+
+            <div className="mt-6 text-center">
+              <p className="text-sm text-slate-500">
+                Al conectar un dispositivo, autorizas el acceso a tus datos de fitness
+              </p>
             </div>
-            <label className="relative inline-flex items-center cursor-pointer">
-              <input type="checkbox" className="sr-only peer" />
-              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-            </label>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

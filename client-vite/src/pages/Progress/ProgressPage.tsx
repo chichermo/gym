@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { 
   TrendingUp, 
-  Target, 
   Calendar, 
   Plus, 
   Edit, 
@@ -11,7 +10,8 @@ import {
   Camera,
   BarChart3,
   Download,
-  Share2
+  Share2,
+  Zap
 } from 'lucide-react';
 import NavBar from '../../components/NavBar';
 
@@ -60,81 +60,96 @@ const ProgressPage: React.FC = () => {
 
   const getWeightChangeColor = () => {
     const change = parseFloat(getWeightChange());
-    if (change < 0) return 'text-green-600';
-    if (change > 0) return 'text-red-600';
-    return 'text-gray-600';
+    if (change < 0) return 'text-emerald-600';
+    if (change > 0) return 'text-rose-600';
+    return 'text-slate-600';
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-white flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex flex-col">
       <NavBar />
       
-      {/* Banner Demo */}
-      <div className="w-full bg-gradient-to-r from-yellow-200 via-yellow-50 to-yellow-100 border-b border-yellow-300 py-2 px-4 flex items-center justify-center">
-        <span className="text-yellow-800 text-sm font-medium">Modo DEMO: Datos simulados de progreso</span>
+      {/* Banner Demo Mejorado */}
+      <div className="w-full bg-gradient-to-r from-amber-200 via-yellow-100 to-orange-100 border-b border-amber-300 py-3 px-4 flex items-center justify-center shadow-sm">
+        <div className="flex items-center gap-2">
+          <Zap className="w-4 h-4 text-amber-700" />
+          <span className="text-amber-800 text-sm font-semibold">Modo DEMO: Datos simulados de progreso</span>
+        </div>
       </div>
 
       <main className="flex-1 w-full max-w-7xl mx-auto px-4 py-8">
-        {/* Header */}
+        {/* Header Mejorado */}
         <div className="mb-8">
-          <div className="flex items-center gap-3 mb-2">
-            <TrendingUp className="w-8 h-8 text-blue-600" />
-            <h1 className="text-3xl font-bold text-gray-900">Seguimiento de Progreso</h1>
+          <div className="flex items-center gap-4 mb-4">
+            <div className="p-3 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl shadow-lg">
+              <TrendingUp className="w-8 h-8 text-white" />
+            </div>
+            <div>
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
+                Seguimiento de Progreso
+              </h1>
+              <p className="text-slate-600 mt-1">Registra y visualiza tu progreso físico</p>
+            </div>
           </div>
-          <p className="text-gray-600">Registra y visualiza tu progreso físico</p>
         </div>
 
-        {/* Resumen rápido */}
+        {/* Resumen rápido mejorado */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white rounded-2xl shadow-lg p-6">
+          <div className="bg-gradient-to-br from-white to-blue-50/50 backdrop-blur-sm rounded-2xl shadow-xl border border-white/30 p-6">
             <div className="flex items-center gap-3 mb-4">
-              <Weight className="w-6 h-6 text-blue-600" />
-              <span className="text-sm text-gray-500">Peso Actual</span>
+              <div className="p-2 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl">
+                <Weight className="w-6 h-6 text-white" />
+              </div>
+              <span className="text-sm text-slate-600 font-medium">Peso Actual</span>
             </div>
-            <div className="text-3xl font-bold text-gray-900">
+            <div className="text-3xl font-bold text-slate-800 mb-2">
               {progressData.weight[progressData.weight.length - 1]?.value} kg
             </div>
-            <div className={`text-sm ${getWeightChangeColor()}`}>
+            <div className={`text-sm font-medium ${getWeightChangeColor()}`}>
               {getWeightChange()} kg desde el inicio
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl shadow-lg p-6">
+          <div className="bg-gradient-to-br from-white to-blue-50/50 backdrop-blur-sm rounded-2xl shadow-xl border border-white/30 p-6">
             <div className="flex items-center gap-3 mb-4">
-              <Ruler className="w-6 h-6 text-green-600" />
-              <span className="text-sm text-gray-500">Mediciones</span>
+              <div className="p-2 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl">
+                <Ruler className="w-6 h-6 text-white" />
+              </div>
+              <span className="text-sm text-slate-600 font-medium">Mediciones</span>
             </div>
-            <div className="text-3xl font-bold text-gray-900">7</div>
-            <div className="text-sm text-gray-600">Perímetros registrados</div>
+            <div className="text-3xl font-bold text-slate-800 mb-2">7</div>
+            <div className="text-sm text-slate-600">Perímetros registrados</div>
           </div>
 
-          <div className="bg-white rounded-2xl shadow-lg p-6">
+          <div className="bg-gradient-to-br from-white to-blue-50/50 backdrop-blur-sm rounded-2xl shadow-xl border border-white/30 p-6">
             <div className="flex items-center gap-3 mb-4">
-              <Camera className="w-6 h-6 text-purple-600" />
-              <span className="text-sm text-gray-500">Fotos</span>
+              <div className="p-2 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl">
+                <Camera className="w-6 h-6 text-white" />
+              </div>
+              <span className="text-sm text-slate-600 font-medium">Fotos</span>
             </div>
-            <div className="text-3xl font-bold text-gray-900">{progressData.photos.length}</div>
-            <div className="text-sm text-gray-600">Fotos de progreso</div>
+            <div className="text-3xl font-bold text-slate-800 mb-2">{progressData.photos.length}</div>
+            <div className="text-sm text-slate-600">Fotos de progreso</div>
           </div>
         </div>
 
-        {/* Tabs */}
-        <div className="bg-white rounded-2xl shadow-lg mb-8">
-          <div className="border-b border-gray-200">
-            <nav className="flex space-x-8 px-6">
+        {/* Tabs mejorados */}
+        <div className="bg-gradient-to-br from-white to-blue-50/50 backdrop-blur-sm rounded-3xl shadow-xl border border-white/30 mb-8">
+          <div className="border-b border-white/30">
+            <nav className="flex space-x-8 px-8">
               {tabs.map((tab) => {
                 const Icon = tab.icon;
                 return (
                   <button
                     key={tab.id}
                     onClick={() => setSelectedTab(tab.id)}
-                    className={`flex items-center gap-2 py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+                    className={`flex items-center gap-3 py-6 px-1 border-b-2 font-medium text-sm transition-all duration-300 ${
                       selectedTab === tab.id
-                        ? 'border-blue-500 text-blue-600'
-                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                        ? 'border-blue-500 text-blue-600 bg-blue-50/50'
+                        : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
                     }`}
                   >
-                    <Icon className="w-4 h-4" />
+                    <Icon className="w-5 h-5" />
                     {tab.label}
                   </button>
                 );
@@ -142,35 +157,40 @@ const ProgressPage: React.FC = () => {
             </nav>
           </div>
 
-          <div className="p-6">
-            {/* Contenido de Peso */}
+          <div className="p-8">
+            {/* Contenido de Peso mejorado */}
             {selectedTab === 'weight' && (
               <div>
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-lg font-semibold text-gray-900">Registro de Peso</h3>
+                <div className="flex items-center justify-between mb-8">
+                  <div>
+                    <h3 className="text-2xl font-bold text-slate-800 mb-2">Registro de Peso</h3>
+                    <p className="text-slate-600">Mantén un seguimiento detallado de tu peso</p>
+                  </div>
                   <button
                     onClick={() => setShowAddModal(true)}
-                    className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                    className="flex items-center gap-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-6 py-3 rounded-xl hover:from-blue-600 hover:to-indigo-700 transition-all duration-300 transform hover:scale-105 shadow-lg"
                   >
-                    <Plus className="w-4 h-4" />
+                    <Plus className="w-5 h-5" />
                     Agregar Peso
                   </button>
                 </div>
                 
                 <div className="space-y-4">
                   {progressData.weight.map((entry, index) => (
-                    <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                    <div key={index} className="flex items-center justify-between p-6 bg-white/60 backdrop-blur-sm rounded-2xl border border-white/30 hover:shadow-lg transition-all duration-300 transform hover:scale-105">
                       <div className="flex items-center gap-4">
-                        <Calendar className="w-5 h-5 text-gray-500" />
-                        <span className="font-medium">{new Date(entry.date).toLocaleDateString()}</span>
+                        <div className="p-2 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl">
+                          <Calendar className="w-5 h-5 text-white" />
+                        </div>
+                        <span className="font-semibold text-slate-800">{new Date(entry.date).toLocaleDateString()}</span>
                       </div>
-                      <div className="flex items-center gap-4">
-                        <span className="text-xl font-bold">{entry.value} kg</span>
+                      <div className="flex items-center gap-6">
+                        <span className="text-2xl font-bold text-slate-800">{entry.value} kg</span>
                         <div className="flex gap-2">
-                          <button className="p-2 text-gray-500 hover:text-blue-600 transition-colors">
+                          <button className="p-3 text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-300">
                             <Edit className="w-4 h-4" />
                           </button>
-                          <button className="p-2 text-gray-500 hover:text-red-600 transition-colors">
+                          <button className="p-3 text-slate-500 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all duration-300">
                             <Trash2 className="w-4 h-4" />
                           </button>
                         </div>
@@ -181,89 +201,95 @@ const ProgressPage: React.FC = () => {
               </div>
             )}
 
-            {/* Contenido de Mediciones */}
+            {/* Contenido de Mediciones mejorado */}
             {selectedTab === 'measurements' && (
               <div>
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-lg font-semibold text-gray-900">Mediciones Corporales</h3>
+                <div className="flex items-center justify-between mb-8">
+                  <div>
+                    <h3 className="text-2xl font-bold text-slate-800 mb-2">Mediciones Corporales</h3>
+                    <p className="text-slate-600">Registra tus perímetros corporales</p>
+                  </div>
                   <button
                     onClick={() => setShowAddModal(true)}
-                    className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
+                    className="flex items-center gap-3 bg-gradient-to-r from-emerald-500 to-teal-600 text-white px-6 py-3 rounded-xl hover:from-emerald-600 hover:to-teal-700 transition-all duration-300 transform hover:scale-105 shadow-lg"
                   >
-                    <Plus className="w-4 h-4" />
+                    <Plus className="w-5 h-5" />
                     Agregar Mediciones
                   </button>
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-4">
-                    <div className="flex justify-between items-center p-4 bg-gray-50 rounded-lg">
-                      <span className="font-medium">Pectoral</span>
-                      <span className="text-lg font-bold">{progressData.measurements.pectoral} cm</span>
+                    <div className="flex justify-between items-center p-6 bg-white/60 backdrop-blur-sm rounded-2xl border border-white/30 hover:shadow-lg transition-all duration-300 transform hover:scale-105">
+                      <span className="font-semibold text-slate-800">Pectoral</span>
+                      <span className="text-xl font-bold text-slate-800">{progressData.measurements.pectoral} cm</span>
                     </div>
-                    <div className="flex justify-between items-center p-4 bg-gray-50 rounded-lg">
-                      <span className="font-medium">Brazo Relajado</span>
-                      <span className="text-lg font-bold">{progressData.measurements.brazoRelajado} cm</span>
+                    <div className="flex justify-between items-center p-6 bg-white/60 backdrop-blur-sm rounded-2xl border border-white/30 hover:shadow-lg transition-all duration-300 transform hover:scale-105">
+                      <span className="font-semibold text-slate-800">Brazo Relajado</span>
+                      <span className="text-xl font-bold text-slate-800">{progressData.measurements.brazoRelajado} cm</span>
                     </div>
-                    <div className="flex justify-between items-center p-4 bg-gray-50 rounded-lg">
-                      <span className="font-medium">Brazo Contraído</span>
-                      <span className="text-lg font-bold">{progressData.measurements.brazoContraido} cm</span>
+                    <div className="flex justify-between items-center p-6 bg-white/60 backdrop-blur-sm rounded-2xl border border-white/30 hover:shadow-lg transition-all duration-300 transform hover:scale-105">
+                      <span className="font-semibold text-slate-800">Brazo Contraído</span>
+                      <span className="text-xl font-bold text-slate-800">{progressData.measurements.brazoContraido} cm</span>
                     </div>
-                    <div className="flex justify-between items-center p-4 bg-gray-50 rounded-lg">
-                      <span className="font-medium">Cintura</span>
-                      <span className="text-lg font-bold">{progressData.measurements.cintura} cm</span>
+                    <div className="flex justify-between items-center p-6 bg-white/60 backdrop-blur-sm rounded-2xl border border-white/30 hover:shadow-lg transition-all duration-300 transform hover:scale-105">
+                      <span className="font-semibold text-slate-800">Cintura</span>
+                      <span className="text-xl font-bold text-slate-800">{progressData.measurements.cintura} cm</span>
                     </div>
                   </div>
                   <div className="space-y-4">
-                    <div className="flex justify-between items-center p-4 bg-gray-50 rounded-lg">
-                      <span className="font-medium">Glúteo</span>
-                      <span className="text-lg font-bold">{progressData.measurements.gluteo} cm</span>
+                    <div className="flex justify-between items-center p-6 bg-white/60 backdrop-blur-sm rounded-2xl border border-white/30 hover:shadow-lg transition-all duration-300 transform hover:scale-105">
+                      <span className="font-semibold text-slate-800">Glúteo</span>
+                      <span className="text-xl font-bold text-slate-800">{progressData.measurements.gluteo} cm</span>
                     </div>
-                    <div className="flex justify-between items-center p-4 bg-gray-50 rounded-lg">
-                      <span className="font-medium">Muslo</span>
-                      <span className="text-lg font-bold">{progressData.measurements.muslo} cm</span>
+                    <div className="flex justify-between items-center p-6 bg-white/60 backdrop-blur-sm rounded-2xl border border-white/30 hover:shadow-lg transition-all duration-300 transform hover:scale-105">
+                      <span className="font-semibold text-slate-800">Muslo</span>
+                      <span className="text-xl font-bold text-slate-800">{progressData.measurements.muslo} cm</span>
                     </div>
-                    <div className="flex justify-between items-center p-4 bg-gray-50 rounded-lg">
-                      <span className="font-medium">Pantorrilla</span>
-                      <span className="text-lg font-bold">{progressData.measurements.pantorrilla} cm</span>
+                    <div className="flex justify-between items-center p-6 bg-white/60 backdrop-blur-sm rounded-2xl border border-white/30 hover:shadow-lg transition-all duration-300 transform hover:scale-105">
+                      <span className="font-semibold text-slate-800">Pantorrilla</span>
+                      <span className="text-xl font-bold text-slate-800">{progressData.measurements.pantorrilla} cm</span>
                     </div>
                   </div>
                 </div>
               </div>
             )}
 
-            {/* Contenido de Fotos */}
+            {/* Contenido de Fotos mejorado */}
             {selectedTab === 'photos' && (
               <div>
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-lg font-semibold text-gray-900">Fotos de Progreso</h3>
+                <div className="flex items-center justify-between mb-8">
+                  <div>
+                    <h3 className="text-2xl font-bold text-slate-800 mb-2">Fotos de Progreso</h3>
+                    <p className="text-slate-600">Documenta visualmente tu transformación</p>
+                  </div>
                   <button
                     onClick={() => setShowAddModal(true)}
-                    className="flex items-center gap-2 bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors"
+                    className="flex items-center gap-3 bg-gradient-to-r from-purple-500 to-pink-600 text-white px-6 py-3 rounded-xl hover:from-purple-600 hover:to-pink-700 transition-all duration-300 transform hover:scale-105 shadow-lg"
                   >
-                    <Plus className="w-4 h-4" />
+                    <Plus className="w-5 h-5" />
                     Agregar Fotos
                   </button>
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   {progressData.photos.map((photo) => (
-                    <div key={photo.id} className="bg-gray-50 rounded-lg p-4">
+                    <div key={photo.id} className="bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-white/30 hover:shadow-lg transition-all duration-300 transform hover:scale-105">
                       <img 
                         src={photo.url} 
                         alt={`Foto ${photo.type}`}
-                        className="w-full h-48 object-cover rounded-lg mb-3"
+                        className="w-full h-48 object-cover rounded-xl mb-4"
                       />
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className="font-medium capitalize">{photo.type}</p>
-                          <p className="text-sm text-gray-500">{new Date(photo.date).toLocaleDateString()}</p>
+                          <p className="font-semibold capitalize text-slate-800">{photo.type}</p>
+                          <p className="text-sm text-slate-500">{new Date(photo.date).toLocaleDateString()}</p>
                         </div>
                         <div className="flex gap-2">
-                          <button className="p-2 text-gray-500 hover:text-blue-600 transition-colors">
+                          <button className="p-3 text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-300">
                             <Edit className="w-4 h-4" />
                           </button>
-                          <button className="p-2 text-gray-500 hover:text-red-600 transition-colors">
+                          <button className="p-3 text-slate-500 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all duration-300">
                             <Trash2 className="w-4 h-4" />
                           </button>
                         </div>
@@ -274,27 +300,32 @@ const ProgressPage: React.FC = () => {
               </div>
             )}
 
-            {/* Contenido de Gráficos */}
+            {/* Contenido de Gráficos mejorado */}
             {selectedTab === 'charts' && (
               <div>
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-lg font-semibold text-gray-900">Gráficos de Progreso</h3>
-                  <div className="flex gap-2">
-                    <button className="flex items-center gap-2 bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors">
-                      <Download className="w-4 h-4" />
+                <div className="flex items-center justify-between mb-8">
+                  <div>
+                    <h3 className="text-2xl font-bold text-slate-800 mb-2">Gráficos de Progreso</h3>
+                    <p className="text-slate-600">Visualiza tu progreso con gráficos interactivos</p>
+                  </div>
+                  <div className="flex gap-3">
+                    <button className="flex items-center gap-3 bg-gradient-to-r from-slate-500 to-slate-600 text-white px-6 py-3 rounded-xl hover:from-slate-600 hover:to-slate-700 transition-all duration-300 transform hover:scale-105 shadow-lg">
+                      <Download className="w-5 h-5" />
                       Exportar
                     </button>
-                    <button className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-                      <Share2 className="w-4 h-4" />
+                    <button className="flex items-center gap-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-6 py-3 rounded-xl hover:from-blue-600 hover:to-indigo-700 transition-all duration-300 transform hover:scale-105 shadow-lg">
+                      <Share2 className="w-5 h-5" />
                       Compartir
                     </button>
                   </div>
                 </div>
                 
-                <div className="bg-gray-50 rounded-lg p-8 text-center">
-                  <BarChart3 className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold text-gray-700 mb-2">Gráficos en Desarrollo</h3>
-                  <p className="text-gray-500">Los gráficos interactivos estarán disponibles próximamente</p>
+                <div className="bg-gradient-to-br from-white to-blue-50/50 backdrop-blur-sm rounded-3xl p-12 text-center border border-white/30">
+                  <div className="p-4 bg-gradient-to-br from-slate-500 to-slate-600 rounded-2xl w-20 h-20 mx-auto mb-6 flex items-center justify-center">
+                    <BarChart3 className="w-10 h-10 text-white" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-slate-800 mb-4">Gráficos en Desarrollo</h3>
+                  <p className="text-slate-600 text-lg">Los gráficos interactivos estarán disponibles próximamente</p>
                 </div>
               </div>
             )}

@@ -13,6 +13,7 @@ const progressRoutes = require('./routes/progress');
 const planRoutes = require('./routes/plan');
 const { router: notificationRoutes } = require('./routes/notifications');
 const { router: achievementRoutes } = require('./routes/achievements');
+const wearablesRoutes = require('./routes/wearables');
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -56,6 +57,7 @@ app.use('/api/progress', progressRoutes);
 app.use('/api/plan', planRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/achievements', achievementRoutes);
+app.use('/api/wearables', wearablesRoutes);
 
 // Ruta de prueba
 app.get('/api/health', (req, res) => {

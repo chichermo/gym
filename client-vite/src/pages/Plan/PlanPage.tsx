@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Brain, Target, TrendingUp, Calendar, Clock, Zap, Lightbulb, BarChart3, Activity, Trophy, Flame, Heart } from 'lucide-react';
+import React, { useState } from 'react';
+import { Brain, Target, TrendingUp, Clock, Zap, Lightbulb, BarChart3, Activity, Flame, Heart } from 'lucide-react';
 import NavBar from '../../components/NavBar';
 
 // Datos simulados de recomendaciones de IA
@@ -74,77 +74,79 @@ const PlanPage: React.FC = () => {
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'high': return 'bg-red-100 text-red-800 border-red-200';
-      case 'medium': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'low': return 'bg-green-100 text-green-800 border-green-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'high': return 'bg-rose-100 text-rose-800 border-rose-200';
+      case 'medium': return 'bg-amber-100 text-amber-800 border-amber-200';
+      case 'low': return 'bg-emerald-100 text-emerald-800 border-emerald-200';
+      default: return 'bg-slate-100 text-slate-800 border-slate-200';
     }
   };
 
   const getProgressColor = (progress: number) => {
-    if (progress >= 80) return 'text-green-600';
-    if (progress >= 60) return 'text-yellow-600';
-    return 'text-red-600';
+    if (progress >= 80) return 'text-emerald-600';
+    if (progress >= 60) return 'text-amber-600';
+    return 'text-rose-600';
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-indigo-50 to-white flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex flex-col">
       <NavBar />
       
-      {/* Banner Demo */}
-      <div className="w-full bg-gradient-to-r from-purple-200 via-purple-50 to-purple-100 border-b border-purple-300 py-2 px-4 flex items-center justify-center">
-        <Brain className="w-4 h-4 text-purple-600 mr-2" />
-        <span className="text-purple-800 text-sm font-medium">Plan de IA: Recomendaciones personalizadas basadas en datos simulados</span>
+      {/* Banner Demo Mejorado */}
+      <div className="w-full bg-gradient-to-r from-amber-200 via-yellow-100 to-orange-100 border-b border-amber-300 py-3 px-4 flex items-center justify-center shadow-sm">
+        <div className="flex items-center gap-2">
+          <Brain className="w-4 h-4 text-amber-700" />
+          <span className="text-amber-800 text-sm font-semibold">Plan de IA: Recomendaciones personalizadas basadas en datos simulados</span>
+        </div>
       </div>
 
       <main className="flex-1 w-full max-w-7xl mx-auto px-4 py-8">
-        {/* Header */}
+        {/* Header Mejorado */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
           <div>
-            <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 leading-tight mb-2">
+            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent leading-tight mb-2">
               Plan de IA
             </h1>
-            <p className="text-gray-600 text-lg">Recomendaciones personalizadas para optimizar tu entrenamiento</p>
+            <p className="text-slate-600 text-lg">Recomendaciones personalizadas para optimizar tu entrenamiento</p>
           </div>
-          <div className="flex items-center gap-2 bg-purple-600 text-white px-4 py-2 rounded-xl">
+          <div className="flex items-center gap-3 bg-gradient-to-r from-purple-500 to-indigo-600 text-white px-6 py-3 rounded-2xl shadow-lg">
             <Brain className="w-5 h-5" />
-            <span className="font-semibold">IA Activa</span>
+            <span className="font-bold">IA Activa</span>
           </div>
         </div>
 
-        {/* Tabs */}
-        <div className="flex space-x-1 bg-white rounded-xl p-1 shadow-lg mb-8">
+        {/* Tabs Mejorados */}
+        <div className="flex space-x-2 bg-white/60 backdrop-blur-sm rounded-2xl p-2 shadow-xl mb-8">
           <button
             onClick={() => setSelectedTab('recommendations')}
-            className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-medium transition-colors ${
+            className={`flex-1 flex items-center justify-center gap-3 px-6 py-4 rounded-xl font-semibold transition-all duration-300 ${
               selectedTab === 'recommendations'
-                ? 'bg-purple-600 text-white'
-                : 'text-gray-600 hover:text-gray-900'
+                ? 'bg-gradient-to-r from-purple-500 to-indigo-600 text-white shadow-lg'
+                : 'text-slate-600 hover:text-slate-800 hover:bg-white/50'
             }`}
           >
-            <Lightbulb className="w-4 h-4" />
+            <Lightbulb className="w-5 h-5" />
             Recomendaciones
           </button>
           <button
             onClick={() => setSelectedTab('analytics')}
-            className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-medium transition-colors ${
+            className={`flex-1 flex items-center justify-center gap-3 px-6 py-4 rounded-xl font-semibold transition-all duration-300 ${
               selectedTab === 'analytics'
-                ? 'bg-purple-600 text-white'
-                : 'text-gray-600 hover:text-gray-900'
+                ? 'bg-gradient-to-r from-purple-500 to-indigo-600 text-white shadow-lg'
+                : 'text-slate-600 hover:text-slate-800 hover:bg-white/50'
             }`}
           >
-            <BarChart3 className="w-4 h-4" />
+            <BarChart3 className="w-5 h-5" />
             Análisis
           </button>
           <button
             onClick={() => setSelectedTab('goals')}
-            className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-medium transition-colors ${
+            className={`flex-1 flex items-center justify-center gap-3 px-6 py-4 rounded-xl font-semibold transition-all duration-300 ${
               selectedTab === 'goals'
-                ? 'bg-purple-600 text-white'
-                : 'text-gray-600 hover:text-gray-900'
+                ? 'bg-gradient-to-r from-purple-500 to-indigo-600 text-white shadow-lg'
+                : 'text-slate-600 hover:text-slate-800 hover:bg-white/50'
             }`}
           >
-            <Target className="w-4 h-4" />
+            <Target className="w-5 h-5" />
             Objetivos
           </button>
         </div>
@@ -154,29 +156,29 @@ const PlanPage: React.FC = () => {
           <div className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {recommendations.map((rec) => (
-                <div key={rec._id} className="bg-white rounded-2xl shadow-lg p-6 border-l-4 border-purple-500">
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-purple-100 rounded-lg text-purple-600">
+                <div key={rec._id} className="bg-gradient-to-br from-white to-blue-50/50 backdrop-blur-sm rounded-3xl shadow-xl border border-white/30 p-8 hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
+                  <div className="flex items-start justify-between mb-6">
+                    <div className="flex items-center gap-4">
+                      <div className="p-3 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl text-white">
                         {rec.icon}
                       </div>
                       <div>
-                        <h3 className="text-lg font-bold text-gray-900">{rec.title}</h3>
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium border ${getPriorityColor(rec.priority)}`}>
+                        <h3 className="text-xl font-bold text-slate-800">{rec.title}</h3>
+                        <span className={`px-3 py-1 rounded-full text-xs font-bold border-2 ${getPriorityColor(rec.priority)}`}>
                           {rec.priority === 'high' ? 'Alta Prioridad' : rec.priority === 'medium' ? 'Media Prioridad' : 'Baja Prioridad'}
                         </span>
                       </div>
                     </div>
                   </div>
                   
-                  <p className="text-gray-600 mb-4">{rec.description}</p>
+                  <p className="text-slate-600 mb-6 text-lg leading-relaxed">{rec.description}</p>
                   
-                  <div className="bg-gray-50 rounded-lg p-4 mb-4">
-                    <h4 className="font-semibold text-gray-900 mb-2">Acción Recomendada:</h4>
-                    <p className="text-gray-700">{rec.action}</p>
+                  <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-6 mb-6 border border-white/30">
+                    <h4 className="font-bold text-slate-800 mb-3">Acción Recomendada:</h4>
+                    <p className="text-slate-700 font-medium">{rec.action}</p>
                   </div>
                   
-                  <button className="w-full bg-purple-600 text-white py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors font-medium">
+                  <button className="w-full bg-gradient-to-r from-purple-500 to-indigo-600 text-white py-4 px-6 rounded-2xl hover:from-purple-600 hover:to-indigo-700 transition-all duration-300 font-bold shadow-lg transform hover:scale-105">
                     Aplicar Recomendación
                   </button>
                 </div>
@@ -187,46 +189,62 @@ const PlanPage: React.FC = () => {
 
         {selectedTab === 'analytics' && (
           <div className="space-y-8">
-            {/* Estadísticas semanales */}
-            <div className="bg-white rounded-2xl shadow-lg p-6">
-              <h2 className="text-xl font-bold text-gray-900 mb-6">Estadísticas de la Semana</h2>
+            {/* Estadísticas semanales mejoradas */}
+            <div className="bg-gradient-to-br from-white to-blue-50/50 backdrop-blur-sm rounded-3xl shadow-xl border border-white/30 p-8">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="p-2 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl">
+                  <BarChart3 className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold text-slate-800">Estadísticas de la Semana</h2>
+                  <p className="text-slate-600">Resumen de tu actividad</p>
+                </div>
+              </div>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-purple-600">{analytics.weeklyStats.workouts}</div>
-                  <div className="text-gray-600">Entrenamientos</div>
+                <div className="text-center p-6 bg-white/60 backdrop-blur-sm rounded-2xl border border-white/30">
+                  <div className="text-3xl font-bold text-purple-600 mb-2">{analytics.weeklyStats.workouts}</div>
+                  <div className="text-slate-600 font-medium">Entrenamientos</div>
                 </div>
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-purple-600">{analytics.weeklyStats.totalTime}</div>
-                  <div className="text-gray-600">Minutos</div>
+                <div className="text-center p-6 bg-white/60 backdrop-blur-sm rounded-2xl border border-white/30">
+                  <div className="text-3xl font-bold text-purple-600 mb-2">{analytics.weeklyStats.totalTime}</div>
+                  <div className="text-slate-600 font-medium">Minutos</div>
                 </div>
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-purple-600">{analytics.weeklyStats.calories}</div>
-                  <div className="text-gray-600">Calorías</div>
+                <div className="text-center p-6 bg-white/60 backdrop-blur-sm rounded-2xl border border-white/30">
+                  <div className="text-3xl font-bold text-purple-600 mb-2">{analytics.weeklyStats.calories}</div>
+                  <div className="text-slate-600 font-medium">Calorías</div>
                 </div>
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-purple-600">{analytics.weeklyStats.avgRating}</div>
-                  <div className="text-gray-600">Rating Promedio</div>
+                <div className="text-center p-6 bg-white/60 backdrop-blur-sm rounded-2xl border border-white/30">
+                  <div className="text-3xl font-bold text-purple-600 mb-2">{analytics.weeklyStats.avgRating}</div>
+                  <div className="text-slate-600 font-medium">Rating Promedio</div>
                 </div>
               </div>
             </div>
 
-            {/* Progreso de fuerza */}
-            <div className="bg-white rounded-2xl shadow-lg p-6">
-              <h2 className="text-xl font-bold text-gray-900 mb-6">Progreso de Fuerza</h2>
+            {/* Progreso de fuerza mejorado */}
+            <div className="bg-gradient-to-br from-white to-blue-50/50 backdrop-blur-sm rounded-3xl shadow-xl border border-white/30 p-8">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="p-2 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl">
+                  <TrendingUp className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold text-slate-800">Progreso de Fuerza</h2>
+                  <p className="text-slate-600">Evolución de tus ejercicios principales</p>
+                </div>
+              </div>
               <div className="space-y-4">
                 {analytics.strengthProgress.map((exercise, index) => (
-                  <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                  <div key={index} className="flex items-center justify-between p-6 bg-white/60 backdrop-blur-sm rounded-2xl border border-white/30 hover:shadow-lg transition-all duration-300 transform hover:scale-105">
                     <div>
-                      <h3 className="font-semibold text-gray-900">{exercise.exercise}</h3>
-                      <p className="text-sm text-gray-600">
+                      <h3 className="font-bold text-slate-800 text-lg">{exercise.exercise}</h3>
+                      <p className="text-sm text-slate-600 font-medium">
                         {exercise.startWeight}kg → {exercise.currentWeight}kg
                       </p>
                     </div>
                     <div className="text-right">
-                      <div className={`text-lg font-bold ${getProgressColor(exercise.progress)}`}>
+                      <div className={`text-2xl font-bold ${getProgressColor(exercise.progress)}`}>
                         +{exercise.progress}%
                       </div>
-                      <div className="text-sm text-gray-600">Progreso</div>
+                      <div className="text-sm text-slate-600 font-medium">Progreso</div>
                     </div>
                   </div>
                 ))}
@@ -236,97 +254,105 @@ const PlanPage: React.FC = () => {
         )}
 
         {selectedTab === 'goals' && (
-          <div className="space-y-6">
+          <div className="space-y-8">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {/* Objetivo de peso */}
-              <div className="bg-white rounded-2xl shadow-lg p-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="p-2 bg-blue-100 rounded-lg text-blue-600">
-                    <Activity className="w-5 h-5" />
+              {/* Objetivo de peso mejorado */}
+              <div className="bg-gradient-to-br from-white to-blue-50/50 backdrop-blur-sm rounded-3xl shadow-xl border border-white/30 p-8">
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="p-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl">
+                    <Activity className="w-6 h-6 text-white" />
                   </div>
-                  <h3 className="text-lg font-bold text-gray-900">Peso Objetivo</h3>
+                  <h3 className="text-xl font-bold text-slate-800">Peso Objetivo</h3>
                 </div>
-                <div className="text-center mb-4">
-                  <div className="text-3xl font-bold text-blue-600">{analytics.goals.weight.current}</div>
-                  <div className="text-gray-600">kg actuales</div>
+                <div className="text-center mb-6">
+                  <div className="text-4xl font-bold text-blue-600 mb-2">{analytics.goals.weight.current}</div>
+                  <div className="text-slate-600 font-medium">kg actuales</div>
                 </div>
-                <div className="bg-gray-200 rounded-full h-2 mb-2">
+                <div className="bg-slate-200 rounded-full h-3 mb-3 overflow-hidden">
                   <div 
-                    className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                    className="bg-gradient-to-r from-blue-500 to-indigo-600 h-3 rounded-full transition-all duration-500 shadow-sm"
                     style={{ width: `${(analytics.goals.weight.current / analytics.goals.weight.target) * 100}%` }}
                   ></div>
                 </div>
-                <div className="text-center text-sm text-gray-600">
+                <div className="text-center text-sm text-slate-600 font-medium">
                   Objetivo: {analytics.goals.weight.target} kg
                 </div>
               </div>
 
-              {/* Objetivo de fuerza */}
-              <div className="bg-white rounded-2xl shadow-lg p-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="p-2 bg-green-100 rounded-lg text-green-600">
-                    <Zap className="w-5 h-5" />
+              {/* Objetivo de fuerza mejorado */}
+              <div className="bg-gradient-to-br from-white to-blue-50/50 backdrop-blur-sm rounded-3xl shadow-xl border border-white/30 p-8">
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="p-3 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl">
+                    <Zap className="w-6 h-6 text-white" />
                   </div>
-                  <h3 className="text-lg font-bold text-gray-900">Fuerza Objetivo</h3>
+                  <h3 className="text-xl font-bold text-slate-800">Fuerza Objetivo</h3>
                 </div>
-                <div className="text-center mb-4">
-                  <div className="text-3xl font-bold text-green-600">{analytics.goals.strength.current}</div>
-                  <div className="text-gray-600">kg (press banca)</div>
+                <div className="text-center mb-6">
+                  <div className="text-4xl font-bold text-emerald-600 mb-2">{analytics.goals.strength.current}</div>
+                  <div className="text-slate-600 font-medium">kg (press banca)</div>
                 </div>
-                <div className="bg-gray-200 rounded-full h-2 mb-2">
+                <div className="bg-slate-200 rounded-full h-3 mb-3 overflow-hidden">
                   <div 
-                    className="bg-green-600 h-2 rounded-full transition-all duration-300"
+                    className="bg-gradient-to-r from-emerald-500 to-teal-600 h-3 rounded-full transition-all duration-500 shadow-sm"
                     style={{ width: `${(analytics.goals.strength.current / analytics.goals.strength.target) * 100}%` }}
                   ></div>
                 </div>
-                <div className="text-center text-sm text-gray-600">
+                <div className="text-center text-sm text-slate-600 font-medium">
                   Objetivo: {analytics.goals.strength.target} kg
                 </div>
               </div>
 
-              {/* Objetivo de resistencia */}
-              <div className="bg-white rounded-2xl shadow-lg p-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="p-2 bg-orange-100 rounded-lg text-orange-600">
-                    <Clock className="w-5 h-5" />
+              {/* Objetivo de resistencia mejorado */}
+              <div className="bg-gradient-to-br from-white to-blue-50/50 backdrop-blur-sm rounded-3xl shadow-xl border border-white/30 p-8">
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="p-3 bg-gradient-to-br from-amber-500 to-orange-600 rounded-2xl">
+                    <Clock className="w-6 h-6 text-white" />
                   </div>
-                  <h3 className="text-lg font-bold text-gray-900">Resistencia Objetivo</h3>
+                  <h3 className="text-xl font-bold text-slate-800">Resistencia Objetivo</h3>
                 </div>
-                <div className="text-center mb-4">
-                  <div className="text-3xl font-bold text-orange-600">{analytics.goals.endurance.current}</div>
-                  <div className="text-gray-600">min (plank)</div>
+                <div className="text-center mb-6">
+                  <div className="text-4xl font-bold text-amber-600 mb-2">{analytics.goals.endurance.current}</div>
+                  <div className="text-slate-600 font-medium">min (plank)</div>
                 </div>
-                <div className="bg-gray-200 rounded-full h-2 mb-2">
+                <div className="bg-slate-200 rounded-full h-3 mb-3 overflow-hidden">
                   <div 
-                    className="bg-orange-600 h-2 rounded-full transition-all duration-300"
+                    className="bg-gradient-to-r from-amber-500 to-orange-600 h-3 rounded-full transition-all duration-500 shadow-sm"
                     style={{ width: `${(analytics.goals.endurance.current / analytics.goals.endurance.target) * 100}%` }}
                   ></div>
                 </div>
-                <div className="text-center text-sm text-gray-600">
+                <div className="text-center text-sm text-slate-600 font-medium">
                   Objetivo: {analytics.goals.endurance.target} min
                 </div>
               </div>
             </div>
 
-            {/* Próximos objetivos */}
-            <div className="bg-white rounded-2xl shadow-lg p-6">
-              <h2 className="text-xl font-bold text-gray-900 mb-6">Próximos Objetivos Sugeridos</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="p-4 bg-purple-50 rounded-lg border border-purple-200">
-                  <h3 className="font-semibold text-purple-900 mb-2">Aumentar Frecuencia</h3>
-                  <p className="text-purple-700 text-sm">La IA sugiere entrenar 5 días por semana para acelerar tu progreso</p>
+            {/* Próximos objetivos mejorados */}
+            <div className="bg-gradient-to-br from-white to-blue-50/50 backdrop-blur-sm rounded-3xl shadow-xl border border-white/30 p-8">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="p-2 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl">
+                  <Target className="w-6 h-6 text-white" />
                 </div>
-                <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-                  <h3 className="font-semibold text-blue-900 mb-2">Variar Ejercicios</h3>
-                  <p className="text-blue-700 text-sm">Agregar ejercicios de estabilidad para mejorar el rendimiento</p>
+                <div>
+                  <h2 className="text-2xl font-bold text-slate-800">Próximos Objetivos Sugeridos</h2>
+                  <p className="text-slate-600">Recomendaciones de la IA</p>
                 </div>
-                <div className="p-4 bg-green-50 rounded-lg border border-green-200">
-                  <h3 className="font-semibold text-green-900 mb-2">Optimizar Descanso</h3>
-                  <p className="text-green-700 text-sm">Reducir el tiempo de descanso entre series para mayor intensidad</p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="p-6 bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl border border-purple-200 hover:shadow-lg transition-all duration-300 transform hover:scale-105">
+                  <h3 className="font-bold text-purple-900 mb-3 text-lg">Aumentar Frecuencia</h3>
+                  <p className="text-purple-700 text-sm leading-relaxed">La IA sugiere entrenar 5 días por semana para acelerar tu progreso</p>
                 </div>
-                <div className="p-4 bg-orange-50 rounded-lg border border-orange-200">
-                  <h3 className="font-semibold text-orange-900 mb-2">Progresión Gradual</h3>
-                  <p className="text-orange-700 text-sm">Aumentar peso en sentadillas y peso muerto gradualmente</p>
+                <div className="p-6 bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl border border-blue-200 hover:shadow-lg transition-all duration-300 transform hover:scale-105">
+                  <h3 className="font-bold text-blue-900 mb-3 text-lg">Variar Ejercicios</h3>
+                  <p className="text-blue-700 text-sm leading-relaxed">Agregar ejercicios de estabilidad para mejorar el rendimiento</p>
+                </div>
+                <div className="p-6 bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-2xl border border-emerald-200 hover:shadow-lg transition-all duration-300 transform hover:scale-105">
+                  <h3 className="font-bold text-emerald-900 mb-3 text-lg">Optimizar Descanso</h3>
+                  <p className="text-emerald-700 text-sm leading-relaxed">Reducir el tiempo de descanso entre series para mayor intensidad</p>
+                </div>
+                <div className="p-6 bg-gradient-to-br from-amber-50 to-amber-100 rounded-2xl border border-amber-200 hover:shadow-lg transition-all duration-300 transform hover:scale-105">
+                  <h3 className="font-bold text-amber-900 mb-3 text-lg">Progresión Gradual</h3>
+                  <p className="text-amber-700 text-sm leading-relaxed">Aumentar peso en sentadillas y peso muerto gradualmente</p>
                 </div>
               </div>
             </div>
