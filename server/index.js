@@ -15,13 +15,13 @@ const { router: notificationRoutes } = require('./routes/notifications');
 const { router: achievementRoutes } = require('./routes/achievements');
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 
 // Middleware
 app.use(helmet());
 app.use(morgan('combined'));
 app.use(cors({
-  origin: 'http://localhost:5173', // Permitir Vite
+  origin: ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:5175', 'http://localhost:5176'], // Permitir Vite
   credentials: true
 }));
 app.use(express.json({ limit: '10mb' }));
