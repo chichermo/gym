@@ -69,6 +69,12 @@ const NavBar: React.FC = () => {
       description: 'Logros y recompensas'
     },
     { 
+      name: 'Sistema de Trofeos', 
+      href: '/trophies', 
+      icon: Trophy,
+      description: 'Nuevo sistema de trofeos'
+    },
+    { 
       name: 'Gamificación', 
       href: '/gamification', 
       icon: BookOpen,

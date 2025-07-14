@@ -11,6 +11,7 @@ import ProgressPage from './pages/Progress/ProgressPage';
 import ProfilePage from './pages/Profile/ProfilePage';
 import PlanPage from './pages/Plan/PlanPage';
 import TrofeosPage from './pages/Trofeos/TrofeosPage';
+import TrophyPage from './pages/Gamification/TrophyPage';
 import NotFoundPage from './pages/NotFoundPage';
 import CustomToaster from './components/Toast';
 import Particles from './components/Particles';
@@ -40,6 +41,7 @@ function App() {
                   <Route path="/profile" element={<ProfilePage />} />
                   <Route path="/plan" element={<PlanPage />} />
                   <Route path="/trofeos" element={<TrofeosPage />} />
+                  <Route path="/trophies" element={<TrophyPage />} />
                   <Route path="/entrenamiento" element={<EntrenamientoPage />} />
                   <Route path="/entrenamientos" element={<EntrenamientosHistPage />} />
                   <Route path="/registros" element={<RegistrosPage />} />

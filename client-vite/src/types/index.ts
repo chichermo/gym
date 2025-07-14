@@ -33,6 +33,71 @@ export interface User {
   lastLogin: string;
   createdAt: string;
   updatedAt: string;
+  
+  // Nuevas propiedades del perfil
+  experienceLevel: ExperienceLevel;
+  bodyType: BodyType;
+  physicalInfo: PhysicalInfo;
+  measurements: Measurement[];
+  bodyComposition?: BodyComposition;
+  weightHistory: WeightRecord[];
+}
+
+// Nuevos tipos para el perfil
+export type ExperienceLevel = 
+  | 'Básico I'    // Soy nuevo en el gym
+  | 'Básico II'   // Menos de 6 meses
+  | 'Intermedio I' // De 6 meses a 1 año
+  | 'Intermedio II' // De 1 a 3 años
+  | 'Avanzado I'  // De 3 a 5 años
+  | 'Avanzado II'; // Más de 5 años
+
+export type BodyType = 'Endomorfo' | 'Ectomorfo' | 'Mesomorfo';
+
+export interface PhysicalInfo {
+  weight: number;
+  height: number;
+  age: number;
+  bodyType: BodyType;
+}
+
+export interface Measurement {
+  id: string;
+  date: string;
+  timestamp: string;
+  cintura: number;
+  gluteoMaximo: number;
+  muslo: number;
+  pantorrilla: number;
+  brazoRelajado: number;
+  brazoContraido: number;
+  pectoral: number;
+  total: number; // Suma de todos los perímetros
+}
+
+export interface BodyComposition {
+  id: string;
+  date: string;
+  timestamp: string;
+  grasaCorporal: number;
+  musculatura: number;
+  pliegues: {
+    tricipital: number;
+    subescapular: number;
+    suprailiaco: number;
+    abdominal: number;
+    musloAnterior: number;
+    pantorrilla: number;
+  };
+}
+
+export interface WeightRecord {
+  id: string;
+  date: string;
+  timestamp: string;
+  weight: number;
+  photo?: string; // URL de la foto opcional
+  notes?: string;
 }
 
 // Tipos de ejercicio
@@ -292,4 +357,58 @@ export interface Ejercicio {
   grupoMuscular: string;
   accesorio: string;
   etiquetas: string[];
+}
+
+// Tipos para el sistema de trofeos
+export interface Trophy {
+  id: string;
+  name: string;
+  description: string;
+  category: TrophyCategory;
+  condition: string;
+  icon: string;
+  isUnlocked: boolean;
+  unlockedAt?: string;
+  progress?: number;
+  target?: number;
+  coinsReward: number;
+  animation?: string;
+}
+
+export type TrophyCategory = 
+  | 'Prueba tu constancia'
+  | 'Composición corporal'
+  | 'Técnicas de entrenamiento'
+  | 'Levantamientos';
+
+export interface TrophyInfo {
+  id: string;
+  name: string;
+  description: string;
+  condition: string;
+  category: TrophyCategory;
+  icon: string;
+  coinsReward: number;
+  isUnlocked: boolean;
+  unlockedAt?: string;
+  progress?: number;
+  target?: number;
+}
+
+// Ente informativo para trofeos
+export interface InfoEntity {
+  id: string;
+  name: string;
+  avatar: string;
+  messages: {
+    welcome: string;
+    trophyUnlocked: string;
+    conditionInfo: string;
+    motivation: string;
+  };
+  animations: {
+    idle: string;
+    celebration: string;
+    explanation: string;
+  };
 } 

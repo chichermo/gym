@@ -1,8 +1,13 @@
 import React, { useState } from 'react';
-import { Edit, Save, Camera, Settings, Activity, Trophy, Calendar, Target, Heart, Weight, Ruler, Mail, MapPin, Bell, Shield, LogOut, Zap, TrendingUp, Award } from "lucide-react";
+import { Edit, Save, Camera, Settings, Activity, Trophy, Calendar, Target, Heart, Weight, Ruler, Mail, MapPin, Bell, Shield, LogOut, Zap, TrendingUp, Award, User, Info, BarChart3, Plus } from "lucide-react";
 import NavBar from '../../components/NavBar';
+import ProfileSetup from '../../components/ProfileSetup';
+import MeasurementTracker from '../../components/MeasurementTracker';
+import WeightTracker from '../../components/WeightTracker';
+import { ExperienceLevel, BodyType, PhysicalInfo, Measurement, BodyComposition, WeightRecord } from '../../types';
+import { experienceLevels, bodyTypes, mockBodyComposition } from '../../data/mockData';
 
-// Datos simulados del usuario
+// Datos simulados del usuario actualizado
 const mockUser = {
   _id: 'user123',
   name: 'Carlos Rodríguez',
@@ -30,12 +35,24 @@ const mockUser = {
     emailUpdates: true,
     privacy: 'public',
     theme: 'light'
-  }
+  },
+  // Nuevas propiedades
+  experienceLevel: 'Intermedio II' as ExperienceLevel,
+  bodyType: 'Mesomorfo' as BodyType,
+  physicalInfo: {
+    weight: 75,
+    height: 175,
+    age: 28,
+    bodyType: 'Mesomorfo' as BodyType
+  },
+  bodyComposition: mockBodyComposition
 };
 
 const ProfilePage: React.FC = () => {
   const [user, setUser] = useState(mockUser);
   const [isEditing, setIsEditing] = useState(false);
+  const [showProfileSetup, setShowProfileSetup] = useState(false);
+  const [activeTab, setActiveTab] = useState<'info' | 'measurements' | 'weight' | 'composition'>('info');
   const [editForm, setEditForm] = useState({
     name: user.name,
     email: user.email,
@@ -59,6 +76,27 @@ const ProfilePage: React.FC = () => {
     });
     setIsEditing(false);
   };
+
+  const handleProfileSetupComplete = (data: {
+    experienceLevel: ExperienceLevel;
+    bodyType: BodyType;
+    physicalInfo: PhysicalInfo;
+  }) => {
+    setUser({
+      ...user,
+      experienceLevel: data.experienceLevel,
+      bodyType: data.bodyType,
+      physicalInfo: data.physicalInfo
+    });
+    setShowProfileSetup(false);
+  };
+
+  const tabs = [
+    { id: 'info', label: 'Información Personal', icon: User },
+    { id: 'measurements', label: 'Medición de Perímetros', icon: Ruler },
+    { id: 'weight', label: 'Seguimiento de Peso', icon: Weight },
+    { id: 'composition', label: 'Composición Corporal', icon: BarChart3 }
+  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex flex-col">
@@ -119,6 +157,38 @@ const ProfilePage: React.FC = () => {
                 </div>
               </div>
 
+              {/* Nueva información del perfil */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-200">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Activity className="w-4 h-4 text-blue-600" />
+                    <span className="text-sm font-semibold text-slate-700">Nivel</span>
+                  </div>
+                  <div className="text-lg font-bold text-blue-600">{user.experienceLevel}</div>
+                </div>
+                <div className="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-xl p-4 border border-emerald-200">
+                  <div className="flex items-center gap-2 mb-2">
+                    <User className="w-4 h-4 text-emerald-600" />
+                    <span className="text-sm font-semibold text-slate-700">Tipo de Cuerpo</span>
+                  </div>
+                  <div className="text-lg font-bold text-emerald-600">{user.bodyType}</div>
+                </div>
+                <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-4 border border-purple-200">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Weight className="w-4 h-4 text-purple-600" />
+                    <span className="text-sm font-semibold text-slate-700">Peso</span>
+                  </div>
+                  <div className="text-lg font-bold text-purple-600">{user.physicalInfo.weight}kg</div>
+                </div>
+                <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-4 border border-amber-200">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Ruler className="w-4 h-4 text-amber-600" />
+                    <span className="text-sm font-semibold text-slate-700">Altura</span>
+                  </div>
+                  <div className="text-lg font-bold text-amber-600">{user.physicalInfo.height}cm</div>
+                </div>
+              </div>
+
               <p className="text-slate-700 text-lg leading-relaxed bg-white/40 backdrop-blur-sm p-4 rounded-xl border border-white/30">
                 {user.bio}
               </p>
@@ -126,6 +196,13 @@ const ProfilePage: React.FC = () => {
 
             {/* Botones de acción mejorados */}
             <div className="flex flex-col gap-3">
+              <button 
+                onClick={() => setShowProfileSetup(true)}
+                className="flex items-center gap-3 bg-gradient-to-r from-emerald-500 to-teal-600 text-white px-6 py-3 rounded-xl hover:from-emerald-600 hover:to-teal-700 transition-all duration-300 transform hover:scale-105 shadow-lg"
+              >
+                <Settings className="w-5 h-5" />
+                Configurar Perfil
+              </button>
               <button className="flex items-center gap-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-6 py-3 rounded-xl hover:from-blue-600 hover:to-indigo-700 transition-all duration-300 transform hover:scale-105 shadow-lg">
                 <Settings className="w-5 h-5" />
                 Configuración
@@ -138,297 +215,196 @@ const ProfilePage: React.FC = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Columna izquierda - Información personal */}
-          <div className="lg:col-span-2 space-y-8">
-            {/* Formulario de edición mejorado */}
-            {isEditing && (
-              <div className="bg-gradient-to-br from-white to-blue-50/50 backdrop-blur-sm rounded-3xl shadow-xl border border-white/30 p-8">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="p-2 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl">
-                    <Edit className="w-6 h-6 text-white" />
-                  </div>
-                  <h2 className="text-2xl font-bold text-slate-800">Editar Perfil</h2>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                  <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-3">Nombre</label>
-                    <input
-                      type="text"
-                      value={editForm.name}
-                      onChange={(e) => setEditForm({...editForm, name: e.target.value})}
-                      className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 bg-white/80 backdrop-blur-sm"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-3">Email</label>
-                    <input
-                      type="email"
-                      value={editForm.email}
-                      onChange={(e) => setEditForm({...editForm, email: e.target.value})}
-                      className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 bg-white/80 backdrop-blur-sm"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-3">Teléfono</label>
-                    <input
-                      type="tel"
-                      value={editForm.phone}
-                      onChange={(e) => setEditForm({...editForm, phone: e.target.value})}
-                      className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 bg-white/80 backdrop-blur-sm"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-3">Ubicación</label>
-                    <input
-                      type="text"
-                      value={editForm.location}
-                      onChange={(e) => setEditForm({...editForm, location: e.target.value})}
-                      className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 bg-white/80 backdrop-blur-sm"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-3">Biografía</label>
-                  <textarea
-                    value={editForm.bio}
-                    onChange={(e) => setEditForm({...editForm, bio: e.target.value})}
-                    rows={4}
-                    className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 bg-white/80 backdrop-blur-sm resize-none"
-                  />
-                </div>
-                <div className="flex gap-4 mt-6">
-                  <button
-                    onClick={handleSave}
-                    className="flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-teal-600 text-white px-6 py-3 rounded-xl hover:from-emerald-600 hover:to-teal-700 transition-all duration-300 transform hover:scale-105 shadow-lg"
-                  >
-                    <Save className="w-5 h-5" />
-                    Guardar Cambios
-                  </button>
-                  <button
-                    onClick={handleCancel}
-                    className="px-6 py-3 border-2 border-slate-300 text-slate-700 rounded-xl hover:bg-slate-50 transition-all duration-300 transform hover:scale-105"
-                  >
-                    Cancelar
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* Estadísticas de entrenamiento mejoradas */}
-            <div className="bg-gradient-to-br from-white to-blue-50/50 backdrop-blur-sm rounded-3xl shadow-xl border border-white/30 p-8">
-              <div className="flex items-center gap-3 mb-8">
-                <div className="p-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl">
-                  <TrendingUp className="w-8 h-8 text-white" />
-                </div>
-                <div>
-                  <h2 className="text-2xl font-bold text-slate-800">Estadísticas de Entrenamiento</h2>
-                  <p className="text-slate-600">Tu progreso en números</p>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                <div className="text-center bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-white/30 hover:shadow-lg transition-all duration-300 transform hover:scale-105">
-                  <div className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-2">
-                    {user.stats.totalWorkouts}
-                  </div>
-                  <div className="text-slate-600 font-medium">Entrenamientos</div>
-                </div>
-                <div className="text-center bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-white/30 hover:shadow-lg transition-all duration-300 transform hover:scale-105">
-                  <div className="text-4xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent mb-2">
-                    {user.stats.totalTime}h
-                  </div>
-                  <div className="text-slate-600 font-medium">Horas totales</div>
-                </div>
-                <div className="text-center bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-white/30 hover:shadow-lg transition-all duration-300 transform hover:scale-105">
-                  <div className="text-4xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent mb-2">
-                    {user.stats.currentStreak}
-                  </div>
-                  <div className="text-slate-600 font-medium">Días seguidos</div>
-                </div>
-                <div className="text-center bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-white/30 hover:shadow-lg transition-all duration-300 transform hover:scale-105">
-                  <div className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">
-                    {user.stats.achievements}
-                  </div>
-                  <div className="text-slate-600 font-medium">Logros</div>
-                </div>
-              </div>
-            </div>
-
-            {/* Información física mejorada */}
-            <div className="bg-gradient-to-br from-white to-blue-50/50 backdrop-blur-sm rounded-3xl shadow-xl border border-white/30 p-8">
-              <div className="flex items-center gap-3 mb-8">
-                <div className="p-3 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl">
-                  <Heart className="w-8 h-8 text-white" />
-                </div>
-                <div>
-                  <h2 className="text-2xl font-bold text-slate-800">Información Física</h2>
-                  <p className="text-slate-600">Tus medidas y datos personales</p>
-                </div>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="flex items-center gap-4 p-6 bg-white/60 backdrop-blur-sm rounded-2xl border border-white/30 hover:shadow-lg transition-all duration-300 transform hover:scale-105">
-                  <div className="p-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl">
-                    <Weight className="w-6 h-6 text-white" />
-                  </div>
-                  <div>
-                    <div className="text-sm text-slate-600 font-medium">Peso</div>
-                    <div className="text-2xl font-bold text-slate-800">{user.weight} kg</div>
-                  </div>
-                </div>
-                <div className="flex items-center gap-4 p-6 bg-white/60 backdrop-blur-sm rounded-2xl border border-white/30 hover:shadow-lg transition-all duration-300 transform hover:scale-105">
-                  <div className="p-3 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl">
-                    <Ruler className="w-6 h-6 text-white" />
-                  </div>
-                  <div>
-                    <div className="text-sm text-slate-600 font-medium">Altura</div>
-                    <div className="text-2xl font-bold text-slate-800">{user.height} cm</div>
-                  </div>
-                </div>
-                <div className="flex items-center gap-4 p-6 bg-white/60 backdrop-blur-sm rounded-2xl border border-white/30 hover:shadow-lg transition-all duration-300 transform hover:scale-105">
-                  <div className="p-3 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl">
-                    <Heart className="w-6 h-6 text-white" />
-                  </div>
-                  <div>
-                    <div className="text-sm text-slate-600 font-medium">Edad</div>
-                    <div className="text-2xl font-bold text-slate-800">{user.age} años</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Columna derecha - Configuración y preferencias mejoradas */}
-          <div className="space-y-8">
-            {/* Objetivos y experiencia mejorados */}
-            <div className="bg-gradient-to-br from-white to-blue-50/50 backdrop-blur-sm rounded-3xl shadow-xl border border-white/30 p-8">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="p-3 bg-gradient-to-br from-amber-500 to-orange-600 rounded-2xl">
-                  <Target className="w-8 h-8 text-white" />
-                </div>
-                <div>
-                  <h2 className="text-2xl font-bold text-slate-800">Objetivos y Experiencia</h2>
-                  <p className="text-slate-600">Tu camino fitness</p>
-                </div>
-              </div>
-              <div className="space-y-6">
-                <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-white/30">
-                  <div className="text-sm text-slate-600 font-medium mb-1">Objetivo principal</div>
-                  <div className="font-bold text-slate-800">{user.goal}</div>
-                </div>
-                <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-white/30">
-                  <div className="text-sm text-slate-600 font-medium mb-1">Nivel de experiencia</div>
-                  <div className="font-bold text-slate-800">{user.experience}</div>
-                </div>
-                <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-white/30">
-                  <div className="text-sm text-slate-600 font-medium mb-1">Racha actual</div>
-                  <div className="font-bold text-slate-800">{user.stats.currentStreak} días</div>
-                </div>
-                <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-white/30">
-                  <div className="text-sm text-slate-600 font-medium mb-1">Mejor racha</div>
-                  <div className="font-bold text-slate-800">{user.stats.longestStreak} días</div>
-                </div>
-              </div>
-            </div>
-
-            {/* Configuración de notificaciones mejorada */}
-            <div className="bg-gradient-to-br from-white to-blue-50/50 backdrop-blur-sm rounded-3xl shadow-xl border border-white/30 p-8">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="p-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl">
-                  <Settings className="w-8 h-8 text-white" />
-                </div>
-                <div>
-                  <h2 className="text-2xl font-bold text-slate-800">Configuración</h2>
-                  <p className="text-slate-600">Personaliza tu experiencia</p>
-                </div>
-              </div>
-              <div className="space-y-6">
-                <div className="flex items-center justify-between bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-white/30">
-                  <div className="flex items-center gap-3">
-                    <Bell className="w-5 h-5 text-blue-600" />
-                    <span className="text-slate-700 font-medium">Notificaciones push</span>
-                  </div>
-                  <label className="relative inline-flex items-center cursor-pointer">
-                    <input 
-                      type="checkbox" 
-                      checked={user.preferences.notifications} 
-                      onChange={(e) => {
-                        console.log('Notificaciones:', e.target.checked);
-                      }}
-                      className="sr-only peer" 
-                    />
-                    <div className="w-12 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-blue-500 peer-checked:to-indigo-600"></div>
-                  </label>
-                </div>
-                <div className="flex items-center justify-between bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-white/30">
-                  <div className="flex items-center gap-3">
-                    <Mail className="w-5 h-5 text-emerald-600" />
-                    <span className="text-slate-700 font-medium">Actualizaciones por email</span>
-                  </div>
-                  <label className="relative inline-flex items-center cursor-pointer">
-                    <input 
-                      type="checkbox" 
-                      checked={user.preferences.emailUpdates} 
-                      onChange={(e) => {
-                        console.log('Email updates:', e.target.checked);
-                      }}
-                      className="sr-only peer" 
-                    />
-                    <div className="w-12 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-emerald-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-emerald-500 peer-checked:to-teal-600"></div>
-                  </label>
-                </div>
-                <div className="flex items-center justify-between bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-white/30">
-                  <div className="flex items-center gap-3">
-                    <Shield className="w-5 h-5 text-purple-600" />
-                    <span className="text-slate-700 font-medium">Perfil público</span>
-                  </div>
-                  <label className="relative inline-flex items-center cursor-pointer">
-                    <input 
-                      type="checkbox" 
-                      checked={user.preferences.privacy === 'public'} 
-                      onChange={(e) => {
-                        console.log('Privacy:', e.target.checked);
-                      }}
-                      className="sr-only peer" 
-                    />
-                    <div className="w-12 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-purple-500 peer-checked:to-pink-600"></div>
-                  </label>
-                </div>
-              </div>
-            </div>
-
-            {/* Acciones rápidas mejoradas */}
-            <div className="bg-gradient-to-br from-white to-blue-50/50 backdrop-blur-sm rounded-3xl shadow-xl border border-white/30 p-8">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="p-3 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl">
-                  <Award className="w-8 h-8 text-white" />
-                </div>
-                <div>
-                  <h2 className="text-2xl font-bold text-slate-800">Acciones Rápidas</h2>
-                  <p className="text-slate-600">Accede a funciones importantes</p>
-                </div>
-              </div>
-              <div className="space-y-4">
-                <button className="w-full flex items-center gap-4 p-4 text-left bg-white/60 backdrop-blur-sm rounded-xl border border-white/30 hover:bg-white/80 transition-all duration-300 transform hover:scale-105">
-                  <Activity className="w-5 h-5 text-blue-600" />
-                  <span className="text-slate-700 font-medium">Ver historial de entrenamientos</span>
+        {/* Tabs de navegación */}
+        <div className="bg-white rounded-3xl shadow-xl border border-white/30 mb-8">
+          <div className="flex overflow-x-auto">
+            {tabs.map((tab) => {
+              const Icon = tab.icon;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id as any)}
+                  className={`flex items-center gap-3 px-6 py-4 font-semibold transition-all duration-300 whitespace-nowrap ${
+                    activeTab === tab.id
+                      ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50'
+                      : 'text-slate-600 hover:text-blue-600 hover:bg-slate-50'
+                  }`}
+                >
+                  <Icon className="w-5 h-5" />
+                  {tab.label}
                 </button>
-                <button className="w-full flex items-center gap-4 p-4 text-left bg-white/60 backdrop-blur-sm rounded-xl border border-white/30 hover:bg-white/80 transition-all duration-300 transform hover:scale-105">
-                  <Trophy className="w-5 h-5 text-amber-600" />
-                  <span className="text-slate-700 font-medium">Mis logros</span>
-                </button>
-                <button className="w-full flex items-center gap-4 p-4 text-left bg-white/60 backdrop-blur-sm rounded-xl border border-white/30 hover:bg-white/80 transition-all duration-300 transform hover:scale-105">
-                  <Target className="w-5 h-5 text-emerald-600" />
-                  <span className="text-slate-700 font-medium">Establecer nuevos objetivos</span>
-                </button>
-                <button className="w-full flex items-center gap-4 p-4 text-left bg-white/60 backdrop-blur-sm rounded-xl border border-white/30 hover:bg-white/80 transition-all duration-300 transform hover:scale-105">
-                  <Settings className="w-5 h-5 text-slate-600" />
-                  <span className="text-slate-700 font-medium">Configuración avanzada</span>
-                </button>
-              </div>
-            </div>
+              );
+            })}
           </div>
         </div>
+
+        {/* Contenido de las tabs */}
+        <div className="bg-white rounded-3xl shadow-xl border border-white/30 p-8">
+          {activeTab === 'info' && (
+            <div className="space-y-8">
+              {/* Formulario de edición mejorado */}
+              {isEditing && (
+                <div className="bg-gradient-to-br from-white to-blue-50/50 backdrop-blur-sm rounded-3xl shadow-xl border border-white/30 p-8">
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="p-2 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl">
+                      <Edit className="w-6 h-6 text-white" />
+                    </div>
+                    <h2 className="text-2xl font-bold text-slate-800">Editar Perfil</h2>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-700 mb-3">Nombre</label>
+                      <input
+                        type="text"
+                        value={editForm.name}
+                        onChange={(e) => setEditForm({...editForm, name: e.target.value})}
+                        className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 bg-white/80 backdrop-blur-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-700 mb-3">Email</label>
+                      <input
+                        type="email"
+                        value={editForm.email}
+                        onChange={(e) => setEditForm({...editForm, email: e.target.value})}
+                        className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 bg-white/80 backdrop-blur-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-700 mb-3">Teléfono</label>
+                      <input
+                        type="tel"
+                        value={editForm.phone}
+                        onChange={(e) => setEditForm({...editForm, phone: e.target.value})}
+                        className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 bg-white/80 backdrop-blur-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-700 mb-3">Ubicación</label>
+                      <input
+                        type="text"
+                        value={editForm.location}
+                        onChange={(e) => setEditForm({...editForm, location: e.target.value})}
+                        className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 bg-white/80 backdrop-blur-sm"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-700 mb-3">Biografía</label>
+                    <textarea
+                      value={editForm.bio}
+                      onChange={(e) => setEditForm({...editForm, bio: e.target.value})}
+                      rows={4}
+                      className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 bg-white/80 backdrop-blur-sm resize-none"
+                    />
+                  </div>
+                  <div className="flex gap-4 mt-6">
+                    <button
+                      onClick={handleSave}
+                      className="flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-teal-600 text-white px-6 py-3 rounded-xl hover:from-emerald-600 hover:to-teal-700 transition-all duration-300 transform hover:scale-105 shadow-lg"
+                    >
+                      <Save className="w-5 h-5" />
+                      Guardar Cambios
+                    </button>
+                    <button
+                      onClick={handleCancel}
+                      className="px-6 py-3 border-2 border-slate-300 text-slate-700 rounded-xl hover:bg-slate-50 transition-all duration-300 transform hover:scale-105"
+                    >
+                      Cancelar
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Estadísticas de entrenamiento mejoradas */}
+              <div className="bg-gradient-to-br from-white to-blue-50/50 backdrop-blur-sm rounded-3xl shadow-xl border border-white/30 p-8">
+                <div className="flex items-center gap-3 mb-8">
+                  <div className="p-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl">
+                    <TrendingUp className="w-8 h-8 text-white" />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-bold text-slate-800">Estadísticas de Entrenamiento</h2>
+                    <p className="text-slate-600">Tu progreso en números</p>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                  <div className="text-center bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-white/30 hover:shadow-lg transition-all duration-300 transform hover:scale-105">
+                    <div className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-2">
+                      {user.stats.totalWorkouts}
+                    </div>
+                    <div className="text-slate-600 font-medium">Entrenamientos</div>
+                  </div>
+                  <div className="text-center bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-white/30 hover:shadow-lg transition-all duration-300 transform hover:scale-105">
+                    <div className="text-4xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent mb-2">
+                      {user.stats.totalTime}h
+                    </div>
+                    <div className="text-slate-600 font-medium">Horas totales</div>
+                  </div>
+                  <div className="text-center bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-white/30 hover:shadow-lg transition-all duration-300 transform hover:scale-105">
+                    <div className="text-4xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent mb-2">
+                      {user.stats.currentStreak}
+                    </div>
+                    <div className="text-slate-600 font-medium">Días seguidos</div>
+                  </div>
+                  <div className="text-center bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-white/30 hover:shadow-lg transition-all duration-300 transform hover:scale-105">
+                    <div className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">
+                      {user.stats.achievements}
+                    </div>
+                    <div className="text-slate-600 font-medium">Logros</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'measurements' && (
+            <MeasurementTracker />
+          )}
+
+          {activeTab === 'weight' && (
+            <WeightTracker />
+          )}
+
+          {activeTab === 'composition' && (
+            <div className="space-y-8">
+              <div className="text-center py-12">
+                <BarChart3 className="w-16 h-16 text-slate-300 mx-auto mb-4" />
+                <h3 className="text-xl font-bold text-slate-800 mb-2">Composición Corporal</h3>
+                <p className="text-slate-600 mb-4">Esta funcionalidad estará disponible próximamente</p>
+                <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6 border border-purple-200">
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-purple-600 mb-1">
+                        {user.bodyComposition?.grasaCorporal || 'N/A'}%
+                      </div>
+                      <div className="text-sm text-slate-600">Grasa Corporal</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-emerald-600 mb-1">
+                        {user.bodyComposition?.musculatura || 'N/A'}%
+                      </div>
+                      <div className="text-sm text-slate-600">Musculatura</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-blue-600 mb-1">
+                        {user.bodyComposition ? 'Medido' : 'No informado'}
+                      </div>
+                      <div className="text-sm text-slate-600">Pliegues</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
       </main>
+
+      {/* Modal de configuración de perfil */}
+      {showProfileSetup && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50">
+          <ProfileSetup onComplete={handleProfileSetupComplete} />
+        </div>
+      )}
     </div>
   );
 };
