@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Measurement } from '../types';
 import { mockMeasurements } from '../data/mockData';
-import { Ruler, Plus, BarChart3, Calendar, TrendingUp, Save, Camera } from 'lucide-react';
+import { Ruler, Plus, BarChart3, Calendar, TrendingUp, Save } from 'lucide-react';
 
 interface MeasurementTrackerProps {
   onSave?: (measurement: Measurement) => void;
@@ -21,7 +21,7 @@ const MeasurementTracker: React.FC<MeasurementTrackerProps> = ({ onSave }) => {
   });
 
   const handleSave = () => {
-    const total = Object.values(newMeasurement).reduce((sum, value) => sum + (value || 0), 0);
+    const total = Object.values(newMeasurement).reduce((sum: number, value) => sum + (Number(value) || 0), 0);
     const measurement: Measurement = {
       id: Date.now().toString(),
       date: new Date().toISOString().split('T')[0],

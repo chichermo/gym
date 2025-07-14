@@ -44,11 +44,7 @@ const RealTimeData: React.FC<RealTimeDataProps> = ({ deviceId, deviceName, devic
   const connectToRealTimeData = () => {
     try {
       // Crear conexión Server-Sent Events
-      const eventSource = new EventSource(`/api/wearables/realtime/${deviceId}`, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
+      const eventSource = new EventSource(`/api/wearables/realtime/${deviceId}`);
 
       eventSource.onopen = () => {
         setIsConnected(true);
