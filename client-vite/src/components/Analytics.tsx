@@ -8,11 +8,9 @@ import {
   Flame, 
   Trophy,
   Download,
-  Filter,
   Eye,
   EyeOff
 } from 'lucide-react';
-import NavBar from './NavBar';
 
 const Analytics: React.FC = () => {
   const [selectedPeriod, setSelectedPeriod] = useState('30');
@@ -63,8 +61,6 @@ const Analytics: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-white flex flex-col">
-      <NavBar />
-      
       {/* Banner Demo */}
       <div className="w-full bg-gradient-to-r from-yellow-200 via-yellow-50 to-yellow-100 border-b border-yellow-300 py-2 px-4 flex items-center justify-center">
         <span className="text-yellow-800 text-sm font-medium">Modo DEMO: Datos simulados de analytics</span>

@@ -98,4 +98,7 @@ uploads/
 public/uploads/
 
 # Cache
-.cache/ 
+.cache/
+
+# Ignorar la carpeta de Gradle descargada manualmente
+/mobile/android/gradle-8.4/ 

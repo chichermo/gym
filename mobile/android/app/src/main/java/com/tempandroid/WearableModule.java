@@ -1,4 +1,4 @@
-package com.fitnessapp;
+package com.tempandroid;
 
 import android.app.Activity;
 import android.content.Intent;
