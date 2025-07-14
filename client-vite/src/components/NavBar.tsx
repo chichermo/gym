@@ -16,14 +16,18 @@ import {
   Smartphone,
   BookOpen,
   Bell,
-  Search
+  Search,
+  Sun,
+  Moon
 } from 'lucide-react';
 import ThemeToggle from './ThemeToggle';
+import { useTheme } from '../contexts/ThemeContext';
 
 const NavBar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const location = useLocation();
+  const { theme, toggleTheme } = useTheme();
 
   const navigation = [
     { 

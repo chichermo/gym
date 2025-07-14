@@ -1,11 +1,12 @@
 import React from 'react';
-import Analytics from '../../components/Analytics';
+import AdvancedCharts from '../../components/Analytics/AdvancedCharts';
+import AIRecommendations from '../../components/AI/AIRecommendations';
 import { BarChart3, TrendingUp, Zap } from 'lucide-react';
 import NavBar from '../../components/NavBar';
 
 const AnalyticsPage: React.FC = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-900 dark:to-slate-800 transition-colors duration-300">
       <NavBar />
       
       {/* Banner Demo Mejorado */}
@@ -33,8 +34,9 @@ const AnalyticsPage: React.FC = () => {
         </div>
 
         {/* Componente Analytics */}
-        <div className="bg-gradient-to-br from-white to-blue-50/50 backdrop-blur-sm rounded-3xl shadow-xl border border-white/30 p-8">
-          <Analytics />
+        <div className="container mx-auto px-4 py-8 space-y-8">
+          <AdvancedCharts />
+          <AIRecommendations />
         </div>
       </main>
     </div>

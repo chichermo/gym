@@ -1,13 +1,11 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 
 type Theme = 'light' | 'dark';
-type ColorScheme = 'blue' | 'green' | 'purple' | 'orange' | 'pink';
 
 interface ThemeContextType {
   theme: Theme;
-  colorScheme: ColorScheme;
   toggleTheme: () => void;
-  setColorScheme: (scheme: ColorScheme) => void;
+  setTheme: (theme: Theme) => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -25,43 +23,55 @@ interface ThemeProviderProps {
 }
 
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
-  const [theme, setTheme] = useState<Theme>('light');
-  const [colorScheme, setColorScheme] = useState<ColorScheme>('blue');
-
-  useEffect(() => {
-    // Cargar tema guardado en localStorage
+  const [theme, setThemeState] = useState<Theme>(() => {
+    // Verificar localStorage primero
     const savedTheme = localStorage.getItem('theme') as Theme;
-    const savedColorScheme = localStorage.getItem('colorScheme') as ColorScheme;
+    if (savedTheme) {
+      return savedTheme;
+    }
     
-    if (savedTheme) setTheme(savedTheme);
-    if (savedColorScheme) setColorScheme(savedColorScheme);
-  }, []);
+    // Detectar preferencia del sistema
+    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      return 'dark';
+    }
+    
+    return 'light';
+  });
 
-  useEffect(() => {
-    // Aplicar tema al documento
-    document.documentElement.setAttribute('data-theme', theme);
-    document.documentElement.setAttribute('data-color-scheme', colorScheme);
+  const setTheme = (newTheme: Theme) => {
+    setThemeState(newTheme);
+    localStorage.setItem('theme', newTheme);
     
-    // Guardar en localStorage
-    localStorage.setItem('theme', theme);
-    localStorage.setItem('colorScheme', colorScheme);
-  }, [theme, colorScheme]);
+    // Aplicar tema al documento
+    if (newTheme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  };
 
   const toggleTheme = () => {
-    setTheme(prev => prev === 'light' ? 'dark' : 'light');
+    setTheme(theme === 'light' ? 'dark' : 'light');
   };
 
-  const setColorSchemeHandler = (scheme: ColorScheme) => {
-    setColorScheme(scheme);
-  };
+  useEffect(() => {
+    // Aplicar tema inicial
+    setTheme(theme);
+    
+    // Escuchar cambios en preferencias del sistema
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleChange = (e: MediaQueryListEvent) => {
+      if (!localStorage.getItem('theme')) {
+        setTheme(e.matches ? 'dark' : 'light');
+      }
+    };
+    
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, []);
 
   return (
-    <ThemeContext.Provider value={{
-      theme,
-      colorScheme,
-      toggleTheme,
-      setColorScheme: setColorSchemeHandler,
-    }}>
+    <ThemeContext.Provider value={{ theme, toggleTheme, setTheme }}>
       {children}
     </ThemeContext.Provider>
   );
