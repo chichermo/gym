@@ -92,7 +92,7 @@ const EntrenamientoPage: React.FC = () => {
           <ModernCard 
             title="Plan de Entrenamiento" 
             subtitle="Rutinas estructuradas"
-            variant="primary"
+            variant="default"
             hover={true}
           >
             <div className="text-center">
