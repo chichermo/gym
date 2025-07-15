@@ -437,22 +437,25 @@ const NavBar: React.FC = () => {
 
           {/* Navegación */}
           <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
-            {navigation.map((item) => (
-              <Link
-                key={item.name}
-                to={item.href}
-                className={`
-                  nav-link-modern group flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200
-                  ${isActive(item.href)
-                    ? 'bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 border-r-2 border-primary-500'
-                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white'
-                  }
-                `}
-              >
-                <span className="mr-3 text-lg">{item.icon}</span>
-                {item.name}
-              </Link>
-            ))}
+            {navigation.map((item) => {
+              const Icon = item.icon;
+              return (
+                <Link
+                  key={item.name}
+                  to={item.href}
+                  className={`
+                    nav-link-modern group flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200
+                    ${isActive(item.href)
+                      ? 'bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 border-r-2 border-primary-500'
+                      : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white'
+                    }
+                  `}
+                >
+                  <Icon className="mr-3 w-5 h-5" />
+                  {item.name}
+                </Link>
+              );
+            })}
           </nav>
 
           {/* Footer del sidebar */}
