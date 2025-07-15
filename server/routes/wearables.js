@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
+const jwt = require('jsonwebtoken');
+const { auth } = require('../middleware/auth');
 const WearableService = require('../services/WearableService');
-const auth = require('../middleware/auth');
 
 // Middleware para autenticación de wearables
 const wearableAuth = async (req, res, next) => {

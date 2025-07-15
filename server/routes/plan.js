@@ -379,4 +379,54 @@ const getRecommendedMuscles = (goals) => {
   return [...new Set(muscles)]; // Eliminar duplicados
 };
 
+// GET /api/plan - Obtener plan de entrenamiento del usuario
+router.get('/', auth, async (req, res) => {
+  try {
+    // Mock plan data
+    const plan = {
+      currentWeek: 3,
+      totalWeeks: 12,
+      workouts: [
+        {
+          day: 'Lunes',
+          type: 'Fuerza',
+          exercises: [
+            { name: 'Press de banca', sets: 4, reps: 8, weight: 80 },
+            { name: 'Sentadillas', sets: 4, reps: 10, weight: 100 },
+            { name: 'Peso muerto', sets: 3, reps: 8, weight: 120 }
+          ]
+        },
+        {
+          day: 'Miércoles',
+          type: 'Cardio',
+          exercises: [
+            { name: 'Correr', duration: 30, intensity: 'Moderada' },
+            { name: 'HIIT', duration: 20, intensity: 'Alta' }
+          ]
+        },
+        {
+          day: 'Viernes',
+          type: 'Fuerza',
+          exercises: [
+            { name: 'Press militar', sets: 4, reps: 8, weight: 60 },
+            { name: 'Remo', sets: 4, reps: 10, weight: 70 },
+            { name: 'Plancha', sets: 3, duration: 60 }
+          ]
+        }
+      ]
+    };
+
+    res.json({
+      success: true,
+      data: plan
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error obteniendo plan de entrenamiento',
+      error: error.message
+    });
+  }
+});
+
 module.exports = router; 

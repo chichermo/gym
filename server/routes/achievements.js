@@ -331,4 +331,4 @@ const checkAchievements = async (userId, action, data) => {
   }
 };
 
-module.exports = { router, checkAchievements }; 
+module.exports = router; 

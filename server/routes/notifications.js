@@ -163,4 +163,4 @@ const createNotification = (userId, type, title, message, data = null) => {
   return notification;
 };
 
-module.exports = { router, createNotification }; 
+module.exports = router; 

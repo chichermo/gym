@@ -27,7 +27,7 @@ const RegistrosPage: React.FC = () => {
   const registros = ejercicioSel ? mockRegistros[ejercicioSel.id] || [] : [];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-white flex flex-col items-center py-12">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-white flex flex-col items-center py-12 lg:pl-64">
       <h1 className="text-3xl font-extrabold text-gray-900 mb-8">Tus registros</h1>
       <div className="flex flex-wrap gap-2 mb-8">
         {gruposMusculares.map(g => (
