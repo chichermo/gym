@@ -24,7 +24,7 @@ import {
 import { motion } from 'framer-motion';
 import ModernCard from '../../components/ModernUI/ModernCard';
 import ModernButton from '../../components/ModernUI/ModernButton';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, BarChart, Bar } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, BarChart as RechartsBarChart, Bar } from 'recharts';
 
 const navLinks = [
   { to: '/dashboard', label: 'Dashboard' },
@@ -489,13 +489,13 @@ const DashboardPage: React.FC = () => {
               </div>
               
               <ResponsiveContainer width="100%" height={200}>
-                <BarChart data={weeklyData}>
+                <RechartsBarChart data={weeklyData}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="day" />
                   <YAxis />
                   <Tooltip />
                   <Bar dataKey="steps" fill="#3b82f6" />
-                </BarChart>
+                </RechartsBarChart>
               </ResponsiveContainer>
             </div>
           </ModernCard>
