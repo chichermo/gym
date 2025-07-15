@@ -24,7 +24,7 @@ import {
 import { motion } from 'framer-motion';
 import ModernCard from '../../components/ModernUI/ModernCard';
 import ModernButton from '../../components/ModernUI/ModernButton';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, BarChart, Bar } from 'recharts';
 
 const navLinks = [
   { to: '/dashboard', label: 'Dashboard' },

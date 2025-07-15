@@ -26,7 +26,7 @@ const EntrenamientoPage: React.FC = () => {
             <div className="text-center">
               <div className="text-4xl mb-4">📊</div>
               <ModernButton 
-                variant="primary" 
+                variant="default" 
                 onClick={() => navigate('/entrenamientos')}
                 className="w-full"
               >
@@ -62,7 +62,7 @@ const EntrenamientoPage: React.FC = () => {
             <div className="text-center">
               <div className="text-4xl mb-4">💪</div>
               <ModernButton 
-                variant="primary" 
+                variant="default" 
                 onClick={() => navigate('/workouts')}
                 className="w-full"
               >
@@ -98,7 +98,7 @@ const EntrenamientoPage: React.FC = () => {
             <div className="text-center">
               <div className="text-4xl mb-4">📋</div>
               <ModernButton 
-                variant="primary" 
+                variant="default" 
                 onClick={() => navigate('/plan')}
                 className="w-full"
               >
@@ -110,7 +110,7 @@ const EntrenamientoPage: React.FC = () => {
           <ModernCard 
             title="Próximamente" 
             subtitle="Nuevas funcionalidades"
-            variant="ghost"
+            variant="default"
             hover={false}
           >
             <div className="text-center">
