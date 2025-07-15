@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { AuthProvider } from './contexts/AuthContext';
+import { NotificationProvider } from './contexts/NotificationContext';
 import NavBar from './components/NavBar';
 import DashboardPage from './pages/Dashboard/DashboardPage';
 import WorkoutsPage from './pages/Workouts/WorkoutsPage';
@@ -31,40 +32,42 @@ function App() {
   return (
     <ThemeProvider>
       <AuthProvider>
-        <Router>
-          <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-900 dark:to-slate-800 transition-colors duration-300">
-            <NavBar />
-            <main className="lg:pl-64">
-              <Routes>
-                <Route path="/" element={<DashboardPage />} />
-                <Route path="/workouts" element={<WorkoutsPage />} />
-                <Route path="/progress" element={<ProgressPage />} />
-                <Route path="/profile" element={<ProfilePage />} />
-                <Route path="/analytics" element={<AnalyticsPage />} />
-                <Route path="/nutrition" element={<NutritionPage />} />
-                <Route path="/wearables" element={<WearablesPage />} />
-                <Route path="/community" element={<CommunityPage />} />
-                <Route path="/calendar" element={<CalendarPage />} />
-                <Route path="/gamification" element={<GamificationPage />} />
-                <Route path="/login" element={<LoginPage />} />
-                <Route path="/register" element={<RegisterPage />} />
-                <Route path="/plan" element={<PlanPage />} />
-                <Route path="/trofeos" element={<TrofeosPage />} />
-                <Route path="/entrenamiento" element={<EntrenamientoPage />} />
-                <Route path="/entrenamientos" element={<EntrenamientosHistPage />} />
-                <Route path="/registros" element={<RegistrosPage />} />
-                <Route path="*" element={<NotFoundPage />} />
-              </Routes>
-            </main>
-            <CustomToaster />
-            <Particles 
-              className="opacity-30"
-              particleCount={30}
-              color="#3b82f6"
-              speed={0.5}
-            />
-          </div>
-        </Router>
+        <NotificationProvider>
+          <Router>
+            <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-900 dark:to-slate-800 transition-colors duration-300">
+              <NavBar />
+              <main className="lg:pl-64">
+                <Routes>
+                  <Route path="/" element={<DashboardPage />} />
+                  <Route path="/workouts" element={<WorkoutsPage />} />
+                  <Route path="/progress" element={<ProgressPage />} />
+                  <Route path="/profile" element={<ProfilePage />} />
+                  <Route path="/analytics" element={<AnalyticsPage />} />
+                  <Route path="/nutrition" element={<NutritionPage />} />
+                  <Route path="/wearables" element={<WearablesPage />} />
+                  <Route path="/community" element={<CommunityPage />} />
+                  <Route path="/calendar" element={<CalendarPage />} />
+                  <Route path="/gamification" element={<GamificationPage />} />
+                  <Route path="/login" element={<LoginPage />} />
+                  <Route path="/register" element={<RegisterPage />} />
+                  <Route path="/plan" element={<PlanPage />} />
+                  <Route path="/trofeos" element={<TrofeosPage />} />
+                  <Route path="/entrenamiento" element={<EntrenamientoPage />} />
+                  <Route path="/entrenamientos" element={<EntrenamientosHistPage />} />
+                  <Route path="/registros" element={<RegistrosPage />} />
+                  <Route path="*" element={<NotFoundPage />} />
+                </Routes>
+              </main>
+              <CustomToaster />
+              <Particles 
+                className="opacity-30"
+                particleCount={30}
+                color="#3b82f6"
+                speed={0.5}
+              />
+            </div>
+          </Router>
+        </NotificationProvider>
       </AuthProvider>
     </ThemeProvider>
   );

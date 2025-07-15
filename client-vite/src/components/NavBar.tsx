@@ -19,12 +19,20 @@ import {
 import ThemeToggle from './ThemeToggle';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 
+interface NavigationItem {
+  name: string;
+  href: string;
+  icon: any;
+  description: string;
+  disabled?: boolean;
+}
+
 const NavBar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const location = useLocation();
 
-  const navigation = [
+  const navigation: NavigationItem[] = [
     { 
       name: 'Dashboard', 
       href: '/', 
@@ -89,7 +97,8 @@ const NavBar: React.FC = () => {
       name: 'Wearables', 
       href: '/wearables', 
       icon: Smartphone,
-      description: 'Dispositivos conectados'
+      description: 'Dispositivos conectados',
+      disabled: true // Temporalmente desactivado
     },
     { 
       name: 'Perfil', 
@@ -106,9 +115,9 @@ const NavBar: React.FC = () => {
     return location.pathname.startsWith(path);
   };
 
-  const filteredNavigation = navigation.filter(item =>
-    item.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredNavigation = navigation
+    .filter(item => !item.disabled)
+    .filter(item => item.name.toLowerCase().includes(searchQuery.toLowerCase()));
 
   return (
     <>
