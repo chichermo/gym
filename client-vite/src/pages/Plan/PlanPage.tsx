@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Brain, Target, TrendingUp, Clock, Zap, Lightbulb, BarChart3, Activity, Flame, Heart } from 'lucide-react';
-import NavBar from '../../components/NavBar';
 
 // Datos simulados de recomendaciones de IA
 const mockAIRecommendations = [
@@ -89,8 +88,6 @@ const PlanPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex flex-col lg:pl-64">
-      <NavBar />
-      
       {/* Banner Demo Mejorado */}
       <div className="w-full bg-gradient-to-r from-amber-200 via-yellow-100 to-orange-100 border-b border-amber-300 py-3 px-4 flex items-center justify-center shadow-sm">
         <div className="flex items-center gap-2">

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Edit, Save, Camera, Settings, Activity, Trophy, Calendar, Target, Heart, Weight, Ruler, Mail, MapPin, Bell, Shield, LogOut, Zap, TrendingUp, Award, User, Info, BarChart3, Plus } from "lucide-react";
-import NavBar from '../../components/NavBar';
 import ProfileSetup from '../../components/ProfileSetup';
 import MeasurementTracker from '../../components/MeasurementTracker';
 import WeightTracker from '../../components/WeightTracker';
@@ -100,8 +99,6 @@ const ProfilePage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex flex-col lg:pl-64">
-      <NavBar />
-      
       {/* Banner Demo Mejorado */}
       <div className="w-full bg-gradient-to-r from-amber-200 via-yellow-100 to-orange-100 border-b border-amber-300 py-3 px-4 flex items-center justify-center shadow-sm">
         <div className="flex items-center gap-2">

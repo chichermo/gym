@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Plus, Target, Trash2, Dumbbell, Heart, Zap, Trophy } from "lucide-react";
-import NavBar from '../../components/NavBar';
 import ExerciseList from '../../components/ExerciseList';
 import { ejercicios } from '../../data/ejercicios';
 import { Ejercicio } from '../../types';
@@ -156,7 +155,6 @@ const WorkoutsPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex flex-col lg:pl-64">
-      <NavBar />
       
       {/* Banner Demo Mejorado */}
       <div className="w-full bg-gradient-to-r from-amber-200 via-yellow-100 to-orange-100 border-b border-amber-300 py-3 px-4 flex items-center justify-center shadow-sm">

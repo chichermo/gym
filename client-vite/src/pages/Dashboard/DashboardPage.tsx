@@ -22,7 +22,6 @@ import {
   Settings
 } from 'lucide-react';
 import { motion } from 'framer-motion';
-import NavBar from '../../components/NavBar';
 import ModernCard from '../../components/ModernUI/ModernCard';
 import ModernButton from '../../components/ModernUI/ModernButton';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
@@ -139,8 +138,6 @@ const DashboardPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-900 dark:to-slate-800 transition-colors duration-300 lg:pl-64">
-      <NavBar />
-      
       {/* Banner Demo mejorado */}
       <motion.div 
         className="w-full bg-gradient-to-r from-yellow-100 via-amber-100 to-yellow-100 dark:from-yellow-900/20 dark:via-amber-900/20 dark:to-yellow-900/20 border-b border-yellow-200 dark:border-yellow-700/30 py-3 px-4"
