@@ -25,6 +25,9 @@ import EntrenamientoPage from './pages/Entrenamiento/EntrenamientoPage';
 import EntrenamientosHistPage from './pages/Entrenamientos/EntrenamientosHistPage';
 import RegistrosPage from './pages/Registros/RegistrosPage';
 
+// Importar mejoras de diseño
+import './styles/improvements.css';
+
 function App() {
   return (
     <ThemeProvider>

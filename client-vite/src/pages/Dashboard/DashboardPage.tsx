@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { Link } from 'react-router-dom';
 import { 
@@ -23,6 +23,9 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import NavBar from '../../components/NavBar';
+import ModernCard from '../../components/ModernUI/ModernCard';
+import ModernButton from '../../components/ModernUI/ModernButton';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 
 const navLinks = [
   { to: '/dashboard', label: 'Dashboard' },
@@ -33,6 +36,7 @@ const navLinks = [
 
 const DashboardPage: React.FC = () => {
   const { user, logout } = useAuth();
+  const [activeTab, setActiveTab] = useState('overview');
 
   const stats = [
     {
@@ -116,8 +120,25 @@ const DashboardPage: React.FC = () => {
     }
   ];
 
+  // Datos mock para gráficos
+  const weeklyData = [
+    { day: 'Lun', workouts: 3, calories: 1200, steps: 8500 },
+    { day: 'Mar', workouts: 2, calories: 1100, steps: 9200 },
+    { day: 'Mié', workouts: 4, calories: 1400, steps: 10500 },
+    { day: 'Jue', workouts: 1, calories: 900, steps: 7800 },
+    { day: 'Vie', workouts: 3, calories: 1300, steps: 9500 },
+    { day: 'Sáb', workouts: 2, calories: 1000, steps: 8200 },
+    { day: 'Dom', workouts: 0, calories: 800, steps: 6500 },
+  ];
+
+  const pieData = [
+    { name: 'Cardio', value: 35, color: '#3b82f6' },
+    { name: 'Fuerza', value: 45, color: '#10b981' },
+    { name: 'Flexibilidad', value: 20, color: '#f59e0b' },
+  ];
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-white dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 lg:pl-64">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-900 dark:to-slate-800 transition-colors duration-300 lg:pl-64">
       <NavBar />
       
       {/* Banner Demo mejorado */}
@@ -376,6 +397,192 @@ const DashboardPage: React.FC = () => {
             </div>
           </div>
         </motion.div>
+
+        {/* Tabs con botones modernos */}
+        <div className="flex space-x-2 mb-6">
+          <ModernButton
+            variant={activeTab === 'overview' ? 'primary' : 'ghost'}
+            size="sm"
+            onClick={() => setActiveTab('overview')}
+          >
+            Resumen
+          </ModernButton>
+          <ModernButton
+            variant={activeTab === 'analytics' ? 'primary' : 'ghost'}
+            size="sm"
+            onClick={() => setActiveTab('analytics')}
+          >
+            Análisis
+          </ModernButton>
+          <ModernButton
+            variant={activeTab === 'goals' ? 'primary' : 'ghost'}
+            size="sm"
+            onClick={() => setActiveTab('goals')}
+          >
+            Metas
+          </ModernButton>
+        </div>
+
+        {/* Contenido de tabs */}
+        {activeTab === 'overview' && (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <ModernCard 
+              title="Actividad Semanal" 
+              subtitle="Entrenamientos y calorías"
+              variant="default"
+            >
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={weeklyData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="day" />
+                  <YAxis />
+                  <Tooltip />
+                  <Line type="monotone" dataKey="workouts" stroke="#3b82f6" strokeWidth={3} />
+                  <Line type="monotone" dataKey="calories" stroke="#10b981" strokeWidth={3} />
+                </LineChart>
+              </ResponsiveContainer>
+            </ModernCard>
+
+            <ModernCard 
+              title="Distribución de Entrenamientos" 
+              subtitle="Por tipo de ejercicio"
+              variant="default"
+            >
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie
+                    data={pieData}
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={80}
+                    dataKey="value"
+                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                  >
+                    {pieData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+            </ModernCard>
+          </div>
+        )}
+
+        {activeTab === 'analytics' && (
+          <ModernCard 
+            title="Análisis Detallado" 
+            subtitle="Métricas avanzadas"
+            variant="glass"
+          >
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-primary-600">85%</div>
+                  <div className="text-sm text-gray-600">Consistencia</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-success-600">+15%</div>
+                  <div className="text-sm text-gray-600">Mejora semanal</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-warning-600">92%</div>
+                  <div className="text-sm text-gray-600">Meta alcanzada</div>
+                </div>
+              </div>
+              
+              <ResponsiveContainer width="100%" height={200}>
+                <BarChart data={weeklyData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="day" />
+                  <YAxis />
+                  <Tooltip />
+                  <Bar dataKey="steps" fill="#3b82f6" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </ModernCard>
+        )}
+
+        {activeTab === 'goals' && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <ModernCard 
+              title="Metas Mensuales" 
+              subtitle="Progreso actual"
+              variant="success"
+            >
+              <div className="space-y-4">
+                <div>
+                  <div className="flex justify-between mb-2">
+                    <span className="text-sm font-medium">Entrenamientos</span>
+                    <span className="text-sm font-medium">15/20</span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div className="bg-success-500 h-2 rounded-full" style={{ width: '75%' }}></div>
+                  </div>
+                </div>
+                
+                <div>
+                  <div className="flex justify-between mb-2">
+                    <span className="text-sm font-medium">Calorías</span>
+                    <span className="text-sm font-medium">8,450/10,000</span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div className="bg-primary-500 h-2 rounded-full" style={{ width: '84.5%' }}></div>
+                  </div>
+                </div>
+                
+                <div>
+                  <div className="flex justify-between mb-2">
+                    <span className="text-sm font-medium">Pasos</span>
+                    <span className="text-sm font-medium">68,950/70,000</span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div className="bg-warning-500 h-2 rounded-full" style={{ width: '98.5%' }}></div>
+                  </div>
+                </div>
+              </div>
+            </ModernCard>
+
+            <ModernCard 
+              title="Próximos Logros" 
+              subtitle="Desbloquea nuevas insignias"
+              variant="gradient"
+            >
+              <div className="space-y-3">
+                <div className="flex items-center space-x-3">
+                  <div className="w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center">
+                    🏆
+                  </div>
+                  <div>
+                    <div className="font-medium text-white">Entrenador Consistente</div>
+                    <div className="text-sm text-white/80">20 entrenamientos este mes</div>
+                  </div>
+                </div>
+                
+                <div className="flex items-center space-x-3">
+                  <div className="w-8 h-8 bg-gray-400 rounded-full flex items-center justify-center">
+                    🎯
+                  </div>
+                  <div>
+                    <div className="font-medium text-white">Quemador de Calorías</div>
+                    <div className="text-sm text-white/80">10,000 calorías esta semana</div>
+                  </div>
+                </div>
+                
+                <div className="flex items-center space-x-3">
+                  <div className="w-8 h-8 bg-gray-400 rounded-full flex items-center justify-center">
+                    🚶
+                  </div>
+                  <div>
+                    <div className="font-medium text-white">Caminante Pro</div>
+                    <div className="text-sm text-white/80">70,000 pasos esta semana</div>
+                  </div>
+                </div>
+              </div>
+            </ModernCard>
+          </div>
+        )}
       </main>
 
       {/* Footer mejorado */}

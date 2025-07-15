@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -22,12 +22,15 @@ import {
 } from 'lucide-react';
 import ThemeToggle from './ThemeToggle';
 import { useTheme } from '../contexts/ThemeContext';
+import { AuthContext } from '../contexts/AuthContext';
+import { SunIcon, MoonIcon, Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 
 const NavBar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const location = useLocation();
-  const { theme, toggleTheme } = useTheme();
+  const { theme, toggleTheme } = useContext(ThemeContext);
+  const { user, logout } = useContext(AuthContext);
 
   const navigation = [
     { 
@@ -431,6 +434,89 @@ const NavBar: React.FC = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Sidebar para desktop */}
+      <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col">
+        <div className="flex flex-col flex-grow bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 shadow-lg">
+          {/* Logo */}
+          <div className="flex items-center justify-center h-16 px-4 bg-gradient-to-r from-primary-500 to-purple-600">
+            <h1 className="text-xl font-bold text-white">FitnessApp</h1>
+          </div>
+
+          {/* Navegación */}
+          <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+            {navigation.map((item) => (
+              <Link
+                key={item.name}
+                to={item.href}
+                className={`
+                  nav-link-modern group flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200
+                  ${isActive(item.href)
+                    ? 'bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 border-r-2 border-primary-500'
+                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white'
+                  }
+                `}
+              >
+                <span className="mr-3 text-lg">{item.icon}</span>
+                {item.name}
+              </Link>
+            ))}
+          </nav>
+
+          {/* Footer del sidebar */}
+          <div className="flex-shrink-0 p-4 border-t border-gray-200 dark:border-gray-700">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="w-8 h-8 bg-primary-500 rounded-full flex items-center justify-center">
+                  <span className="text-white text-sm font-medium">
+                    {user?.name?.charAt(0) || 'U'}
+                  </span>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-900 dark:text-white">
+                    {user?.name || 'Usuario'}
+                  </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    {user?.email || 'usuario@email.com'}
+                  </p>
+                </div>
+              </div>
+              
+              <button
+                onClick={toggleTheme}
+                className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white transition-colors duration-200"
+              >
+                {theme === 'dark' ? (
+                  <SunIcon className="h-5 w-5" />
+                ) : (
+                  <MoonIcon className="h-5 w-5" />
+                )}
+              </button>
+            </div>
+            
+            <button
+              onClick={logout}
+              className="w-full mt-3 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors duration-200"
+            >
+              Cerrar Sesión
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile menu button */}
+      <div className="lg:hidden fixed top-4 left-4 z-50">
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="p-2 rounded-lg bg-white dark:bg-gray-900 shadow-lg border border-gray-200 dark:border-gray-700"
+        >
+          {isOpen ? (
+            <XMarkIcon className="h-6 w-6 text-gray-700 dark:text-gray-300" />
+          ) : (
+            <Bars3Icon className="h-6 w-6 text-gray-700 dark:text-gray-300" />
+          )}
+        </button>
+      </div>
     </>
   );
 };
