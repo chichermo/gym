@@ -1,48 +1,126 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import ModernCard from '../../components/ModernUI/ModernCard';
+import ModernButton from '../../components/ModernUI/ModernButton';
 
 const EntrenamientoPage: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-white flex flex-col items-center justify-center py-12">
-      <h1 className="text-4xl font-extrabold text-gray-900 mb-10">Entrenamiento</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-3xl">
-        <button
-          className="bg-white shadow-lg rounded-2xl p-8 flex flex-col items-center hover:bg-blue-50 transition-colors border border-blue-100"
-          onClick={() => navigate('/entrenamientos')}
-        >
-          <span className="text-2xl font-bold mb-2">Tus entrenamientos</span>
-          <span className="text-gray-500">Histórico de rutinas realizadas</span>
-        </button>
-        <button
-          className="bg-white shadow-lg rounded-2xl p-8 flex flex-col items-center hover:bg-blue-50 transition-colors border border-blue-100"
-          onClick={() => navigate('/registros')}
-        >
-          <span className="text-2xl font-bold mb-2">Tus registros</span>
-          <span className="text-gray-500">Histórico y gráficas por grupo muscular</span>
-        </button>
-        <button
-          className="bg-blue-600 text-white shadow-lg rounded-2xl p-8 flex flex-col items-center hover:bg-blue-700 transition-colors border border-blue-100"
-          onClick={() => navigate('/workouts')}
-        >
-          <span className="text-2xl font-bold mb-2">Crea tu workout</span>
-          <span className="text-blue-100">Arma tu rutina personalizada</span>
-        </button>
-        <button
-          className="bg-yellow-100 text-yellow-700 shadow-lg rounded-2xl p-8 flex flex-col items-center hover:bg-yellow-200 transition-colors border border-yellow-200"
-          onClick={() => navigate('/trofeos')}
-        >
-          <span className="text-2xl font-bold mb-2">Trofeos</span>
-          <span className="text-yellow-700">Logros y medallas</span>
-        </button>
-        <button
-          className="bg-gray-100 text-gray-400 shadow-lg rounded-2xl p-8 flex flex-col items-center border border-gray-200 cursor-not-allowed"
-          disabled
-        >
-          <span className="text-2xl font-bold mb-2">Por definir</span>
-          <span className="text-gray-400">Próximamente...</span>
-        </button>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-white lg:pl-64">
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center mb-8">
+          <h1 className="text-hero text-gradient-primary mb-4">Entrenamiento</h1>
+          <p className="text-body text-gray-600 max-w-2xl mx-auto">
+            Gestiona tus entrenamientos, revisa tu historial y crea nuevas rutinas personalizadas.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+          <ModernCard 
+            title="Tus Entrenamientos" 
+            subtitle="Histórico de rutinas realizadas"
+            variant="default"
+            hover={true}
+          >
+            <div className="text-center">
+              <div className="text-4xl mb-4">📊</div>
+              <ModernButton 
+                variant="primary" 
+                onClick={() => navigate('/entrenamientos')}
+                className="w-full"
+              >
+                Ver Historial
+              </ModernButton>
+            </div>
+          </ModernCard>
+
+          <ModernCard 
+            title="Tus Registros" 
+            subtitle="Histórico y gráficas por grupo muscular"
+            variant="success"
+            hover={true}
+          >
+            <div className="text-center">
+              <div className="text-4xl mb-4">📈</div>
+              <ModernButton 
+                variant="success" 
+                onClick={() => navigate('/registros')}
+                className="w-full"
+              >
+                Ver Registros
+              </ModernButton>
+            </div>
+          </ModernCard>
+
+          <ModernCard 
+            title="Crea tu Workout" 
+            subtitle="Arma tu rutina personalizada"
+            variant="gradient"
+            hover={true}
+          >
+            <div className="text-center">
+              <div className="text-4xl mb-4">💪</div>
+              <ModernButton 
+                variant="primary" 
+                onClick={() => navigate('/workouts')}
+                className="w-full"
+              >
+                Crear Rutina
+              </ModernButton>
+            </div>
+          </ModernCard>
+
+          <ModernCard 
+            title="Trofeos" 
+            subtitle="Logros y medallas"
+            variant="warning"
+            hover={true}
+          >
+            <div className="text-center">
+              <div className="text-4xl mb-4">🏆</div>
+              <ModernButton 
+                variant="warning" 
+                onClick={() => navigate('/trofeos')}
+                className="w-full"
+              >
+                Ver Trofeos
+              </ModernButton>
+            </div>
+          </ModernCard>
+
+          <ModernCard 
+            title="Plan de Entrenamiento" 
+            subtitle="Rutinas estructuradas"
+            variant="primary"
+            hover={true}
+          >
+            <div className="text-center">
+              <div className="text-4xl mb-4">📋</div>
+              <ModernButton 
+                variant="primary" 
+                onClick={() => navigate('/plan')}
+                className="w-full"
+              >
+                Ver Plan
+              </ModernButton>
+            </div>
+          </ModernCard>
+
+          <ModernCard 
+            title="Próximamente" 
+            subtitle="Nuevas funcionalidades"
+            variant="ghost"
+            hover={false}
+          >
+            <div className="text-center">
+              <div className="text-4xl mb-4">🚀</div>
+              <div className="text-gray-500 text-sm">
+                Más funcionalidades en desarrollo
+              </div>
+            </div>
+          </ModernCard>
+        </div>
       </div>
     </div>
   );

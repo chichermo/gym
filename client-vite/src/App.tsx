@@ -20,7 +20,6 @@ import CustomToaster from './components/Toast';
 import Particles from './components/Particles';
 import PlanPage from './pages/Plan/PlanPage';
 import TrofeosPage from './pages/Trofeos/TrofeosPage';
-import TrophyPage from './pages/Gamification/TrophyPage';
 import EntrenamientoPage from './pages/Entrenamiento/EntrenamientoPage';
 import EntrenamientosHistPage from './pages/Entrenamientos/EntrenamientosHistPage';
 import RegistrosPage from './pages/Registros/RegistrosPage';
@@ -51,7 +50,6 @@ function App() {
                 <Route path="/register" element={<RegisterPage />} />
                 <Route path="/plan" element={<PlanPage />} />
                 <Route path="/trofeos" element={<TrofeosPage />} />
-                <Route path="/trophies" element={<TrophyPage />} />
                 <Route path="/entrenamiento" element={<EntrenamientoPage />} />
                 <Route path="/entrenamientos" element={<EntrenamientosHistPage />} />
                 <Route path="/registros" element={<RegistrosPage />} />
