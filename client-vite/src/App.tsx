@@ -321,68 +321,68 @@ function App() {
                       } />
                     </Routes>
                   </AnimatePresence>
+
+                  {/* Footer mejorado */}
+                  <motion.footer
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl border-t border-gray-200 dark:border-gray-700 mt-auto"
+                  >
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                      <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+                        <div>
+                          <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">
+                            FitnessPro
+                          </h3>
+                          <p className="text-gray-600 dark:text-gray-400">
+                            Tu compañero personal de fitness con tecnología avanzada.
+                          </p>
+                        </div>
+                        
+                        <div>
+                          <h4 className="font-semibold text-gray-800 dark:text-white mb-4">
+                            Funcionalidades
+                          </h4>
+                          <ul className="space-y-2 text-gray-600 dark:text-gray-400">
+                            <li>Entrenamientos Personalizados</li>
+                            <li>Analytics Avanzados</li>
+                            <li>Gamificación</li>
+                            <li>Comunidad</li>
+                          </ul>
+                        </div>
+                        
+                        <div>
+                          <h4 className="font-semibold text-gray-800 dark:text-white mb-4">
+                            Soporte
+                          </h4>
+                          <ul className="space-y-2 text-gray-600 dark:text-gray-400">
+                            <li>Centro de Ayuda</li>
+                            <li>Contacto</li>
+                            <li>FAQ</li>
+                            <li>Feedback</li>
+                          </ul>
+                        </div>
+                        
+                        <div>
+                          <h4 className="font-semibold text-gray-800 dark:text-white mb-4">
+                            Legal
+                          </h4>
+                          <ul className="space-y-2 text-gray-600 dark:text-gray-400">
+                            <li>Privacidad</li>
+                            <li>Términos</li>
+                            <li>Cookies</li>
+                            <li>Licencias</li>
+                          </ul>
+                        </div>
+                      </div>
+                      
+                      <div className="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700 text-center text-gray-600 dark:text-gray-400">
+                        <p>&copy; 2024 FitnessPro. Todos los derechos reservados.</p>
+                      </div>
+                    </div>
+                  </motion.footer>
                 </main>
               </div>
-
-              {/* Footer mejorado */}
-              <motion.footer
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl border-t border-gray-200 dark:border-gray-700 mt-auto"
-              >
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                  <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">
-                        FitnessPro
-                      </h3>
-                      <p className="text-gray-600 dark:text-gray-400">
-                        Tu compañero personal de fitness con tecnología avanzada.
-                      </p>
-                    </div>
-                    
-                    <div>
-                      <h4 className="font-semibold text-gray-800 dark:text-white mb-4">
-                        Funcionalidades
-                      </h4>
-                      <ul className="space-y-2 text-gray-600 dark:text-gray-400">
-                        <li>Entrenamientos Personalizados</li>
-                        <li>Analytics Avanzados</li>
-                        <li>Gamificación</li>
-                        <li>Comunidad</li>
-                      </ul>
-                    </div>
-                    
-                    <div>
-                      <h4 className="font-semibold text-gray-800 dark:text-white mb-4">
-                        Soporte
-                      </h4>
-                      <ul className="space-y-2 text-gray-600 dark:text-gray-400">
-                        <li>Centro de Ayuda</li>
-                        <li>Contacto</li>
-                        <li>FAQ</li>
-                        <li>Feedback</li>
-                      </ul>
-                    </div>
-                    
-                    <div>
-                      <h4 className="font-semibold text-gray-800 dark:text-white mb-4">
-                        Legal
-                      </h4>
-                      <ul className="space-y-2 text-gray-600 dark:text-gray-400">
-                        <li>Privacidad</li>
-                        <li>Términos</li>
-                        <li>Cookies</li>
-                        <li>Licencias</li>
-                      </ul>
-                    </div>
-                  </div>
-                  
-                  <div className="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700 text-center text-gray-600 dark:text-gray-400">
-                    <p>&copy; 2024 FitnessPro. Todos los derechos reservados.</p>
-                  </div>
-                </div>
-              </motion.footer>
             </div>
           </Router>
         </NotificationProvider>
