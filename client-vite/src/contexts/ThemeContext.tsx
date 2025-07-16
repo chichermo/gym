@@ -274,8 +274,18 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       root.style.setProperty(`--shadow-${key}`, value);
     });
 
-    // Aplicar tema al body
+    // Aplicar tema al body y html para Tailwind
     document.body.className = `theme-${style} ${isDark ? 'dark' : 'light'}`;
+    
+    // Aplicar clase dark al html para Tailwind CSS
+    if (isDark) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    
+    // Solo mostrar log cuando hay un cambio real
+    console.log(`🎨 Tema aplicado: ${style} (${isDark ? 'oscuro' : 'claro'})`);
   }, [theme, style, isDark]);
 
   return (

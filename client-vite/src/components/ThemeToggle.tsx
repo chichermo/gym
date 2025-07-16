@@ -7,14 +7,8 @@ const ThemeToggle: React.FC = () => {
   const { mode, toggleMode, isDark } = useTheme();
 
   const handleToggle = () => {
-    console.log('Toggle clicked, current mode:', mode, 'isDark:', isDark);
+    console.log(`🌙 Cambiando tema: ${mode} → ${mode === 'light' ? 'dark' : mode === 'dark' ? 'auto' : 'light'}`);
     toggleMode();
-    
-    // Verificar el estado después del cambio
-    setTimeout(() => {
-      console.log('After toggle - body classes:', document.body.className);
-      console.log('After toggle - html classes:', document.documentElement.className);
-    }, 100);
   };
 
   return (
