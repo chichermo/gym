@@ -37,7 +37,7 @@ function App() {
               <motion.header
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="sticky top-0 z-50 bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl border-b border-gray-200 dark:border-gray-700"
+                className="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl border-b border-gray-200 dark:border-gray-700 lg:left-64"
               >
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                   <div className="flex items-center justify-between h-16">
@@ -71,7 +71,7 @@ function App() {
                 <NavBar />
 
                 {/* Contenido de la página */}
-                <main className="flex-1 lg:pl-64">
+                <main className="flex-1 lg:pl-64 pt-16 lg:pt-0">
                   <AnimatePresence mode="wait">
                     <Routes>
                       <Route path="/" element={
@@ -80,6 +80,7 @@ function App() {
                           animate={{ opacity: 1, x: 0 }}
                           exit={{ opacity: 0, x: -20 }}
                           transition={{ duration: 0.3 }}
+                          className="p-4 lg:p-6"
                         >
                           <DashboardPage />
                         </motion.div>
@@ -91,6 +92,7 @@ function App() {
                           animate={{ opacity: 1, x: 0 }}
                           exit={{ opacity: 0, x: -20 }}
                           transition={{ duration: 0.3 }}
+                          className="p-4 lg:p-6"
                         >
                           <ImmersiveDashboard
                             userData={{
@@ -132,6 +134,7 @@ function App() {
                           animate={{ opacity: 1, x: 0 }}
                           exit={{ opacity: 0, x: -20 }}
                           transition={{ duration: 0.3 }}
+                          className="p-4 lg:p-6"
                         >
                           <WorkoutsPage />
                         </motion.div>
@@ -143,6 +146,7 @@ function App() {
                           animate={{ opacity: 1, x: 0 }}
                           exit={{ opacity: 0, x: -20 }}
                           transition={{ duration: 0.3 }}
+                          className="p-4 lg:p-6"
                         >
                           <ProgressPage />
                         </motion.div>
@@ -154,6 +158,7 @@ function App() {
                           animate={{ opacity: 1, x: 0 }}
                           exit={{ opacity: 0, x: -20 }}
                           transition={{ duration: 0.3 }}
+                          className="p-4 lg:p-6"
                         >
                           <AnalyticsPage />
                         </motion.div>
@@ -165,6 +170,7 @@ function App() {
                           animate={{ opacity: 1, x: 0 }}
                           exit={{ opacity: 0, x: -20 }}
                           transition={{ duration: 0.3 }}
+                          className="p-4 lg:p-6"
                         >
                           <NutritionPage />
                         </motion.div>
@@ -176,6 +182,7 @@ function App() {
                           animate={{ opacity: 1, x: 0 }}
                           exit={{ opacity: 0, x: -20 }}
                           transition={{ duration: 0.3 }}
+                          className="p-4 lg:p-6"
                         >
                           <CommunityPage />
                         </motion.div>
@@ -187,6 +194,7 @@ function App() {
                           animate={{ opacity: 1, x: 0 }}
                           exit={{ opacity: 0, x: -20 }}
                           transition={{ duration: 0.3 }}
+                          className="p-4 lg:p-6"
                         >
                           <GamificationPage />
                         </motion.div>
@@ -198,6 +206,7 @@ function App() {
                           animate={{ opacity: 1, x: 0 }}
                           exit={{ opacity: 0, x: -20 }}
                           transition={{ duration: 0.3 }}
+                          className="p-4 lg:p-6"
                         >
                           <CalendarPage />
                         </motion.div>
@@ -209,6 +218,7 @@ function App() {
                           animate={{ opacity: 1, x: 0 }}
                           exit={{ opacity: 0, x: -20 }}
                           transition={{ duration: 0.3 }}
+                          className="p-4 lg:p-6"
                         >
                           <PlanPage />
                         </motion.div>
@@ -220,6 +230,7 @@ function App() {
                           animate={{ opacity: 1, x: 0 }}
                           exit={{ opacity: 0, x: -20 }}
                           transition={{ duration: 0.3 }}
+                          className="p-4 lg:p-6"
                         >
                           <WorkoutsPage />
                         </motion.div>
@@ -231,6 +242,7 @@ function App() {
                           animate={{ opacity: 1, x: 0 }}
                           exit={{ opacity: 0, x: -20 }}
                           transition={{ duration: 0.3 }}
+                          className="p-4 lg:p-6"
                         >
                           <WorkoutsPage />
                         </motion.div>
@@ -242,6 +254,7 @@ function App() {
                           animate={{ opacity: 1, x: 0 }}
                           exit={{ opacity: 0, x: -20 }}
                           transition={{ duration: 0.3 }}
+                          className="p-4 lg:p-6"
                         >
                           <ProgressPage />
                         </motion.div>
@@ -253,6 +266,7 @@ function App() {
                           animate={{ opacity: 1, x: 0 }}
                           exit={{ opacity: 0, x: -20 }}
                           transition={{ duration: 0.3 }}
+                          className="p-4 lg:p-6"
                         >
                           <GamificationPage />
                         </motion.div>
@@ -264,6 +278,7 @@ function App() {
                           animate={{ opacity: 1, x: 0 }}
                           exit={{ opacity: 0, x: -20 }}
                           transition={{ duration: 0.3 }}
+                          className="p-4 lg:p-6"
                         >
                           <ProfilePage />
                         </motion.div>
@@ -275,6 +290,7 @@ function App() {
                           animate={{ opacity: 1, x: 0 }}
                           exit={{ opacity: 0, x: -20 }}
                           transition={{ duration: 0.3 }}
+                          className="p-4 lg:p-6"
                         >
                           <LoginPage />
                         </motion.div>
@@ -286,6 +302,7 @@ function App() {
                           animate={{ opacity: 1, x: 0 }}
                           exit={{ opacity: 0, x: -20 }}
                           transition={{ duration: 0.3 }}
+                          className="p-4 lg:p-6"
                         >
                           <RegisterPage />
                         </motion.div>
@@ -297,6 +314,7 @@ function App() {
                           animate={{ opacity: 1, x: 0 }}
                           exit={{ opacity: 0, x: -20 }}
                           transition={{ duration: 0.3 }}
+                          className="p-4 lg:p-6"
                         >
                           <NotFoundPage />
                         </motion.div>
