@@ -4,22 +4,33 @@ import { Sun, Moon } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 
 const ThemeToggle: React.FC = () => {
-  const { mode, toggleMode } = useTheme();
+  const { mode, toggleMode, isDark } = useTheme();
+
+  const handleToggle = () => {
+    console.log('Toggle clicked, current mode:', mode, 'isDark:', isDark);
+    toggleMode();
+    
+    // Verificar el estado después del cambio
+    setTimeout(() => {
+      console.log('After toggle - body classes:', document.body.className);
+      console.log('After toggle - html classes:', document.documentElement.className);
+    }, 100);
+  };
 
   return (
     <motion.button
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
-      onClick={toggleMode}
-      className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-      aria-label={`Cambiar a modo ${mode === 'light' ? 'oscuro' : 'claro'}`}
+      onClick={handleToggle}
+      className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200"
+      aria-label={`Cambiar a modo ${isDark ? 'claro' : 'oscuro'}`}
     >
       <motion.div
         initial={false}
-        animate={{ rotate: mode === 'dark' ? 180 : 0 }}
+        animate={{ rotate: isDark ? 180 : 0 }}
         transition={{ duration: 0.3 }}
       >
-        {mode === 'dark' ? (
+        {isDark ? (
           <Sun className="w-5 h-5 text-yellow-500" />
         ) : (
           <Moon className="w-5 h-5 text-blue-500" />

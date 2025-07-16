@@ -38,6 +38,7 @@ interface ThemeContextType {
   mode: ThemeMode;
   style: ThemeStyle;
   theme: Theme;
+  isDark: boolean;
   setMode: (mode: ThemeMode) => void;
   setStyle: (style: ThemeStyle) => void;
   toggleMode: () => void;
@@ -282,6 +283,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       mode,
       style,
       theme,
+      isDark,
       setMode: setModeHandler,
       setStyle: setStyleHandler,
       toggleMode
