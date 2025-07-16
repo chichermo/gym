@@ -1,421 +1,387 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  Brain, 
-  Target, 
-  TrendingUp, 
-  Zap, 
-  Heart, 
-  Clock, 
-  Star,
-  MessageCircle,
-  Lightbulb,
-  Activity,
-  Dumbbell,
-  Apple
+  Brain, Lightbulb, Target, TrendingUp, Calendar, 
+  Activity, Heart, Zap, Clock, Star, CheckCircle, ArrowRight, X
 } from 'lucide-react';
 
-interface AIRecommendation {
+interface Recommendation {
   id: string;
-  type: 'workout' | 'nutrition' | 'motivation' | 'recovery' | 'goal';
+  type: 'workout' | 'nutrition' | 'recovery' | 'goal' | 'social';
   title: string;
   description: string;
   confidence: number;
-  priority: 'high' | 'medium' | 'low';
+  priority: 'low' | 'medium' | 'high';
   category: string;
-  icon: React.ComponentType<any>;
-  action?: string;
-  data?: any;
-}
-
-interface UserProfile {
-  fitnessLevel: 'beginner' | 'intermediate' | 'advanced';
-  goals: string[];
-  preferences: string[];
-  recentActivity: {
-    workouts: number;
-    calories: number;
-    steps: number;
-    sleepHours: number;
-  };
-  progress: {
-    weight: number;
-    strength: number;
-    endurance: number;
+  estimatedTime?: number;
+  difficulty?: 'beginner' | 'intermediate' | 'advanced';
+  tags: string[];
+  action?: {
+    label: string;
+    onClick: () => void;
   };
 }
 
-const AIRecommendations: React.FC = () => {
-  const [userProfile, setUserProfile] = useState<UserProfile>({
-    fitnessLevel: 'intermediate',
-    goals: ['Perder peso', 'Ganar músculo', 'Mejorar resistencia'],
-    preferences: ['Entrenamientos cortos', 'Ejercicios con peso corporal', 'Yoga'],
-    recentActivity: {
-      workouts: 4,
-      calories: 2800,
-      steps: 8500,
-      sleepHours: 7.5
-    },
-    progress: {
-      weight: 75,
-      strength: 8,
-      endurance: 7
-    }
-  });
-
-  const [recommendations, setRecommendations] = useState<AIRecommendation[]>([
-    {
-      id: '1',
-      type: 'workout',
-      title: 'Entrenamiento de Fuerza Optimizado',
-      description: 'Basado en tu progreso reciente, te recomiendo un entrenamiento de fuerza de 45 minutos enfocado en grupos musculares que necesitan más desarrollo.',
-      confidence: 92,
-      priority: 'high',
-      category: 'Entrenamiento',
-      icon: Dumbbell,
-      action: 'Ver entrenamiento',
-      data: {
-        duration: 45,
-        focus: ['Pecho', 'Espalda', 'Piernas'],
-        intensity: 'Moderada'
-      }
-    },
-    {
-      id: '2',
-      type: 'nutrition',
-      title: 'Ajuste de Macronutrientes',
-      description: 'Tu consumo de proteínas está por debajo del óptimo para tus objetivos de ganancia muscular. Te sugiero aumentar a 1.8g por kg de peso corporal.',
-      confidence: 88,
-      priority: 'high',
-      category: 'Nutrición',
-      icon: Apple,
-      action: 'Ver plan nutricional',
-      data: {
-        currentProtein: 120,
-        recommendedProtein: 135,
-        sources: ['Pollo', 'Pescado', 'Huevos', 'Legumbres']
-      }
-    },
-    {
-      id: '3',
-      type: 'recovery',
-      title: 'Día de Recuperación Activa',
-      description: 'Has entrenado 4 días consecutivos. Te recomiendo un día de recuperación activa con estiramientos y yoga suave.',
-      confidence: 85,
-      priority: 'medium',
-      category: 'Recuperación',
-      icon: Heart,
-      action: 'Ver rutina de recuperación',
-      data: {
-        activities: ['Yoga suave', 'Estiramientos', 'Caminata ligera'],
-        duration: 30
-      }
-    },
-    {
-      id: '4',
-      type: 'motivation',
-      title: 'Nuevo Desafío Personal',
-      description: 'Estás cerca de alcanzar tu meta de 10,000 pasos diarios. Te propongo un desafío de 7 días para consolidar este hábito.',
-      confidence: 78,
-      priority: 'medium',
-      category: 'Motivación',
-      icon: Target,
-      action: 'Aceptar desafío',
-      data: {
-        challenge: '7 días de 10,000 pasos',
-        reward: '500 XP + Badge "Caminante Consistente"'
-      }
-    },
-    {
-      id: '5',
-      type: 'goal',
-      title: 'Ajuste de Objetivos',
-      description: 'Tu progreso en resistencia es excelente. Considera agregar "Mejorar fuerza máxima" como nuevo objetivo.',
-      confidence: 82,
-      priority: 'low',
-      category: 'Metas',
-      icon: TrendingUp,
-      action: 'Revisar objetivos',
-      data: {
-        currentGoals: ['Perder peso', 'Ganar músculo'],
-        suggestedGoal: 'Mejorar fuerza máxima'
-      }
-    }
-  ]);
-
-  const [selectedRecommendation, setSelectedRecommendation] = useState<AIRecommendation | null>(null);
-  const [aiInsights, setAiInsights] = useState({
-    overallProgress: 78,
-    nextMilestone: 'Alcanzar 80% de fuerza máxima',
-    estimatedTimeToGoal: '3 semanas',
-    riskFactors: ['Sueño insuficiente', 'Recuperación inadecuada'],
-    opportunities: ['Aumentar intensidad', 'Optimizar nutrición']
-  });
-
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case 'high': return 'from-red-500 to-pink-600';
-      case 'medium': return 'from-amber-500 to-orange-600';
-      case 'low': return 'from-blue-500 to-indigo-600';
-      default: return 'from-gray-500 to-slate-600';
-    }
+interface AIRecommendationsProps {
+  userData: {
+    level: string;
+    goals: string[];
+    preferences: string[];
+    recentActivity: any[];
   };
+  onApplyRecommendation: (recommendation: Recommendation) => void;
+  onDismissRecommendation: (id: string) => void;
+}
 
-  const getConfidenceColor = (confidence: number) => {
-    if (confidence >= 90) return 'text-emerald-600 dark:text-emerald-400';
-    if (confidence >= 80) return 'text-blue-600 dark:text-blue-400';
-    if (confidence >= 70) return 'text-amber-600 dark:text-amber-400';
-    return 'text-rose-600 dark:text-rose-400';
-  };
+const AIRecommendations: React.FC<AIRecommendationsProps> = ({
+  userData,
+  onApplyRecommendation,
+  onDismissRecommendation
+}) => {
+  const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState<'all' | 'workout' | 'nutrition' | 'recovery' | 'goal' | 'social'>('all');
+  const [showDetails, setShowDetails] = useState<string | null>(null);
 
-  const getTypeColor = (type: string) => {
+  useEffect(() => {
+    // Simular generación de recomendaciones basadas en datos del usuario
+    setTimeout(() => {
+      const mockRecommendations: Recommendation[] = [
+        {
+          id: '1',
+          type: 'workout',
+          title: 'Entrenamiento HIIT Personalizado',
+          description: 'Basado en tu nivel intermedio y objetivo de pérdida de grasa, te recomiendo un circuito HIIT de 25 minutos con ejercicios de alta intensidad.',
+          confidence: 92,
+          priority: 'high',
+          category: 'Cardio',
+          estimatedTime: 25,
+          difficulty: 'intermediate',
+          tags: ['HIIT', 'Cardio', 'Pérdida de grasa'],
+          action: {
+            label: 'Aplicar Entrenamiento',
+            onClick: () => console.log('Aplicar entrenamiento HIIT')
+          }
+        },
+        {
+          id: '2',
+          type: 'nutrition',
+          title: 'Plan de Hidratación Optimizado',
+          description: 'Tu nivel de actividad sugiere aumentar la hidratación. Bebe 500ml de agua 30 minutos antes del entrenamiento.',
+          confidence: 88,
+          priority: 'medium',
+          category: 'Hidratación',
+          tags: ['Hidratación', 'Rendimiento', 'Salud'],
+          action: {
+            label: 'Configurar Recordatorio',
+            onClick: () => console.log('Configurar recordatorio de hidratación')
+          }
+        },
+        {
+          id: '3',
+          type: 'recovery',
+          title: 'Rutina de Estiramiento Post-Entrenamiento',
+          description: 'Para mejorar tu recuperación y flexibilidad, incluye 10 minutos de estiramientos dinámicos después de cada sesión.',
+          confidence: 85,
+          priority: 'medium',
+          category: 'Recuperación',
+          estimatedTime: 10,
+          difficulty: 'beginner',
+          tags: ['Estiramiento', 'Recuperación', 'Flexibilidad'],
+          action: {
+            label: 'Ver Rutina',
+            onClick: () => console.log('Ver rutina de estiramiento')
+          }
+        },
+        {
+          id: '4',
+          type: 'goal',
+          title: 'Ajuste de Metas Semanales',
+          description: 'Tu progreso sugiere aumentar tu meta de entrenamientos de 3 a 4 por semana para alcanzar mejor tus objetivos.',
+          confidence: 78,
+          priority: 'high',
+          category: 'Metas',
+          tags: ['Metas', 'Progreso', 'Motivación'],
+          action: {
+            label: 'Actualizar Metas',
+            onClick: () => console.log('Actualizar metas')
+          }
+        },
+        {
+          id: '5',
+          type: 'social',
+          title: 'Conectar con Entrenadores',
+          description: 'Encuentra entrenadores certificados en tu área que se especialicen en tus objetivos de fitness.',
+          confidence: 82,
+          priority: 'low',
+          category: 'Comunidad',
+          tags: ['Entrenadores', 'Comunidad', 'Mentoría'],
+          action: {
+            label: 'Explorar Entrenadores',
+            onClick: () => console.log('Explorar entrenadores')
+          }
+        }
+      ];
+      
+      setRecommendations(mockRecommendations);
+      setLoading(false);
+    }, 2000);
+  }, [userData]);
+
+  const getRecommendationIcon = (type: Recommendation['type']) => {
     switch (type) {
-      case 'workout': return 'from-blue-500 to-indigo-600';
-      case 'nutrition': return 'from-emerald-500 to-teal-600';
-      case 'motivation': return 'from-purple-500 to-pink-600';
-      case 'recovery': return 'from-rose-500 to-pink-600';
-      case 'goal': return 'from-amber-500 to-orange-600';
-      default: return 'from-gray-500 to-slate-600';
+      case 'workout':
+        return <Activity className="w-5 h-5" />;
+      case 'nutrition':
+        return <Heart className="w-5 h-5" />;
+      case 'recovery':
+        return <Clock className="w-5 h-5" />;
+      case 'goal':
+        return <Target className="w-5 h-5" />;
+      case 'social':
+        return <Star className="w-5 h-5" />;
+      default:
+        return <Lightbulb className="w-5 h-5" />;
     }
+  };
+
+  const getPriorityColor = (priority: Recommendation['priority']) => {
+    switch (priority) {
+      case 'high':
+        return 'from-red-500 to-pink-600';
+      case 'medium':
+        return 'from-yellow-500 to-orange-600';
+      case 'low':
+        return 'from-green-500 to-emerald-600';
+      default:
+        return 'from-gray-500 to-gray-600';
+    }
+  };
+
+  const getDifficultyColor = (difficulty?: Recommendation['difficulty']) => {
+    switch (difficulty) {
+      case 'beginner':
+        return 'text-green-600 bg-green-100';
+      case 'intermediate':
+        return 'text-yellow-600 bg-yellow-100';
+      case 'advanced':
+        return 'text-red-600 bg-red-100';
+      default:
+        return 'text-gray-600 bg-gray-100';
+    }
+  };
+
+  const filteredRecommendations = recommendations.filter(rec => 
+    filter === 'all' || rec.type === filter
+  );
+
+  const confidenceColor = (confidence: number) => {
+    if (confidence >= 90) return 'text-green-600';
+    if (confidence >= 80) return 'text-yellow-600';
+    return 'text-red-600';
   };
 
   return (
-    <div className="space-y-8">
-      {/* Header con IA Insights */}
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="bg-gradient-to-br from-white/80 to-blue-50/80 dark:from-slate-800/80 dark:to-slate-700/80 backdrop-blur-xl rounded-3xl p-8 border border-white/20 dark:border-slate-700/50"
-      >
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-4">
-            <div className="p-3 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl">
-              <Brain className="w-8 h-8 text-white" />
-            </div>
-            <div>
-              <h2 className="text-3xl font-bold text-slate-800 dark:text-white mb-2">
-                IA Fitness Coach
-              </h2>
-              <p className="text-slate-600 dark:text-slate-300">
-                Recomendaciones personalizadas basadas en tu progreso
-              </p>
-            </div>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="bg-gradient-to-br from-white to-purple-50/50 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-white/30">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="p-3 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl">
+            <Brain className="w-6 h-6 text-white" />
           </div>
-          <div className="text-right">
-            <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
-              {aiInsights.overallProgress}%
-            </div>
-            <div className="text-sm text-slate-600 dark:text-slate-400">
-              Progreso general
-            </div>
+          <div>
+            <h3 className="text-xl font-semibold text-gray-800">Recomendaciones de IA</h3>
+            <p className="text-gray-600">Personalizadas según tu perfil y progreso</p>
           </div>
         </div>
 
-        {/* Insights rápidos */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white/60 dark:bg-slate-700/60 rounded-2xl p-4">
-            <div className="flex items-center gap-3 mb-3">
-              <Target className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-              <span className="font-semibold text-slate-800 dark:text-white">Próximo hito</span>
-            </div>
-            <p className="text-sm text-slate-600 dark:text-slate-400">
-              {aiInsights.nextMilestone}
-            </p>
-          </div>
-          
-          <div className="bg-white/60 dark:bg-slate-700/60 rounded-2xl p-4">
-            <div className="flex items-center gap-3 mb-3">
-              <Clock className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
-              <span className="font-semibold text-slate-800 dark:text-white">Tiempo estimado</span>
-            </div>
-            <p className="text-sm text-slate-600 dark:text-slate-400">
-              {aiInsights.estimatedTimeToGoal}
-            </p>
-          </div>
-          
-          <div className="bg-white/60 dark:bg-slate-700/60 rounded-2xl p-4">
-            <div className="flex items-center gap-3 mb-3">
-              <Lightbulb className="w-5 h-5 text-amber-600 dark:text-amber-400" />
-              <span className="font-semibold text-slate-800 dark:text-white">Oportunidades</span>
-            </div>
-            <p className="text-sm text-slate-600 dark:text-slate-400">
-              {aiInsights.opportunities.length} mejoras identificadas
-            </p>
-          </div>
-        </div>
-      </motion.div>
-
-      {/* Recomendaciones principales */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <AnimatePresence>
-          {recommendations.slice(0, 4).map((recommendation, index) => {
-            const Icon = recommendation.icon;
+        {/* Filters */}
+        <div className="flex flex-wrap gap-2">
+          {[
+            { id: 'all', label: 'Todas', icon: Brain },
+            { id: 'workout', label: 'Entrenamiento', icon: Activity },
+            { id: 'nutrition', label: 'Nutrición', icon: Heart },
+            { id: 'recovery', label: 'Recuperación', icon: Clock },
+            { id: 'goal', label: 'Metas', icon: Target },
+            { id: 'social', label: 'Social', icon: Star }
+          ].map((filterOption) => {
+            const Icon = filterOption.icon;
             return (
-              <motion.div
-                key={recommendation.id}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: index * 0.1 }}
-                onClick={() => setSelectedRecommendation(recommendation)}
-                className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-xl rounded-3xl p-6 border border-white/20 dark:border-slate-700/50 cursor-pointer hover:shadow-xl transition-all duration-300"
+              <button
+                key={filterOption.id}
+                onClick={() => setFilter(filterOption.id as any)}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                  filter === filterOption.id
+                    ? 'bg-gradient-to-r from-purple-500 to-pink-600 text-white shadow-lg'
+                    : 'text-gray-600 hover:bg-gray-100'
+                }`}
               >
-                {/* Header del recommendation */}
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center gap-3">
-                    <div className={`w-12 h-12 rounded-2xl bg-gradient-to-r ${getTypeColor(recommendation.type)} flex items-center justify-center`}>
-                      <Icon className="w-6 h-6 text-white" />
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-slate-800 dark:text-white">
-                        {recommendation.title}
-                      </h3>
-                      <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
-                        <span className="capitalize">{recommendation.category}</span>
-                        <span>•</span>
-                        <span className={`font-semibold ${getConfidenceColor(recommendation.confidence)}`}>
-                          {recommendation.confidence}% confianza
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className={`px-3 py-1 rounded-full bg-gradient-to-r ${getPriorityColor(recommendation.priority)} text-white text-xs font-semibold`}>
-                    {recommendation.priority}
-                  </div>
-                </div>
-
-                {/* Descripción */}
-                <p className="text-slate-600 dark:text-slate-300 mb-4 line-clamp-3">
-                  {recommendation.description}
-                </p>
-
-                {/* Acción */}
-                {recommendation.action && (
-                  <button className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 rounded-xl hover:from-blue-600 hover:to-purple-700 transition-all duration-300 font-semibold">
-                    {recommendation.action}
-                  </button>
-                )}
-              </motion.div>
+                <Icon className="w-4 h-4" />
+                {filterOption.label}
+              </button>
             );
           })}
-        </AnimatePresence>
+        </div>
       </div>
 
-      {/* Análisis detallado */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5 }}
-        className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-xl rounded-3xl p-6 border border-white/20 dark:border-slate-700/50"
-      >
-        <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-6">
-          Análisis IA Detallado
-        </h3>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Factores de riesgo */}
-          <div>
-            <h4 className="font-semibold text-slate-800 dark:text-white mb-3 flex items-center gap-2">
-              <span className="w-2 h-2 bg-rose-500 rounded-full"></span>
-              Factores de Riesgo
-            </h4>
-            <div className="space-y-2">
-              {aiInsights.riskFactors.map((factor, index) => (
-                <div key={index} className="flex items-center gap-3 p-3 bg-rose-50 dark:bg-rose-900/20 rounded-xl">
-                  <span className="text-rose-600 dark:text-rose-400">⚠️</span>
-                  <span className="text-sm text-slate-700 dark:text-slate-300">{factor}</span>
-                </div>
-              ))}
-            </div>
-          </div>
+      {/* Loading State */}
+      {loading && (
+        <div className="bg-gradient-to-br from-white to-blue-50/50 backdrop-blur-sm rounded-2xl p-8 shadow-xl border border-white/30 text-center">
+          <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-gray-600">Analizando tus datos para generar recomendaciones personalizadas...</p>
+        </div>
+      )}
 
-          {/* Oportunidades de mejora */}
-          <div>
-            <h4 className="font-semibold text-slate-800 dark:text-white mb-3 flex items-center gap-2">
-              <span className="w-2 h-2 bg-emerald-500 rounded-full"></span>
-              Oportunidades de Mejora
-            </h4>
-            <div className="space-y-2">
-              {aiInsights.opportunities.map((opportunity, index) => (
-                <div key={index} className="flex items-center gap-3 p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-xl">
-                  <span className="text-emerald-600 dark:text-emerald-400">💡</span>
-                  <span className="text-sm text-slate-700 dark:text-slate-300">{opportunity}</span>
+      {/* Recommendations Grid */}
+      {!loading && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {filteredRecommendations.map((recommendation, index) => (
+            <motion.div
+              key={recommendation.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+              className="bg-gradient-to-br from-white to-gray-50/50 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-white/30 hover:shadow-2xl transition-all duration-300"
+            >
+              {/* Header */}
+              <div className="flex items-start justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <div className={`p-2 bg-gradient-to-br ${getPriorityColor(recommendation.priority)} rounded-lg`}>
+                    {getRecommendationIcon(recommendation.type)}
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-800">{recommendation.title}</h4>
+                    <p className="text-sm text-gray-600">{recommendation.category}</p>
+                  </div>
                 </div>
-              ))}
+                
+                <div className="flex items-center gap-2">
+                  <div className={`text-sm font-medium ${confidenceColor(recommendation.confidence)}`}>
+                    {recommendation.confidence}%
+                  </div>
+                  <button
+                    onClick={() => onDismissRecommendation(recommendation.id)}
+                    className="p-1 hover:bg-gray-200 rounded-lg transition-colors"
+                  >
+                    <X className="w-4 h-4 text-gray-400" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Description */}
+              <p className="text-gray-600 mb-4 line-clamp-3">{recommendation.description}</p>
+
+              {/* Tags */}
+              <div className="flex flex-wrap gap-2 mb-4">
+                {recommendation.tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+
+              {/* Details */}
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-4">
+                  {recommendation.estimatedTime && (
+                    <div className="flex items-center gap-1 text-sm text-gray-600">
+                      <Clock className="w-4 h-4" />
+                      {recommendation.estimatedTime} min
+                    </div>
+                  )}
+                  {recommendation.difficulty && (
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${getDifficultyColor(recommendation.difficulty)}`}>
+                      {recommendation.difficulty}
+                    </span>
+                  )}
+                </div>
+                
+                <button
+                  onClick={() => setShowDetails(showDetails === recommendation.id ? null : recommendation.id)}
+                  className="text-blue-600 hover:text-blue-700 text-sm font-medium"
+                >
+                  {showDetails === recommendation.id ? 'Ocultar' : 'Ver más'}
+                </button>
+              </div>
+
+              {/* Expanded Details */}
+              <AnimatePresence>
+                {showDetails === recommendation.id && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="pt-4 border-t border-gray-200">
+                      <h5 className="font-semibold text-gray-800 mb-2">Detalles Técnicos</h5>
+                      <ul className="text-sm text-gray-600 space-y-1">
+                        <li>• Basado en {recommendation.confidence}% de confianza</li>
+                        <li>• Prioridad: {recommendation.priority}</li>
+                        <li>• Categoría: {recommendation.category}</li>
+                        {recommendation.estimatedTime && (
+                          <li>• Tiempo estimado: {recommendation.estimatedTime} minutos</li>
+                        )}
+                      </ul>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Action Button */}
+              {recommendation.action && (
+                <button
+                  onClick={() => onApplyRecommendation(recommendation)}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-purple-500 to-pink-600 text-white rounded-xl font-medium hover:shadow-lg transition-all duration-200"
+                >
+                  <CheckCircle className="w-4 h-4" />
+                  {recommendation.action.label}
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              )}
+            </motion.div>
+          ))}
+        </div>
+      )}
+
+      {/* Empty State */}
+      {!loading && filteredRecommendations.length === 0 && (
+        <div className="bg-gradient-to-br from-white to-gray-50/50 backdrop-blur-sm rounded-2xl p-8 shadow-xl border border-white/30 text-center">
+          <Brain className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+          <h4 className="text-lg font-semibold text-gray-800 mb-2">No hay recomendaciones</h4>
+          <p className="text-gray-600">Completa más actividades para recibir recomendaciones personalizadas</p>
+        </div>
+      )}
+
+      {/* AI Insights */}
+      {!loading && recommendations.length > 0 && (
+        <div className="bg-gradient-to-br from-white to-green-50/50 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-white/30">
+          <h4 className="text-lg font-semibold text-gray-800 mb-4">Insights de IA</h4>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="text-center p-4 bg-green-50 rounded-xl">
+              <div className="text-2xl font-bold text-green-600">
+                {recommendations.filter(r => r.priority === 'high').length}
+              </div>
+              <div className="text-sm text-gray-600">Recomendaciones Prioritarias</div>
+            </div>
+            <div className="text-center p-4 bg-blue-50 rounded-xl">
+              <div className="text-2xl font-bold text-blue-600">
+                {Math.round(recommendations.reduce((sum, r) => sum + r.confidence, 0) / recommendations.length)}%
+              </div>
+              <div className="text-sm text-gray-600">Confianza Promedio</div>
+            </div>
+            <div className="text-center p-4 bg-purple-50 rounded-xl">
+              <div className="text-2xl font-bold text-purple-600">
+                {recommendations.length}
+              </div>
+              <div className="text-sm text-gray-600">Total de Sugerencias</div>
             </div>
           </div>
         </div>
-      </motion.div>
-
-      {/* Modal de recomendación detallada */}
-      <AnimatePresence>
-        {selectedRecommendation && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
-            onClick={() => setSelectedRecommendation(null)}
-          >
-            <motion.div
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.8, opacity: 0 }}
-              onClick={(e) => e.stopPropagation()}
-              className="bg-white dark:bg-slate-800 rounded-3xl p-8 max-w-2xl mx-4 max-h-[90vh] overflow-y-auto"
-            >
-              <div className="flex items-center gap-4 mb-6">
-                <div className={`w-16 h-16 rounded-2xl bg-gradient-to-r ${getTypeColor(selectedRecommendation.type)} flex items-center justify-center`}>
-                  <selectedRecommendation.icon className="w-8 h-8 text-white" />
-                </div>
-                <div>
-                  <h2 className="text-2xl font-bold text-slate-800 dark:text-white">
-                    {selectedRecommendation.title}
-                  </h2>
-                  <p className="text-slate-600 dark:text-slate-400">
-                    {selectedRecommendation.category} • {selectedRecommendation.confidence}% confianza
-                  </p>
-                </div>
-              </div>
-
-              <p className="text-slate-700 dark:text-slate-300 mb-6">
-                {selectedRecommendation.description}
-              </p>
-
-              {selectedRecommendation.data && (
-                <div className="bg-slate-50 dark:bg-slate-700 rounded-2xl p-6 mb-6">
-                  <h3 className="font-semibold text-slate-800 dark:text-white mb-4">
-                    Detalles de la Recomendación
-                  </h3>
-                  <div className="space-y-3">
-                    {Object.entries(selectedRecommendation.data).map(([key, value]) => (
-                      <div key={key} className="flex justify-between">
-                        <span className="text-slate-600 dark:text-slate-400 capitalize">
-                          {key.replace(/([A-Z])/g, ' $1').trim()}:
-                        </span>
-                        <span className="font-semibold text-slate-800 dark:text-white">
-                          {Array.isArray(value) ? value.join(', ') : String(value)}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              <div className="flex gap-4">
-                <button className="flex-1 bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 rounded-xl hover:from-blue-600 hover:to-purple-700 transition-all duration-300 font-semibold">
-                  Aplicar Recomendación
-                </button>
-                <button 
-                  onClick={() => setSelectedRecommendation(null)}
-                  className="px-6 py-3 border-2 border-slate-300 text-slate-700 dark:text-slate-300 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700 transition-all duration-300"
-                >
-                  Cerrar
-                </button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      )}
     </div>
   );
 };

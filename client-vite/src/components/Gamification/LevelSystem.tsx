@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Star, Trophy, Zap, Target, Award, Crown } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  TrendingUp, Star, Trophy, Target, Zap, 
+  CheckCircle, Award, Crown, Flame
+} from 'lucide-react';
 
 interface Level {
   level: number;
