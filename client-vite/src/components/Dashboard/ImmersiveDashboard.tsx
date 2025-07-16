@@ -3,7 +3,7 @@ import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-mo
 import { 
   Activity, Heart, Target, Calendar, TrendingUp, 
   Zap, Clock, Star, Trophy, Users, MapPin, 
-  BarChart3, PieChart, LineChart, Target as TargetIcon
+  BarChart3, PieChart, LineChart, Target as TargetIcon, Plus
 } from 'lucide-react';
 import { useTheme } from '../../contexts/ThemeContext';
 
