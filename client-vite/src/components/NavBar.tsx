@@ -16,7 +16,8 @@ import {
   X,
   Zap,
   Heart,
-  Activity
+  Activity,
+  Camera
 } from 'lucide-react';
 
 const NavBar: React.FC = () => {
@@ -33,7 +34,8 @@ const NavBar: React.FC = () => {
     { name: 'Analytics', href: '/analytics', icon: BarChart3, color: 'text-indigo-600' },
     { name: 'Comunidad', href: '/community', icon: Users, color: 'text-pink-600' },
     { name: 'Calendario', href: '/calendar', icon: Calendar, color: 'text-teal-600' },
-    { name: 'Plan', href: '/plan', icon: Target, color: 'text-red-600' }
+    { name: 'Plan', href: '/plan', icon: Target, color: 'text-red-600' },
+    { name: 'Entrenamiento AR', href: '/ar', icon: Camera, color: 'text-cyan-600' }
   ];
 
   const isActive = (path: string) => {
