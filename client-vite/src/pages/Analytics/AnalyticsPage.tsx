@@ -1,230 +1,239 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { BarChart3, TrendingUp, Target, Calendar, Activity, Users } from 'lucide-react';
-import AdvancedCharts from '../../components/Analytics/AdvancedCharts';
-import ReportExporter from '../../components/Analytics/ReportExporter';
-import PerformanceComparison from '../../components/Analytics/PerformanceComparison';
+import { useAnalytics } from '../../contexts/AnalyticsContext';
+import { 
+  BarChart3, TrendingUp, Target, Calendar, Download,
+  Eye, Brain, Zap, Activity, PieChart as LucidePieChart, LineChart as LucideLineChart
+} from 'lucide-react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
 
 const AnalyticsPage: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'charts' | 'comparison' | 'export'>('charts');
+  const { metrics, predictions, trends, isLoading, exportReport, generateInsights } = useAnalytics();
+  const [selectedMetric, setSelectedMetric] = useState<string>('');
+  const [insights, setInsights] = useState<string[]>([]);
 
-  // Datos de ejemplo para los gráficos
-  const workoutData = [
-    { name: 'Lun', value: 3, target: 4 },
-    { name: 'Mar', value: 2, target: 4 },
-    { name: 'Mié', value: 4, target: 4 },
-    { name: 'Jue', value: 1, target: 4 },
-    { name: 'Vie', value: 3, target: 4 },
-    { name: 'Sáb', value: 5, target: 4 },
-    { name: 'Dom', value: 2, target: 4 }
-  ];
-
-  const caloriesData = [
-    { name: 'Lun', value: 450 },
-    { name: 'Mar', value: 320 },
-    { name: 'Mié', value: 580 },
-    { name: 'Jue', value: 280 },
-    { name: 'Vie', value: 420 },
-    { name: 'Sáb', value: 650 },
-    { name: 'Dom', value: 380 }
-  ];
-
-  const exerciseTypeData = [
-    { name: 'Cardio', value: 35 },
-    { name: 'Fuerza', value: 25 },
-    { name: 'Flexibilidad', value: 20 },
-    { name: 'HIIT', value: 15 },
-    { name: 'Yoga', value: 5 }
-  ];
-
-  const performanceData = [
-    { name: 'Resistencia', value: 85 },
-    { name: 'Fuerza', value: 70 },
-    { name: 'Flexibilidad', value: 60 },
-    { name: 'Velocidad', value: 75 },
-    { name: 'Equilibrio', value: 80 }
-  ];
-
-  const currentPerformance = {
-    period: 'Semana Actual',
-    workouts: 20,
-    calories: 2800,
-    steps: 85000,
-    heartRate: 145,
-    duration: 420
+  const handleExportReport = async (format: 'pdf' | 'csv' | 'json') => {
+    await exportReport(format);
   };
 
-  const previousPerformance = {
-    period: 'Semana Anterior',
-    workouts: 18,
-    calories: 2600,
-    steps: 82000,
-    heartRate: 142,
-    duration: 390
+  const handleGenerateInsights = async () => {
+    const newInsights = await generateInsights();
+    setInsights(newInsights);
   };
 
-  const availableReports = [
-    {
-      title: 'Reporte de Progreso',
-      data: workoutData,
-      type: 'progress' as const
-    },
-    {
-      title: 'Análisis de Entrenamientos',
-      data: caloriesData,
-      type: 'workouts' as const
-    },
-    {
-      title: 'Métricas de Rendimiento',
-      data: performanceData,
-      type: 'analytics' as const
-    },
-    {
-      title: 'Actividad Social',
-      data: exerciseTypeData,
-      type: 'social' as const
+  const getMetricColor = (category: string) => {
+    switch (category) {
+      case 'performance': return '#3b82f6';
+      case 'health': return '#10b981';
+      case 'progress': return '#f59e0b';
+      case 'social': return '#8b5cf6';
+      default: return '#6b7280';
     }
-  ];
-
-  const handleExport = (format: 'pdf' | 'excel', data: any) => {
-    console.log(`Exporting ${data.title} in ${format} format`);
-    // Aquí se implementaría la lógica real de exportación
   };
 
-  const handlePeriodChange = (period: 'week' | 'month' | 'quarter') => {
-    console.log(`Period changed to: ${period}`);
-    // Aquí se actualizarían los datos según el período
+  const getChangeColor = (change: number) => {
+    return change > 0 ? '#10b981' : change < 0 ? '#ef4444' : '#6b7280';
   };
 
-  const tabs = [
-    { id: 'charts', label: 'Gráficos', icon: BarChart3 },
-    { id: 'comparison', label: 'Comparación', icon: TrendingUp },
-    { id: 'export', label: 'Exportar', icon: Target }
-  ];
+  const getChangeIcon = (change: number) => {
+    return change > 0 ? '↗️' : change < 0 ? '↘️' : '→';
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 p-6">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
-        >
-          <h1 className="text-4xl font-bold text-gray-800 mb-2">Analytics</h1>
-          <p className="text-gray-600">Analiza tu progreso y rendimiento con datos detallados</p>
-        </motion.div>
-
-        {/* Tabs */}
-        <div className="flex space-x-2 mb-8">
-          {tabs.map((tab) => {
-            const Icon = tab.icon;
-            return (
+        <div className="mb-8">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+            <div>
+              <h1 className="text-4xl font-bold mb-2 text-gray-900">
+                Analytics Avanzado
+              </h1>
+              <p className="text-lg text-gray-600">
+                Análisis profundo de tu progreso y predicciones inteligentes
+              </p>
+            </div>
+            
+            <div className="flex items-center gap-3">
               <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
-                className={`flex items-center gap-2 px-6 py-3 rounded-xl transition-all duration-300 ${
-                  activeTab === tab.id
-                    ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg'
-                    : 'text-gray-600 hover:bg-gray-100'
-                }`}
+                onClick={handleGenerateInsights}
+                disabled={isLoading}
+                className="flex items-center gap-2 px-4 py-2 rounded-lg font-medium bg-blue-500 text-white hover:bg-blue-600 transition-colors duration-200 disabled:opacity-50"
               >
-                <Icon className="w-5 h-5" />
-                {tab.label}
+                <Brain className="w-4 h-4" />
+                {isLoading ? 'Generando...' : 'Generar Insights'}
               </button>
-            );
-          })}
+              
+              <button
+                onClick={() => handleExportReport('pdf')}
+                disabled={isLoading}
+                className="flex items-center gap-2 px-4 py-2 rounded-lg font-medium bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 transition-colors duration-200 disabled:opacity-50"
+              >
+                <Download className="w-4 h-4" />
+                Exportar
+              </button>
+            </div>
+          </div>
         </div>
 
-        {/* Content */}
-        <motion.div
-          key={activeTab}
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -20 }}
-          transition={{ duration: 0.3 }}
-        >
-          {activeTab === 'charts' && (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <AdvancedCharts
-                data={workoutData}
-                type="line"
-                title="Entrenamientos Semanales"
-                subtitle="Progreso vs meta semanal"
-                height={300}
-              />
-              <AdvancedCharts
-                data={caloriesData}
-                type="area"
-                title="Calorías Quemadas"
-                subtitle="Consumo diario de calorías"
-                height={300}
-              />
-              <AdvancedCharts
-                data={exerciseTypeData}
-                type="pie"
-                title="Distribución de Ejercicios"
-                subtitle="Tipos de entrenamiento"
-                height={300}
-              />
-              <AdvancedCharts
-                data={performanceData}
-                type="radar"
-                title="Rendimiento por Categoría"
-                subtitle="Análisis multidimensional"
-                height={300}
-              />
-            </div>
-          )}
-
-          {activeTab === 'comparison' && (
-            <PerformanceComparison
-              currentData={currentPerformance}
-              previousData={previousPerformance}
-              onPeriodChange={handlePeriodChange}
-            />
-          )}
-
-          {activeTab === 'export' && (
-            <ReportExporter
-              onExport={handleExport}
-              availableReports={availableReports}
-            />
-          )}
-        </motion.div>
-
-        {/* Quick Stats */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
-        >
-          {[
-            { label: 'Entrenamientos', value: '20', icon: Activity, color: 'from-blue-500 to-indigo-600' },
-            { label: 'Calorías Totales', value: '2,800', icon: Target, color: 'from-green-500 to-emerald-600' },
-            { label: 'Días Activos', value: '5/7', icon: Calendar, color: 'from-purple-500 to-pink-600' },
-            { label: 'Amigos Conectados', value: '12', icon: Users, color: 'from-orange-500 to-red-600' }
-          ].map((stat, index) => {
-            const Icon = stat.icon;
-            return (
-              <div
-                key={stat.label}
-                className="bg-gradient-to-br from-white to-gray-50/50 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-white/30"
-              >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-gray-600">{stat.label}</p>
-                    <p className="text-2xl font-bold text-gray-800">{stat.value}</p>
+        {/* Métricas principales */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+          {metrics.map((metric, index) => (
+            <div
+              key={metric.id}
+              className="p-6 rounded-xl border bg-white hover:shadow-lg transition-shadow duration-200 cursor-pointer"
+              onClick={() => setSelectedMetric(metric.id)}
+            >
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <div 
+                    className="w-12 h-12 rounded-xl flex items-center justify-center"
+                    style={{ backgroundColor: getMetricColor(metric.category) }}
+                  >
+                    <BarChart3 className="w-6 h-6 text-white" />
                   </div>
-                  <div className={`p-3 bg-gradient-to-br ${stat.color} rounded-xl`}>
-                    <Icon className="w-6 h-6 text-white" />
+                  
+                  <div>
+                    <h3 className="font-semibold text-gray-900">
+                      {metric.name}
+                    </h3>
+                    <p className="text-sm text-gray-500">
+                      {metric.category}
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="text-right">
+                  <div className="text-2xl font-bold text-gray-900">
+                    {metric.value}
+                  </div>
+                  <div className="text-sm" style={{ color: getMetricColor(metric.category) }}>
+                    {metric.unit}
                   </div>
                 </div>
               </div>
-            );
-          })}
-        </motion.div>
+              
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm" style={{ color: getChangeColor(metric.change) }}>
+                    {getChangeIcon(metric.change)} {Math.abs(metric.change)}%
+                  </span>
+                  <span className="text-xs text-gray-500">
+                    vs mes anterior
+                  </span>
+                </div>
+                
+                {metric.target && (
+                  <div className="text-xs text-gray-500">
+                    Meta: {metric.target}
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Gráficos y análisis */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+          {/* Gráfico de tendencias */}
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+            <div className="flex items-center gap-3 mb-6">
+              <TrendingUp className="w-6 h-6 text-blue-600" />
+              <h3 className="text-xl font-semibold text-gray-900">
+                Tendencias de Progreso
+              </h3>
+            </div>
+            
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={selectedMetric ? metrics.find(m => m.id === selectedMetric)?.data : []}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                <XAxis dataKey="date" stroke="#6b7280" />
+                <YAxis stroke="#6b7280" />
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: 'white', 
+                    border: '1px solid #e5e7eb',
+                    borderRadius: '8px'
+                  }}
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="value" 
+                  stroke="#3b82f6" 
+                  strokeWidth={3}
+                  dot={{ fill: '#3b82f6', strokeWidth: 2, r: 4 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* Predicciones */}
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+            <div className="flex items-center gap-3 mb-6">
+              <Brain className="w-6 h-6 text-blue-600" />
+              <h3 className="text-xl font-semibold text-gray-900">
+                Predicciones IA
+              </h3>
+            </div>
+            
+            <div className="space-y-4">
+              {predictions.map((prediction, index) => (
+                <div
+                  key={prediction.metric}
+                  className="p-4 rounded-xl border border-gray-200 bg-gray-50"
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-semibold text-gray-900">
+                      {metrics.find(m => m.id === prediction.metric)?.name}
+                    </span>
+                    <span className="text-sm text-gray-500">
+                      {prediction.confidence * 100}% confianza
+                    </span>
+                  </div>
+                  
+                  <div className="flex items-center gap-4 mb-3">
+                    <div>
+                      <div className="text-sm text-gray-500">
+                        Actual
+                      </div>
+                      <div className="font-bold text-gray-900">
+                        {prediction.currentValue}
+                      </div>
+                    </div>
+                    
+                    <div className="text-2xl">→</div>
+                    
+                    <div>
+                      <div className="text-sm text-gray-500">
+                        Predicción
+                      </div>
+                      <div className="font-bold text-green-600">
+                        {prediction.predictedValue}
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="text-xs text-gray-500">
+                    {prediction.timeframe}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Insights generados */}
+        {insights.length > 0 && (
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+            <h3 className="text-xl font-semibold text-gray-900 mb-4">Insights Generados</h3>
+            <div className="space-y-3">
+              {insights.map((insight, index) => (
+                <div key={index} className="p-3 bg-blue-50 rounded-lg border border-blue-200">
+                  <p className="text-blue-800">{insight}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

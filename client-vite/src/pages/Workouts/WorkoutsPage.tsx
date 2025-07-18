@@ -1,9 +1,11 @@
 import React, { useState } from "react";
-import { Plus, Target, Trash2, Dumbbell, Heart, Zap, Trophy } from "lucide-react";
+import { Plus, Target, Trash2, Dumbbell, Heart, Zap, Trophy, Play, Pause, Square, Clock, TrendingUp, Search, Filter, Calendar, Star, Timer, CheckCircle, XCircle, Edit, Eye, BookOpen } from "lucide-react";
 import ExerciseList from '../../components/ExerciseList';
 import { ejercicios } from '../../data/ejercicios';
 import { Ejercicio } from '../../types';
 import { useNavigate } from 'react-router-dom';
+import { useWorkouts } from '../../contexts/WorkoutsContext';
+import { Activity } from "lucide-react";
 
 // Datos simulados de entrenamientos
 const mockWorkouts = [
@@ -67,262 +69,483 @@ const gruposMusculares = [
 const etiquetasUnicas = Array.from(new Set(ejercicios.flatMap(e => e.etiquetas)));
 
 const WorkoutsPage: React.FC = () => {
-  const [workouts] = useState(mockWorkouts);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterType, setFilterType] = useState('all');
-  const [grupoSeleccionado, setGrupoSeleccionado] = useState('Todos');
-  const [etiquetaSeleccionada, setEtiquetaSeleccionada] = useState('Todas');
-  const [accesoriosSeleccionados, setAccesoriosSeleccionados] = useState<string[]>([]);
-  const [workout, setWorkout] = useState<Ejercicio[]>([]);
-  const navigate = useNavigate();
+  const { 
+    workouts, 
+    templates, 
+    exercises, 
+    currentWorkout,
+    createWorkout,
+    startWorkout,
+    completeWorkout,
+    pauseWorkout,
+    resumeWorkout,
+    cancelWorkout,
+    addExerciseToWorkout,
+    updateSet,
+    getWorkoutStats,
+    searchExercises,
+    getExercisesByCategory,
+    startTimer,
+    pauseTimer,
+    resetTimer,
+    getTimerState
+  } = useWorkouts();
+
+  const [activeTab, setActiveTab] = useState('workouts');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showExerciseModal, setShowExerciseModal] = useState(false);
+  const [selectedWorkout, setSelectedWorkout] = useState<string | null>(null);
+
+  const stats = getWorkoutStats();
+  const timerState = getTimerState();
+
+  const categories = [
+    { id: 'all', name: 'Todos', icon: Dumbbell },
+    { id: 'strength', name: 'Fuerza', icon: Target },
+    { id: 'cardio', name: 'Cardio', icon: Heart },
+    { id: 'hiit', name: 'HIIT', icon: Zap },
+    { id: 'flexibility', name: 'Flexibilidad', icon: Activity },
+    { id: 'bodyweight', name: 'Peso Corporal', icon: Activity }
+  ];
+
+  const filteredExercises = searchQuery 
+    ? searchExercises(searchQuery)
+    : selectedCategory !== 'all' 
+      ? getExercisesByCategory(selectedCategory)
+      : exercises;
+
+  const getWorkoutTypeIcon = (type: string) => {
+    const iconMap: { [key: string]: any } = {
+      strength: Target,
+      cardio: Heart,
+      hiit: Zap,
+      flexibility: Activity,
+      mixed: Dumbbell
+    };
+    const Icon = iconMap[type] || Dumbbell;
+    return <Icon className="w-5 h-5" />;
+  };
 
   const getDifficultyColor = (difficulty: string) => {
-    switch (difficulty.toLowerCase()) {
-      case 'principiante': return 'bg-emerald-100 text-emerald-800 border-emerald-200';
-      case 'intermedio': return 'bg-amber-100 text-amber-800 border-amber-200';
-      case 'avanzado': return 'bg-rose-100 text-rose-800 border-rose-200';
-      default: return 'bg-slate-100 text-slate-800 border-slate-200';
-    }
-  };
-
-  const filteredWorkouts = workouts.filter(workout => {
-    const matchesSearch = workout.name.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesType = filterType === 'all' || workout.type === filterType;
-    return matchesSearch && matchesType;
-  });
-
-  // Accesorios únicos del grupo muscular seleccionado
-  const accesoriosGrupo = grupoSeleccionado === 'Todos'
-    ? []
-    : Array.from(new Set(
-        ejercicios
-          .filter(e => e.grupoMuscular.toLowerCase() === grupoSeleccionado.toLowerCase())
-          .flatMap(e => e.accesorio.split(/[ /]+/).map(a => a.trim()).filter(Boolean))
-      ));
-
-  // Filtrado de ejercicios
-  const ejerciciosFiltrados = ejercicios.filter(e => {
-    const grupoOk = grupoSeleccionado === 'Todos' || e.grupoMuscular.toLowerCase() === grupoSeleccionado.toLowerCase();
-    const etiquetaOk = etiquetaSeleccionada === 'Todas' || e.etiquetas.includes(etiquetaSeleccionada);
-    let accesorioOk = true;
-    if (grupoSeleccionado !== 'Todos' && accesoriosSeleccionados.length > 0) {
-      const accesoriosEjercicio = e.accesorio.split(/[ /]+/).map(a => a.trim());
-      accesorioOk = accesoriosSeleccionados.some(acc => accesoriosEjercicio.includes(acc));
-    }
-    return grupoOk && etiquetaOk && accesorioOk;
-  });
-
-  // Manejo de checkboxes de accesorios
-  const handleAccesorioChange = (accesorio: string) => {
-    setAccesoriosSeleccionados(prev =>
-      prev.includes(accesorio)
-        ? prev.filter(a => a !== accesorio)
-        : [...prev, accesorio]
-    );
-  };
-
-  // Reset accesorios al cambiar grupo muscular
-  React.useEffect(() => {
-    setAccesoriosSeleccionados([]);
-  }, [grupoSeleccionado]);
-
-  // Agregar ejercicio al workout
-  const handleAddExercise = (ejercicio: Ejercicio) => {
-    if (!workout.find(e => e.id === ejercicio.id)) {
-      setWorkout(prev => [...prev, ejercicio]);
-    }
-  };
-
-  // Quitar ejercicio del workout
-  const handleRemoveExercise = (id: string) => {
-    setWorkout(prev => prev.filter(e => e.id !== id));
-  };
-
-  // Guardar workout en localStorage y redirigir
-  const handleSaveWorkout = () => {
-    if (workout.length === 0) return;
-    const prev = JSON.parse(localStorage.getItem('workouts_hist') || '[]');
-    const nuevo = {
-      id: Date.now().toString(),
-      nombre: `Rutina ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`,
-      fecha: new Date().toISOString(),
-      ejercicios: workout
+    const colorMap: { [key: string]: string } = {
+      beginner: 'text-green-600 bg-green-100',
+      intermediate: 'text-yellow-600 bg-yellow-100',
+      advanced: 'text-red-600 bg-red-100'
     };
-    localStorage.setItem('workouts_hist', JSON.stringify([nuevo, ...prev]));
-    setWorkout([]);
-    navigate('/entrenamientos');
+    return colorMap[difficulty] || 'text-gray-600 bg-gray-100';
+  };
+
+  const formatTime = (minutes: number) => {
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    return hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex flex-col lg:pl-64">
-      
-      {/* Banner Demo Mejorado */}
-      <div className="w-full bg-gradient-to-r from-amber-200 via-yellow-100 to-orange-100 border-b border-amber-300 py-3 px-4 flex items-center justify-center shadow-sm">
-        <div className="flex items-center gap-2">
-          <Zap className="w-4 h-4 text-amber-700" />
-          <span className="text-amber-800 text-sm font-semibold">Modo DEMO: Datos simulados</span>
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        {/* Header */}
+        <div className="mb-8">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-4xl font-bold text-gray-900 mb-2">
+                Entrenamientos
+              </h1>
+              <p className="text-lg text-gray-600">
+                Gestiona tus rutinas y ejercicios
+              </p>
+            </div>
+            <button
+              onClick={() => setShowCreateModal(true)}
+              className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors duration-200"
+            >
+              <Plus className="w-4 h-4" />
+              Crear Entrenamiento
+            </button>
+          </div>
         </div>
-      </div>
 
-      <main className="flex-1 w-full max-w-7xl mx-auto px-4 py-8 flex flex-col lg:flex-row gap-8">
-        <div className="flex-1">
-          {/* Header Mejorado */}
-          <div className="mb-8">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="p-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl shadow-lg">
-                <Dumbbell className="w-8 h-8 text-white" />
+        {/* Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+          <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                <Dumbbell className="w-5 h-5 text-blue-600" />
               </div>
               <div>
-                <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
-                  Ejercicios
-                </h1>
-                <p className="text-slate-600 mt-1">Construye tu rutina personalizada</p>
-              </div>
-            </div>
-            
-            {/* Estadísticas rápidas */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-              <div className="bg-white/70 backdrop-blur-sm rounded-xl p-4 border border-white/20 shadow-sm">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-blue-100 rounded-lg">
-                    <Target className="w-5 h-5 text-blue-600" />
-                  </div>
-                  <div>
-                    <p className="text-2xl font-bold text-slate-800">{ejerciciosFiltrados.length}</p>
-                    <p className="text-sm text-slate-600">Ejercicios disponibles</p>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="bg-white/70 backdrop-blur-sm rounded-xl p-4 border border-white/20 shadow-sm">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-emerald-100 rounded-lg">
-                    <Heart className="w-5 h-5 text-emerald-600" />
-                  </div>
-                  <div>
-                    <p className="text-2xl font-bold text-slate-800">{workout.length}</p>
-                    <p className="text-sm text-slate-600">En tu rutina</p>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="bg-white/70 backdrop-blur-sm rounded-xl p-4 border border-white/20 shadow-sm">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-amber-100 rounded-lg">
-                    <Trophy className="w-5 h-5 text-amber-600" />
-                  </div>
-                  <div>
-                    <p className="text-2xl font-bold text-slate-800">{gruposMusculares.length - 1}</p>
-                    <p className="text-sm text-slate-600">Grupos musculares</p>
-                  </div>
-                </div>
+                <div className="text-2xl font-bold text-gray-900">{stats.totalWorkouts}</div>
+                <div className="text-sm text-gray-500">Entrenamientos</div>
               </div>
             </div>
           </div>
 
-          {/* Grupos musculares como chips mejorados */}
-          <div className="mb-8">
-            <h3 className="text-lg font-semibold text-slate-700 mb-4">Grupos Musculares</h3>
-            <div className="flex flex-wrap gap-3">
-              {gruposMusculares.map(grupo => (
+          <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                <Clock className="w-5 h-5 text-green-600" />
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-gray-900">{formatTime(stats.totalTime)}</div>
+                <div className="text-sm text-gray-500">Tiempo Total</div>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center">
+                <Star className="w-5 h-5 text-yellow-600" />
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-gray-900">
+                  {stats.averageRating.toFixed(1)}
+                </div>
+                <div className="text-sm text-gray-500">Rating Promedio</div>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                <TrendingUp className="w-5 h-5 text-purple-600" />
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-gray-900 capitalize">{stats.favoriteType}</div>
+                <div className="text-sm text-gray-500">Tipo Favorito</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Current Workout Timer */}
+        {timerState.isRunning && (
+          <div className="mb-6 bg-blue-500 text-white p-4 rounded-xl">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Timer className="w-6 h-6" />
+                <div>
+                  <div className="text-lg font-semibold">Entrenamiento en Progreso</div>
+                  <div className="text-sm opacity-90">
+                    Tiempo restante: {Math.floor(timerState.timeLeft / 60)}:{(timerState.timeLeft % 60).toString().padStart(2, '0')}
+                  </div>
+                </div>
+              </div>
+              <div className="flex gap-2">
                 <button
-                  key={grupo}
-                  className={`px-6 py-3 rounded-full border-2 font-medium transition-all duration-300 transform hover:scale-105 active:scale-95 ${
-                    grupoSeleccionado === grupo
-                      ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white border-blue-600 shadow-lg shadow-blue-500/30'
-                      : 'bg-white/80 backdrop-blur-sm text-slate-700 border-slate-200 hover:border-blue-300 hover:bg-blue-50/50 shadow-sm hover:shadow-md'
-                  }`}
-                  onClick={() => setGrupoSeleccionado(grupo)}
+                  onClick={pauseTimer}
+                  className="p-2 bg-white bg-opacity-20 rounded-lg hover:bg-opacity-30 transition-colors duration-200"
                 >
-                  {grupo}
+                  <Pause className="w-4 h-4" />
                 </button>
+                <button
+                  onClick={resetTimer}
+                  className="p-2 bg-white bg-opacity-20 rounded-lg hover:bg-opacity-30 transition-colors duration-200"
+                >
+                  <Square className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Tabs */}
+        <div className="mb-6">
+          <div className="flex space-x-1 bg-white p-1 rounded-lg shadow-sm">
+            {[
+              { id: 'workouts', label: 'Mis Entrenamientos', icon: Dumbbell },
+              { id: 'templates', label: 'Plantillas', icon: BookOpen },
+              { id: 'exercises', label: 'Ejercicios', icon: Target }
+            ].map((tab) => {
+              const Icon = tab.icon;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-md transition-colors duration-200 ${
+                    activeTab === tab.id
+                      ? 'bg-blue-500 text-white'
+                      : 'text-gray-600 hover:bg-gray-100'
+                  }`}
+                >
+                  <Icon className="w-4 h-4" />
+                  {tab.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Tab Content */}
+        {activeTab === 'workouts' && (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h2 className="text-2xl font-bold text-gray-900">Mis Entrenamientos</h2>
+              <div className="flex gap-2">
+                <button className="p-2 text-gray-500 hover:text-gray-700 transition-colors duration-200">
+                  <Filter className="w-4 h-4" />
+                </button>
+                <button className="p-2 text-gray-500 hover:text-gray-700 transition-colors duration-200">
+                  <Calendar className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+
+            {workouts.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {workouts.map((workout) => (
+                  <div
+                    key={workout.id}
+                    className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow duration-200"
+                  >
+                    <div className="p-6">
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-2">
+                          {getWorkoutTypeIcon(workout.type)}
+                          <span className="text-sm font-medium text-gray-500 capitalize">
+                            {workout.type}
+                          </span>
+                        </div>
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${getDifficultyColor(workout.difficulty)}`}>
+                          {workout.difficulty}
+                        </span>
+                      </div>
+
+                      <h3 className="text-lg font-bold text-gray-900 mb-2">{workout.name}</h3>
+                      <p className="text-gray-600 text-sm mb-4">{workout.description}</p>
+
+                      <div className="flex items-center gap-4 text-sm text-gray-500 mb-4">
+                        <div className="flex items-center gap-1">
+                          <Clock className="w-4 h-4" />
+                          {formatTime(workout.duration)}
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Target className="w-4 h-4" />
+                          {workout.exercises.length} ejercicios
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          {workout.isCompleted ? (
+                            <CheckCircle className="w-5 h-5 text-green-500" />
+                          ) : (
+                            <XCircle className="w-5 h-5 text-gray-400" />
+                          )}
+                          <span className={`text-sm ${workout.isCompleted ? 'text-green-600' : 'text-gray-500'}`}>
+                            {workout.isCompleted ? 'Completado' : 'Pendiente'}
+                          </span>
+                        </div>
+
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => setSelectedWorkout(workout.id)}
+                            className="p-2 text-gray-500 hover:text-blue-600 transition-colors duration-200"
+                          >
+                            <Eye className="w-4 h-4" />
+                          </button>
+                          {!workout.isCompleted && (
+                            <button
+                              onClick={() => startWorkout(workout.id)}
+                              className="p-2 text-gray-500 hover:text-green-600 transition-colors duration-200"
+                            >
+                              <Play className="w-4 h-4" />
+                            </button>
+                          )}
+                          <button className="p-2 text-gray-500 hover:text-gray-700 transition-colors duration-200">
+                            <Edit className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <Dumbbell className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  No hay entrenamientos
+                </h3>
+                <p className="text-gray-500 mb-4">
+                  Crea tu primer entrenamiento para comenzar
+                </p>
+                <button
+                  onClick={() => setShowCreateModal(true)}
+                  className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors duration-200"
+                >
+                  Crear Entrenamiento
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {activeTab === 'templates' && (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold text-gray-900">Plantillas de Entrenamiento</h2>
+            
+            {templates.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {templates.map((template) => (
+                  <div
+                    key={template.id}
+                    className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow duration-200"
+                  >
+                    <div className="p-6">
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-2">
+                          {getWorkoutTypeIcon(template.type)}
+                          <span className="text-sm font-medium text-gray-500 capitalize">
+                            {template.type}
+                          </span>
+                        </div>
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${getDifficultyColor(template.difficulty)}`}>
+                          {template.difficulty}
+                        </span>
+                      </div>
+
+                      <h3 className="text-lg font-bold text-gray-900 mb-2">{template.name}</h3>
+                      <p className="text-gray-600 text-sm mb-4">{template.description}</p>
+
+                      <div className="flex items-center gap-4 text-sm text-gray-500 mb-4">
+                        <div className="flex items-center gap-1">
+                          <Clock className="w-4 h-4" />
+                          {formatTime(template.duration)}
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Target className="w-4 h-4" />
+                          {template.exercises.length} ejercicios
+                        </div>
+                      </div>
+
+                      <button
+                        onClick={() => {
+                          // Use template logic
+                        }}
+                        className="w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors duration-200"
+                      >
+                        Usar Plantilla
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <BookOpen className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  No hay plantillas
+                </h3>
+                <p className="text-gray-500">
+                  Las plantillas aparecerán aquí cuando estén disponibles
+                </p>
+              </div>
+            )}
+          </div>
+        )}
+
+        {activeTab === 'exercises' && (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h2 className="text-2xl font-bold text-gray-900">Ejercicios</h2>
+              <div className="flex gap-2">
+                <div className="relative">
+                  <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                  <input
+                    type="text"
+                    placeholder="Buscar ejercicios..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <select
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                  className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  {categories.map((category) => (
+                    <option key={category.id} value={category.id}>
+                      {category.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredExercises.map((exercise) => (
+                <div
+                  key={exercise.id}
+                  className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow duration-200"
+                >
+                  <div className="p-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-2">
+                        {getWorkoutTypeIcon(exercise.category)}
+                        <span className="text-sm font-medium text-gray-500 capitalize">
+                          {exercise.category}
+                        </span>
+                      </div>
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getDifficultyColor(exercise.difficulty)}`}>
+                        {exercise.difficulty}
+                      </span>
+                    </div>
+
+                    <h3 className="text-lg font-bold text-gray-900 mb-2">{exercise.name}</h3>
+                    
+                    <div className="mb-4">
+                      <div className="text-sm text-gray-600 mb-2">
+                        <strong>Grupos musculares:</strong>
+                      </div>
+                      <div className="flex flex-wrap gap-1">
+                        {exercise.muscleGroups.map((muscle) => (
+                          <span
+                            key={muscle}
+                            className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full"
+                          >
+                            {muscle}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
+                    {exercise.equipment.length > 0 && (
+                      <div className="mb-4">
+                        <div className="text-sm text-gray-600 mb-2">
+                          <strong>Equipamiento:</strong>
+                        </div>
+                        <div className="flex flex-wrap gap-1">
+                          {exercise.equipment.map((equipment) => (
+                            <span
+                              key={equipment}
+                              className="px-2 py-1 bg-blue-100 text-blue-600 text-xs rounded-full"
+                            >
+                              {equipment}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    <button
+                      onClick={() => setShowExerciseModal(true)}
+                      className="w-full px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors duration-200"
+                    >
+                      Ver Detalles
+                    </button>
+                  </div>
+                </div>
               ))}
             </div>
           </div>
-
-          {/* Filtro de accesorios mejorado */}
-          {grupoSeleccionado !== 'Todos' && accesoriosGrupo.length > 0 && (
-            <div className="mb-8 bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-white/20 shadow-sm">
-              <h3 className="text-lg font-semibold text-slate-700 mb-4">Filtrar por Accesorio</h3>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                {accesoriosGrupo.map(acc => (
-                  <label key={acc} className="flex items-center gap-3 p-3 rounded-lg bg-white/50 border border-white/30 hover:bg-white/70 transition-colors cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={accesoriosSeleccionados.includes(acc)}
-                      onChange={() => handleAccesorioChange(acc)}
-                      className="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500 focus:ring-2"
-                    />
-                    <span className="text-slate-700 font-medium">{acc}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Lista de ejercicios */}
-          <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-white/20 shadow-sm">
-            <ExerciseList
-              ejercicios={ejerciciosFiltrados}
-              onAddExercise={handleAddExercise}
-              onRemoveExercise={handleRemoveExercise}
-              ejerciciosEnWorkout={workout.map(e => e.id)}
-            />
-          </div>
-        </div>
-
-        {/* Panel lateral de workout en construcción mejorado */}
-        {workout.length > 0 && (
-          <aside className="w-full lg:w-96">
-            <div className="bg-gradient-to-br from-white to-blue-50/50 backdrop-blur-sm rounded-2xl shadow-xl border border-white/30 p-6 h-fit sticky top-8">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="p-2 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl">
-                  <Plus className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <h2 className="text-xl font-bold text-slate-800">Tu Rutina</h2>
-                  <p className="text-sm text-slate-600">{workout.length} ejercicios seleccionados</p>
-                </div>
-              </div>
-
-              <div className="space-y-4 mb-6 max-h-96 overflow-y-auto">
-                {workout.map((ejercicio, index) => (
-                  <div key={ejercicio.id} className="flex items-center justify-between gap-3 p-4 bg-white/70 rounded-xl border border-white/30 shadow-sm hover:shadow-md transition-all duration-200">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full font-medium">
-                          {index + 1}
-                        </span>
-                        <span className="font-semibold text-slate-800">{ejercicio.nombre}</span>
-                      </div>
-                      <span className="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded-full">
-                        {ejercicio.grupoMuscular}
-                      </span>
-                    </div>
-                    <button
-                      className="p-2 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition-colors"
-                      onClick={() => handleRemoveExercise(ejercicio.id)}
-                      title="Quitar ejercicio"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
-                ))}
-              </div>
-
-              <button
-                className="w-full bg-gradient-to-r from-emerald-500 to-teal-600 text-white py-4 rounded-xl font-semibold hover:from-emerald-600 hover:to-teal-700 transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg shadow-emerald-500/30"
-                onClick={handleSaveWorkout}
-              >
-                <div className="flex items-center justify-center gap-2">
-                  <Trophy className="w-5 h-5" />
-                  Guardar Rutina
-                </div>
-              </button>
-            </div>
-          </aside>
         )}
-      </main>
+      </div>
+
+      {/* Modals would go here */}
     </div>
   );
 };

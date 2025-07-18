@@ -1,18 +1,24 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle, AlertCircle, Info, X } from 'lucide-react';
+import React, { createContext, useContext, useState } from 'react';
 
 interface Notification {
   id: string;
-  type: 'success' | 'error' | 'warning' | 'info';
+  type: 'success' | 'warning' | 'error' | 'info';
   title: string;
   message: string;
-  duration?: number;
+  timestamp: Date;
+  read: boolean;
+  action?: {
+    label: string;
+    onClick: () => void;
+  };
 }
 
 interface NotificationContextType {
   notifications: Notification[];
-  addNotification: (notification: Omit<Notification, 'id'>) => void;
+  unreadCount: number;
+  addNotification: (notification: Omit<Notification, 'id' | 'timestamp' | 'read'>) => void;
+  markAsRead: (id: string) => void;
+  markAllAsRead: () => void;
   removeNotification: (id: string) => void;
   clearAll: () => void;
 }
@@ -32,89 +38,84 @@ interface NotificationProviderProps {
 }
 
 export const NotificationProvider: React.FC<NotificationProviderProps> = ({ children }) => {
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-
-  const addNotification = useCallback((notification: Omit<Notification, 'id'>) => {
-    const id = Math.random().toString(36).substr(2, 9);
-    const newNotification = { ...notification, id };
-    
-    setNotifications(prev => [...prev, newNotification]);
-
-    // Auto remove after duration
-    if (notification.duration !== 0) {
-      setTimeout(() => {
-        removeNotification(id);
-      }, notification.duration || 5000);
+  const [notifications, setNotifications] = useState<Notification[]>([
+    {
+      id: '1',
+      type: 'success',
+      title: '¡Logro Desbloqueado!',
+      message: 'Has completado 7 días consecutivos de entrenamiento',
+      timestamp: new Date(Date.now() - 1000 * 60 * 30), // 30 minutos atrás
+      read: false,
+      action: {
+        label: 'Ver logro',
+        onClick: () => console.log('Ver logro')
+      }
+    },
+    {
+      id: '2',
+      type: 'info',
+      title: 'Nueva Recomendación',
+      message: 'La IA tiene una nueva recomendación para tu entrenamiento',
+      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2), // 2 horas atrás
+      read: false,
+      action: {
+        label: 'Ver recomendación',
+        onClick: () => console.log('Ver recomendación')
+      }
+    },
+    {
+      id: '3',
+      type: 'warning',
+      title: 'Recordatorio de Entrenamiento',
+      message: 'Tienes un entrenamiento programado para hoy',
+      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 4), // 4 horas atrás
+      read: true
     }
-  }, []);
+  ]);
 
-  const removeNotification = useCallback((id: string) => {
-    setNotifications(prev => prev.filter(notification => notification.id !== id));
-  }, []);
+  const unreadCount = notifications.filter(n => !n.read).length;
 
-  const clearAll = useCallback(() => {
-    setNotifications([]);
-  }, []);
-
-  const getIcon = (type: Notification['type']) => {
-    switch (type) {
-      case 'success':
-        return <CheckCircle className="w-5 h-5 text-green-500" />;
-      case 'error':
-        return <AlertCircle className="w-5 h-5 text-red-500" />;
-      case 'warning':
-        return <AlertCircle className="w-5 h-5 text-yellow-500" />;
-      case 'info':
-        return <Info className="w-5 h-5 text-blue-500" />;
-    }
+  const addNotification = (notification: Omit<Notification, 'id' | 'timestamp' | 'read'>) => {
+    const newNotification: Notification = {
+      ...notification,
+      id: Date.now().toString(),
+      timestamp: new Date(),
+      read: false
+    };
+    setNotifications(prev => [newNotification, ...prev]);
   };
 
-  const getStyles = (type: Notification['type']) => {
-    switch (type) {
-      case 'success':
-        return 'bg-green-50 border-green-200 text-green-800 dark:bg-green-900/20 dark:border-green-700/30 dark:text-green-200';
-      case 'error':
-        return 'bg-red-50 border-red-200 text-red-800 dark:bg-red-900/20 dark:border-red-700/30 dark:text-red-200';
-      case 'warning':
-        return 'bg-yellow-50 border-yellow-200 text-yellow-800 dark:bg-yellow-900/20 dark:border-yellow-700/30 dark:text-yellow-200';
-      case 'info':
-        return 'bg-blue-50 border-blue-200 text-blue-800 dark:bg-blue-900/20 dark:border-blue-700/30 dark:text-blue-200';
-    }
+  const markAsRead = (id: string) => {
+    setNotifications(prev => prev.map(notification => 
+      notification.id === id ? { ...notification, read: true } : notification
+    ));
+  };
+
+  const markAllAsRead = () => {
+    setNotifications(prev => prev.map(notification => ({ ...notification, read: true })));
+  };
+
+  const removeNotification = (id: string) => {
+    setNotifications(prev => prev.filter(notification => notification.id !== id));
+  };
+
+  const clearAll = () => {
+    setNotifications([]);
+  };
+
+  const value: NotificationContextType = {
+    notifications,
+    unreadCount,
+    addNotification,
+    markAsRead,
+    markAllAsRead,
+    removeNotification,
+    clearAll
   };
 
   return (
-    <NotificationContext.Provider value={{ notifications, addNotification, removeNotification, clearAll }}>
+    <NotificationContext.Provider value={value}>
       {children}
-      
-      {/* Notification Container */}
-      <div className="fixed top-4 right-4 z-50 space-y-2">
-        <AnimatePresence>
-          {notifications.map((notification) => (
-            <motion.div
-              key={notification.id}
-              initial={{ opacity: 0, x: 300, scale: 0.8 }}
-              animate={{ opacity: 1, x: 0, scale: 1 }}
-              exit={{ opacity: 0, x: 300, scale: 0.8 }}
-              transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className={`max-w-sm w-full p-4 rounded-xl border shadow-lg backdrop-blur-sm ${getStyles(notification.type)}`}
-            >
-              <div className="flex items-start gap-3">
-                {getIcon(notification.type)}
-                <div className="flex-1">
-                  <h4 className="font-semibold text-sm">{notification.title}</h4>
-                  <p className="text-sm opacity-90 mt-1">{notification.message}</p>
-                </div>
-                <button
-                  onClick={() => removeNotification(notification.id)}
-                  className="p-1 hover:bg-black/10 rounded-lg transition-colors"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-            </motion.div>
-          ))}
-        </AnimatePresence>
-      </div>
     </NotificationContext.Provider>
   );
 }; 
