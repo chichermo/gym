@@ -3,7 +3,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 interface Exercise {
   id: string;
   name: string;
-  category: 'strength' | 'cardio' | 'flexibility' | 'bodyweight';
+  category: 'strength' | 'cardio' | 'flexibility' | 'bodyweight' | 'hiit';
   muscleGroups: string[];
   equipment: string[];
   difficulty: 'beginner' | 'intermediate' | 'advanced';

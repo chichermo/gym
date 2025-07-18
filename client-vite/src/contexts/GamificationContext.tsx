@@ -21,14 +21,25 @@ interface Level {
   rewards: string[];
 }
 
+interface UserProgress {
+  currentLevel: number;
+  xpToNextLevel: number;
+  totalXP: number;
+  achievementsUnlocked: number;
+  streakDays: number;
+}
+
 interface GamificationContextType {
   achievements: Achievement[];
   level: Level;
   totalXP: number;
   streak: number;
+  userProgress: UserProgress;
   unlockAchievement: (id: string) => void;
   addXP: (amount: number) => void;
   getProgress: () => number;
+  getProgressToNextLevel: () => number;
+  getLevelInfo: () => { level: number; title: string; xpRequired: number };
 }
 
 const GamificationContext = createContext<GamificationContextType | undefined>(undefined);
@@ -116,6 +127,14 @@ export const GamificationProvider: React.FC<GamificationProviderProps> = ({ chil
   const [totalXP, setTotalXP] = useState(2750);
   const [streak, setStreak] = useState(7);
 
+  const userProgress: UserProgress = {
+    currentLevel: level.level,
+    xpToNextLevel: level.xpRequired - level.xpCurrent,
+    totalXP: totalXP,
+    achievementsUnlocked: achievements.filter(a => a.unlocked).length,
+    streakDays: streak
+  };
+
   const unlockAchievement = (id: string) => {
     setAchievements(prev => prev.map(achievement => {
       if (achievement.id === id && !achievement.unlocked) {
@@ -156,14 +175,29 @@ export const GamificationProvider: React.FC<GamificationProviderProps> = ({ chil
     return (level.xpCurrent / level.xpRequired) * 100;
   };
 
+  const getProgressToNextLevel = () => {
+    return (level.xpCurrent / level.xpRequired) * 100;
+  };
+
+  const getLevelInfo = () => {
+    return {
+      level: level.level,
+      title: level.title,
+      xpRequired: level.xpRequired
+    };
+  };
+
   const value: GamificationContextType = {
     achievements,
     level,
     totalXP,
     streak,
+    userProgress,
     unlockAchievement,
     addXP,
-    getProgress
+    getProgress,
+    getProgressToNextLevel,
+    getLevelInfo
   };
 
   return (

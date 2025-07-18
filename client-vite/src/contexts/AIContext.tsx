@@ -8,17 +8,21 @@ interface AIRecommendation {
   confidence: number;
   priority: 'high' | 'medium' | 'low';
   action?: string;
+  timestamp?: Date;
+  actionUrl?: string;
 }
 
 interface AIContextType {
   recommendations: AIRecommendation[];
   isLoading: boolean;
+  analysis: any;
   generateRecommendations: () => Promise<void>;
   acceptRecommendation: (id: string) => void;
   dismissRecommendation: (id: string) => void;
+  getMotivationalMessage: () => string;
 }
 
-const AIContext = createContext<AIContextType | undefined>(undefined);
+export const AIContext = createContext<AIContextType | undefined>(undefined);
 
 export const useAI = () => {
   const context = useContext(AIContext);
@@ -41,7 +45,9 @@ export const AIProvider: React.FC<AIProviderProps> = ({ children }) => {
       description: 'Basado en tu progreso, considera aumentar la intensidad de tus sesiones de cardio para quemar más calorías.',
       confidence: 0.85,
       priority: 'high',
-      action: 'Ver rutina sugerida'
+      action: 'Ver rutina sugerida',
+      timestamp: new Date(),
+      actionUrl: '/workouts'
     },
     {
       id: 'rec_2',
@@ -50,7 +56,9 @@ export const AIProvider: React.FC<AIProviderProps> = ({ children }) => {
       description: 'Para optimizar tu recuperación muscular, considera aumentar tu ingesta de proteínas en 20g diarios.',
       confidence: 0.78,
       priority: 'medium',
-      action: 'Ver plan nutricional'
+      action: 'Ver plan nutricional',
+      timestamp: new Date(),
+      actionUrl: '/nutrition'
     },
     {
       id: 'rec_3',
@@ -59,7 +67,9 @@ export const AIProvider: React.FC<AIProviderProps> = ({ children }) => {
       description: 'Tu cuerpo necesita recuperación. Te sugiero un día de descanso activo con estiramientos suaves.',
       confidence: 0.92,
       priority: 'high',
-      action: 'Ver rutina de recuperación'
+      action: 'Ver rutina de recuperación',
+      timestamp: new Date(),
+      actionUrl: '/workouts'
     },
     {
       id: 'rec_4',
@@ -67,11 +77,28 @@ export const AIProvider: React.FC<AIProviderProps> = ({ children }) => {
       title: 'Ajustar meta de peso',
       description: 'Basado en tu progreso actual, tu meta de pérdida de peso es realista y alcanzable.',
       confidence: 0.95,
-      priority: 'low'
+      priority: 'low',
+      timestamp: new Date()
     }
   ]);
 
   const [isLoading, setIsLoading] = useState(false);
+
+  const analysis = {
+    performance: 'excellent',
+    trends: ['strength_increasing', 'cardio_improving'],
+    insights: ['Consistencia excelente', 'Progreso constante']
+  };
+
+  const getMotivationalMessage = () => {
+    const messages = [
+      "¡Cada entrenamiento te acerca más a tus metas! 💪",
+      "Tu consistencia es inspiradora, ¡sigue así! 🔥",
+      "Hoy es otro día para ser más fuerte que ayer! ⚡",
+      "Tu futuro yo te agradecerá por este esfuerzo! 🎯"
+    ];
+    return messages[Math.floor(Math.random() * messages.length)];
+  };
 
   const generateRecommendations = async () => {
     setIsLoading(true);
@@ -87,7 +114,9 @@ export const AIProvider: React.FC<AIProviderProps> = ({ children }) => {
           description: 'Para evitar el estancamiento, considera variar tu rutina de fuerza con nuevos ejercicios.',
           confidence: 0.82,
           priority: 'medium',
-          action: 'Ver ejercicios sugeridos'
+          action: 'Ver ejercicios sugeridos',
+          timestamp: new Date(),
+          actionUrl: '/workouts'
         }
       ];
       
@@ -113,9 +142,11 @@ export const AIProvider: React.FC<AIProviderProps> = ({ children }) => {
   const value: AIContextType = {
     recommendations,
     isLoading,
+    analysis,
     generateRecommendations,
     acceptRecommendation,
-    dismissRecommendation
+    dismissRecommendation,
+    getMotivationalMessage
   };
 
   return (
