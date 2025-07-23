@@ -3,16 +3,6 @@
   "outputDirectory": "client-vite/dist",
   "installCommand": "npm run install-all",
   "framework": "vite",
-  "routes": [
-    {
-      "src": "/assets/(.*)",
-      "dest": "/assets/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
-    }
-  ],
   "rewrites": [
     {
       "source": "/(.*)",
