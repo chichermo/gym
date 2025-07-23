@@ -2,5 +2,21 @@
   "buildCommand": "cd client-vite && npm run build",
   "outputDirectory": "client-vite/dist",
   "installCommand": "npm run install-all",
-  "framework": "vite"
+  "framework": "vite",
+  "routes": [
+    {
+      "src": "/assets/(.*)",
+      "dest": "/assets/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
 } 
