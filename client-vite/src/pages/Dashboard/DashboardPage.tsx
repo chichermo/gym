@@ -3,6 +3,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useGamification } from '../../contexts/GamificationContext';
 import { useAnalytics } from '../../contexts/AnalyticsContext';
 import { useAI } from '../../contexts/AIContext';
+import { useExperience } from '../../contexts/ExperienceContext';
 import { 
   TrendingUp, 
   Target, 
@@ -20,7 +21,8 @@ import {
   Play,
   Clock,
   CheckCircle,
-  ArrowUp
+  ArrowUp,
+  Plus
 } from 'lucide-react';
 
 const DashboardPage: React.FC = () => {
@@ -28,6 +30,7 @@ const DashboardPage: React.FC = () => {
   const { level, totalXP, achievements } = useGamification();
   const { metrics } = useAnalytics();
   const { recommendations } = useAI();
+  const { userLevel, getRecentActivities } = useExperience();
 
   // Datos mock para las propiedades faltantes
   const recentActivity = [
@@ -58,7 +61,8 @@ const DashboardPage: React.FC = () => {
     improvement: 15
   };
 
-  const progressToNextLevel = ((totalXP % 1000) / 1000) * 100;
+  // Usar el sistema de XP real
+  const progressToNextLevel = userLevel.progress;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
@@ -93,18 +97,18 @@ const DashboardPage: React.FC = () => {
             </div>
             <div>
               <p className="text-sm font-medium text-gray-600">Nivel Actual</p>
-              <p className="text-2xl font-bold text-gray-900">{level.level}</p>
+              <p className="text-2xl font-bold text-gray-900">{userLevel.level}</p>
             </div>
           </div>
           <div className="mt-4">
             <div className="flex items-center justify-between text-sm mb-2">
               <span className="text-gray-500">Progreso al siguiente nivel</span>
-              <span className="font-medium text-blue-600">{Math.round(progressToNextLevel)}%</span>
+              <span className="font-medium text-blue-600">{userLevel.progress}%</span>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-2">
               <div
                 className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all duration-300"
-                style={{ width: `${progressToNextLevel}%` }}
+                style={{ width: `${userLevel.progress}%` }}
               />
             </div>
           </div>
@@ -117,7 +121,7 @@ const DashboardPage: React.FC = () => {
             </div>
             <div>
               <p className="text-sm font-medium text-gray-600">XP Total</p>
-              <p className="text-2xl font-bold text-gray-900">{totalXP.toLocaleString()}</p>
+              <p className="text-2xl font-bold text-gray-900">{userLevel.totalXP.toLocaleString()}</p>
             </div>
           </div>
           <div className="mt-4 flex items-center gap-2">
@@ -172,8 +176,8 @@ const DashboardPage: React.FC = () => {
               <button className="flex items-center gap-4 p-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl hover:from-blue-600 hover:to-blue-700 transition-all duration-300 transform hover:scale-105">
                 <Play className="w-6 h-6" />
                 <div className="text-left">
-                  <div className="font-semibold">Iniciar Entrenamiento</div>
-                  <div className="text-sm opacity-90">Comienza tu rutina diaria</div>
+                  <div className="font-semibold">Vamos a entrenar</div>
+                  <div className="text-sm opacity-90">Crea una rutina rápida de ejercicios</div>
                 </div>
               </button>
               
