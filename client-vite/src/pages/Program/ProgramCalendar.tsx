@@ -235,7 +235,6 @@ const ProgramCalendar: React.FC<ProgramCalendarProps> = ({ onDayClick, onActivit
                       </div>
                       <div className="text-left">
                         <div className="font-semibold text-gray-900">{activityType.name}</div>
-                        <div className="text-sm text-gray-600">{activityType.description}</div>
                       </div>
                     </div>
                   </button>
