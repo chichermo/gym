@@ -348,7 +348,7 @@ const HabitsForm: React.FC<HabitsFormProps> = ({ onComplete, onBack }) => {
     setFormData(prev => ({
       ...prev,
       [currentSectionData.id]: {
-        ...prev[currentSectionData.id as keyof HabitsData],
+        ...(prev[currentSectionData.id as keyof HabitsData] as Record<string, any>),
         [questionId]: value
       }
     }));

@@ -1,19 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { OrbitControls, Text, Box, Sphere, Cylinder } from '@react-three/drei';
-import { Vector3 } from 'three';
-import { 
-  Play, 
-  Pause, 
-  RotateCcw, 
-  Camera, 
-  Target, 
-  Zap,
-  ArrowRight,
-  ArrowLeft,
-  CheckCircle,
-  AlertCircle
-} from 'lucide-react';
+import { Box, Sphere, Text } from '@react-three/drei';
+import { ArrowRight, ArrowLeft, Play, Pause, RotateCcw, SkipForward, SkipBack } from 'lucide-react';
+import * as THREE from 'three';
 
 interface ExerciseStep {
   id: string;
@@ -63,12 +52,12 @@ const ExerciseModel: React.FC<{ step: ExerciseStep; isActive: boolean }> = ({ st
       {/* Indicadores de movimiento */}
       {isActive && (
         <>
-          <ArrowRight position={[step.scale[0] + 0.5, 0, 0]} scale={0.3}>
-            <meshStandardMaterial color="#00ff00" />
-          </ArrowRight>
-          <ArrowLeft position={[-step.scale[0] - 0.5, 0, 0]} scale={0.3}>
-            <meshStandardMaterial color="#00ff00" />
-          </ArrowLeft>
+          <group position={[step.scale[0] + 0.5, 0, 0]} scale={0.3}>
+            <ArrowRight />
+          </group>
+          <group position={[-step.scale[0] - 0.5, 0, 0]} scale={0.3}>
+            <ArrowLeft />
+          </group>
         </>
       )}
     </group>
@@ -257,7 +246,7 @@ export const ARWorkoutGuide: React.FC<ARWorkoutGuideProps> = ({
       <div className="absolute top-0 left-0 right-0 z-10 bg-gradient-to-r from-blue-600 to-purple-600 p-4">
         <div className="flex items-center justify-between text-white">
           <div className="flex items-center gap-3">
-            <Camera className="w-6 h-6" />
+            <Play className="w-6 h-6" />
             <h1 className="text-xl font-bold">Guía AR: {exerciseName}</h1>
           </div>
           <button
@@ -273,7 +262,7 @@ export const ARWorkoutGuide: React.FC<ARWorkoutGuideProps> = ({
       <div className="w-full h-full">
         <Canvas camera={{ position: [0, 2, 5], fov: 75 }}>
           <ARScene currentStep={currentStep} isActive={isPlaying} />
-          <OrbitControls enablePan={false} enableZoom={true} />
+          {/* OrbitControls enablePan={false} enableZoom={true} /> */}
         </Canvas>
       </div>
 
@@ -303,7 +292,7 @@ export const ARWorkoutGuide: React.FC<ARWorkoutGuideProps> = ({
             <div className="space-y-1">
               {currentStep.instructions.map((instruction, index) => (
                 <div key={index} className="flex items-center gap-2 text-sm text-gray-300">
-                  <CheckCircle className="w-4 h-4 text-green-400" />
+                  {/* <CheckCircle className="w-4 h-4 text-green-400" /> */}
                   {instruction}
                 </div>
               ))}
@@ -317,7 +306,7 @@ export const ARWorkoutGuide: React.FC<ARWorkoutGuideProps> = ({
               disabled={currentStepIndex === 0}
               className="p-3 bg-white bg-opacity-20 hover:bg-opacity-30 disabled:opacity-50 rounded-full transition-colors"
             >
-              <ArrowLeft className="w-5 h-5 text-white" />
+              <SkipBack className="w-5 h-5 text-white" />
             </button>
 
             <button
@@ -336,7 +325,7 @@ export const ARWorkoutGuide: React.FC<ARWorkoutGuideProps> = ({
               disabled={currentStepIndex === exerciseSteps.length - 1}
               className="p-3 bg-white bg-opacity-20 hover:bg-opacity-30 disabled:opacity-50 rounded-full transition-colors"
             >
-              <ArrowRight className="w-5 h-5 text-white" />
+              <SkipForward className="w-5 h-5 text-white" />
             </button>
 
             <button
@@ -351,7 +340,7 @@ export const ARWorkoutGuide: React.FC<ARWorkoutGuideProps> = ({
           {isARSupported && (
             <div className="mt-4 text-center">
               <div className="inline-flex items-center gap-2 bg-green-500 bg-opacity-20 text-green-400 px-3 py-1 rounded-full text-sm">
-                <Target className="w-4 h-4" />
+                {/* <Target className="w-4 h-4" /> */}
                 AR Disponible
               </div>
             </div>
@@ -364,7 +353,7 @@ export const ARWorkoutGuide: React.FC<ARWorkoutGuideProps> = ({
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="bg-white bg-opacity-95 backdrop-blur-sm rounded-2xl p-8 max-w-md mx-4">
             <div className="text-center">
-              <Zap className="w-12 h-12 text-blue-600 mx-auto mb-4" />
+              {/* <Zap className="w-12 h-12 text-blue-600 mx-auto mb-4" /> */}
               <h2 className="text-2xl font-bold text-gray-900 mb-2">
                 Guía AR de Entrenamiento
               </h2>

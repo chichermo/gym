@@ -2,17 +2,14 @@ import React, { useState } from 'react';
 import { 
   Calendar, 
   Plus, 
-  Dumbbell, 
-  Heart, 
-  Users, 
+  X, 
+  Check, 
+  Clock, 
   Target, 
+  Users, 
   Activity, 
-  Stretch,
-  X,
-  Check,
-  Play,
-  Edit,
-  Trash
+  Heart, 
+  ArrowLeft 
 } from 'lucide-react';
 
 interface ProgramActivity {
@@ -78,48 +75,12 @@ const ProgramCalendar: React.FC<ProgramCalendarProps> = ({ onDayClick, onActivit
   const calendarDays = generateCalendarDays(currentDate);
 
   const activityTypes = [
-    {
-      type: 'workout',
-      name: 'Workout',
-      description: 'Entrenamiento de fuerza',
-      icon: Dumbbell,
-      color: 'from-blue-500 to-blue-600'
-    },
-    {
-      type: 'cardio',
-      name: 'Cardiovascular',
-      description: 'Entrenamiento de resistencia',
-      icon: Heart,
-      color: 'from-red-500 to-red-600'
-    },
-    {
-      type: 'class',
-      name: 'Clases dirigidas',
-      description: 'Clases grupales',
-      icon: Users,
-      color: 'from-purple-500 to-purple-600'
-    },
-    {
-      type: 'sport',
-      name: 'Deporte',
-      description: 'Actividad deportiva',
-      icon: Target,
-      color: 'from-green-500 to-green-600'
-    },
-    {
-      type: 'activity',
-      name: 'Actividad física',
-      description: 'Actividad general',
-      icon: Activity,
-      color: 'from-orange-500 to-orange-600'
-    },
-    {
-      type: 'stretching',
-      name: 'Stretching y movilidad',
-      description: 'Flexibilidad y movilidad',
-      icon: Stretch,
-      color: 'from-teal-500 to-teal-600'
-    }
+    { id: 'workout', name: 'Workout', icon: Target, color: 'bg-blue-500' },
+    { id: 'cardio', name: 'Cardiovascular', icon: Heart, color: 'bg-red-500' },
+    { id: 'class', name: 'Clases', icon: Users, color: 'bg-purple-500' },
+    { id: 'sport', name: 'Deporte', icon: Target, color: 'bg-green-500' },
+    { id: 'activity', name: 'Actividad Física', icon: Activity, color: 'bg-orange-500' },
+    { id: 'stretching', name: 'Stretching y movilidad', icon: Activity, color: 'bg-teal-500' }
   ];
 
   const handleDayClick = (date: string) => {
@@ -258,7 +219,7 @@ const ProgramCalendar: React.FC<ProgramCalendarProps> = ({ onDayClick, onActivit
                 const Icon = activityType.icon;
                 return (
                   <button
-                    key={activityType.type}
+                    key={activityType.id}
                     onClick={() => {
                       setShowActivityModal(false);
                       // Aquí se abriría el modal específico para cada tipo

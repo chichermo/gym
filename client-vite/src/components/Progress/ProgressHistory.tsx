@@ -10,7 +10,6 @@ import {
   Users,
   Activity,
   Heart,
-  Stretch,
   ArrowRight,
   ArrowLeft,
   Play,
@@ -113,7 +112,7 @@ const ProgressHistory: React.FC<ProgressHistoryProps> = ({ onBack }) => {
       case 'class': return Users;
       case 'sport': return Target;
       case 'activity': return Activity;
-      case 'stretching': return Stretch;
+      case 'stretching': return Activity;
       default: return Activity;
     }
   };

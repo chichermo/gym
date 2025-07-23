@@ -4,7 +4,6 @@ import {
   Users, 
   Target, 
   Activity, 
-  Stretch,
   Flame,
   ArrowLeft
 } from 'lucide-react';
@@ -178,7 +177,7 @@ const ActivitySelector: React.FC<ActivitySelectorProps> = ({ onActivitySelected,
       id: 'mobility',
       name: 'Movilidad y Estiramiento',
       description: 'Aumentan el flujo sanguíneo y el oxígeno a los músculos, optimizando el transporte de nutrientes y la eliminación de residuos metabólicos. Ayudando al cuerpo a recuperarse más rápido y mantener activo el metabolismo.',
-      icon: Stretch,
+      icon: Activity,
       color: 'from-teal-500 to-teal-600',
       type: 'stretching'
     }
@@ -462,13 +461,13 @@ const ActivitySelector: React.FC<ActivitySelectorProps> = ({ onActivitySelected,
           {/* Estiramiento y Movilidad */}
           <div>
             <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-              <Stretch className="w-5 h-5 text-teal-600" />
+              <Activity className="w-5 h-5 text-teal-600" />
               Estiramiento y Movilidad
             </h2>
             <div className="bg-gradient-to-r from-teal-50 to-blue-50 border border-teal-200 rounded-xl p-6">
               <div className="text-center">
                 <div className="w-16 h-16 bg-gradient-to-r from-teal-500 to-teal-600 rounded-lg flex items-center justify-center mx-auto mb-4">
-                  <Stretch className="w-8 h-8 text-white" />
+                  <Activity className="w-8 h-8 text-white" />
                 </div>
                 <h3 className="font-semibold text-gray-900 mb-3">Movilidad y Estiramiento</h3>
                 <p className="text-gray-600 mb-4 max-w-2xl mx-auto">
