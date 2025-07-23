@@ -26,6 +26,7 @@ import CommunityPage from './pages/Community/CommunityPage';
 import GamificationPage from './pages/Gamification/GamificationPage';
 import CalendarPage from './pages/Calendar/CalendarPage';
 import PlanPage from './pages/Plan/PlanPage';
+import ProgramPage from './pages/Program/ProgramPage';
 import ARPage from './pages/AR/ARPage';
 import LoginPage from './pages/Auth/LoginPage';
 import RegisterPage from './pages/Auth/RegisterPage';
@@ -75,6 +76,7 @@ function App() {
                                         <Route path="/" element={<DashboardPage />} />
                                         <Route path="/dashboard" element={<DashboardPage />} />
                                         <Route path="/workouts" element={<WorkoutsPage />} />
+                                        <Route path="/program" element={<ProgramPage />} />
                                         <Route path="/progress" element={<ProgressPage />} />
                                         <Route path="/profile" element={<ProfilePage />} />
                                         <Route path="/trophies" element={<TrophiesPage />} />

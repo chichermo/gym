@@ -27,7 +27,7 @@ const NavBar: React.FC = () => {
 
   const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: Home, color: 'text-blue-600' },
-    { name: 'Entrenamientos', href: '/workouts', icon: Dumbbell, color: 'text-purple-600' },
+    { name: 'Mi Programa', href: '/program', icon: Dumbbell, color: 'text-purple-600' },
     { name: 'Progreso', href: '/progress', icon: TrendingUp, color: 'text-green-600' },
     { name: 'Perfil', href: '/profile', icon: User, color: 'text-orange-600' },
     { name: 'Trofeos', href: '/trophies', icon: Trophy, color: 'text-yellow-600' },
