@@ -1,4 +1,4 @@
-const CACHE_NAME = 'fitnesspro-v3';
+const CACHE_NAME = 'fitnesspro-v4';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -48,17 +48,42 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Interceptar requests
-self.addEventListener('fetch', (event) => {
-  // Solo manejar requests GET del mismo origen
-  if (event.request.method !== 'GET' || 
-      !event.request.url.startsWith(self.location.origin)) {
-    return;
+// Función para verificar si un request es válido para cachear
+function isValidRequest(request) {
+  // Solo requests GET
+  if (request.method !== 'GET') {
+    return false;
+  }
+
+  // Solo requests del mismo origen
+  if (!request.url.startsWith(self.location.origin)) {
+    return false;
   }
 
   // No cachear requests de desarrollo
-  if (event.request.url.includes('localhost') || 
-      event.request.url.includes('127.0.0.1')) {
+  if (request.url.includes('localhost') || request.url.includes('127.0.0.1')) {
+    return false;
+  }
+
+  // No cachear requests con esquemas problemáticos
+  const url = new URL(request.url);
+  if (url.protocol !== 'https:' && url.protocol !== 'http:') {
+    return false;
+  }
+
+  // Solo cachear ciertos tipos de recursos
+  const validDestinations = ['document', 'script', 'style', 'image', 'font'];
+  if (!validDestinations.includes(request.destination)) {
+    return false;
+  }
+
+  return true;
+}
+
+// Interceptar requests
+self.addEventListener('fetch', (event) => {
+  // Solo procesar requests válidos
+  if (!isValidRequest(event.request)) {
     return;
   }
 
@@ -73,10 +98,11 @@ self.addEventListener('fetch', (event) => {
         // Si no está en cache, hacer request a la red
         return fetch(event.request)
           .then((response) => {
-            // Solo cachear respuestas exitosas del mismo origen
-            if (response && response.status === 200 && 
+            // Solo cachear respuestas exitosas y válidas
+            if (response && 
+                response.status === 200 && 
                 response.type === 'basic' && 
-                event.request.url.startsWith(self.location.origin)) {
+                isValidRequest(event.request)) {
               
               const responseToCache = response.clone();
               
