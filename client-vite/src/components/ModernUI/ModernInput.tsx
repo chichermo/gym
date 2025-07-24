@@ -1,4 +1,5 @@
 import React, { forwardRef } from 'react';
+import { LucideIcon } from 'lucide-react';
 
 interface ModernInputProps {
   label?: string;
@@ -6,11 +7,11 @@ interface ModernInputProps {
   type?: string;
   value?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  icon?: LucideIcon;
+  iconPosition?: 'left' | 'right';
   error?: string;
-  helper?: string;
   disabled?: boolean;
   required?: boolean;
-  icon?: React.ReactNode;
   className?: string;
   name?: string;
   id?: string;
@@ -22,63 +23,61 @@ const ModernInput = forwardRef<HTMLInputElement, ModernInputProps>(({
   type = 'text',
   value,
   onChange,
+  icon: Icon,
+  iconPosition = 'left',
   error,
-  helper,
   disabled = false,
   required = false,
-  icon,
   className = '',
   name,
   id
 }, ref) => {
-  const inputClasses = `
-    input-modern
-    w-full
-    ${error ? 'border-danger-500 focus:border-danger-500 focus:ring-danger-500/20' : 'border-gray-300 focus:border-primary-500 focus:ring-primary-500/20'}
-    ${disabled ? 'bg-gray-100 cursor-not-allowed' : ''}
-    ${icon ? 'pl-10' : ''}
-    ${className}
-  `;
+  const baseClasses = 'input-glass w-full transition-all duration-300';
+  const errorClasses = error ? 'border-red-500/50 focus:border-red-500' : '';
+  const disabledClasses = disabled ? 'opacity-50 cursor-not-allowed' : '';
+  
+  const inputClasses = `${baseClasses} ${errorClasses} ${disabledClasses} ${className}`;
 
   return (
     <div className="space-y-2">
       {label && (
-        <label htmlFor={id} className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+        <label className="block text-sm font-medium text-white">
           {label}
-          {required && <span className="text-danger-500 ml-1">*</span>}
+          {required && <span className="text-red-400 ml-1">*</span>}
         </label>
       )}
       
       <div className="relative">
-        {icon && (
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <span className="text-gray-400">{icon}</span>
+        {Icon && iconPosition === 'left' && (
+          <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+            <Icon className="w-5 h-5" />
           </div>
         )}
         
         <input
           ref={ref}
           type={type}
-          id={id}
-          name={name}
           value={value}
           onChange={onChange}
           placeholder={placeholder}
           disabled={disabled}
           required={required}
-          className={inputClasses}
+          name={name}
+          id={id}
+          className={`${inputClasses} ${Icon && iconPosition === 'left' ? 'pl-10' : ''} ${Icon && iconPosition === 'right' ? 'pr-10' : ''}`}
         />
+        
+        {Icon && iconPosition === 'right' && (
+          <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+            <Icon className="w-5 h-5" />
+          </div>
+        )}
       </div>
       
       {error && (
-        <p className="text-sm text-danger-600 dark:text-danger-400 animate-fade-in">
+        <p className="text-sm text-red-400 flex items-center gap-1">
+          <span className="w-1 h-1 bg-red-400 rounded-full"></span>
           {error}
-        </p>
-      )}
-      
-      {helper && !error && (
-        <p className="text-sm text-gray-500 dark:text-gray-400">
-          {helper}
         </p>
       )}
     </div>
