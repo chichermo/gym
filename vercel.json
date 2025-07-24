@@ -2,5 +2,16 @@
   "buildCommand": "cd client-vite && npm run build",
   "outputDirectory": "client-vite/dist",
   "installCommand": "npm run install-all",
-  "framework": "vite"
+  "framework": "vite",
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
+        }
+      ]
+    }
+  ]
 } 
