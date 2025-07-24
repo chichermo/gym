@@ -5,7 +5,7 @@ import { Play, ArrowRight } from 'lucide-react';
 const LandingGallery: React.FC = () => {
   const galleryItems = [
     {
-      image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+      image: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
       title: "Culturismo",
       category: "Musculación",
       link: "/entrenamiento-programa"
@@ -23,7 +23,7 @@ const LandingGallery: React.FC = () => {
       link: "/entrenamiento-programa"
     },
     {
-      image: "https://images.unsplash.com/photo-1594736797933-d0401ba2fe65?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+      image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
       title: "CrossFit",
       category: "Funcional",
       link: "/entrenamiento-programa"
@@ -65,11 +65,11 @@ const LandingGallery: React.FC = () => {
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                 />
                 
-                {/* Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                {/* Overlay siempre visible */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
                 
-                {/* Contenido del overlay */}
-                <div className="absolute inset-0 flex flex-col justify-end p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                {/* Contenido siempre visible */}
+                <div className="absolute inset-0 flex flex-col justify-end p-6">
                   <div className="mb-4">
                     <span className="inline-block px-3 py-1 bg-red-500/80 backdrop-blur-sm rounded-full text-white text-sm font-medium mb-2">
                       {item.category}

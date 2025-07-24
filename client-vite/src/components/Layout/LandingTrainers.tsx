@@ -6,7 +6,7 @@ const LandingTrainers: React.FC = () => {
     {
       name: "Coach Cesar Lugo",
       specialty: "Entrenamiento Funcional",
-      image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+      image: "/cesar.png",
       description: "Especialista en transformación corporal con más de 10 años de experiencia. Creador de programas personalizados que han ayudado a miles de personas a alcanzar sus objetivos.",
       rating: 4.9,
       clients: 2500,
