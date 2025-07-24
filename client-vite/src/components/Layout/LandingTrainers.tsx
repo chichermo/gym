@@ -32,7 +32,7 @@ const LandingTrainers: React.FC = () => {
     {
       name: "Carlos Rodríguez",
       specialty: "Culturismo y Fuerza",
-      image: "https://images.unsplash.com/photo-1594736797933-d0401ba2fe65?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
       description: "Entrenador de fuerza y culturismo con experiencia en competencias nacionales. Especializado en desarrollo muscular y nutrición deportiva.",
       rating: 4.9,
       clients: 3200,
