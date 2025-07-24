@@ -1,366 +1,249 @@
 import React, { useState } from 'react';
-import { useTrophies } from '../../contexts/TrophiesContext';
-import { 
-  Trophy, 
-  Lock, 
-  Unlock, 
-  TrendingUp,
-  Target,
-  Award,
-  Star,
-  Calendar,
-  Activity,
-  Zap,
-  Dumbbell,
-  Heart,
-  Ruler,
-  Weight,
-  Clock,
-  Sparkles,
-  Crown,
-  Medal
-} from 'lucide-react';
+import { Trophy, Unlock, Star, TrendingUp, Filter, Search } from 'lucide-react';
+import { ModernCard, ModernButton, ModernBadge } from '../../components/ModernUI';
+
+const mockStats = {
+  total: 24,
+  unlocked: 18,
+  totalPoints: 3200,
+  progress: 75
+};
+
+const mockTrophies = [
+  { id: 1, name: 'Primer Entrenamiento', points: 100, unlocked: true, date: '2024-01-10', level: 'Bronce', category: 'Progreso' },
+  { id: 2, name: 'Meta Semanal', points: 200, unlocked: true, date: '2024-01-17', level: 'Plata', category: 'Consistencia' },
+  { id: 3, name: 'Desafío Mensual', points: 500, unlocked: false, date: null, level: 'Oro', category: 'Desafío' },
+  { id: 4, name: 'Superación Personal', points: 300, unlocked: true, date: '2024-02-01', level: 'Plata', category: 'Progreso' },
+  { id: 5, name: 'Constancia', points: 400, unlocked: true, date: '2024-02-15', level: 'Oro', category: 'Consistencia' },
+  { id: 6, name: 'Reto Especial', points: 800, unlocked: false, date: null, level: 'Platino', category: 'Desafío' }
+];
+
+const mockRecentUnlocks = [
+  { id: 2, name: 'Meta Semanal', date: '2024-01-17', points: 200 },
+  { id: 4, name: 'Superación Personal', date: '2024-02-01', points: 300 },
+  { id: 5, name: 'Constancia', date: '2024-02-15', points: 400 }
+];
+
+const mockProgressToNextTrophy = 60;
 
 const TrophiesPage: React.FC = () => {
-  const { 
-    trophies, 
-    unlockedTrophies, 
-    lockedTrophies, 
-    totalTrophies, 
-    unlockedCount,
-    totalCoins,
-    getTrophiesByCategory,
-    getTrophyProgress
-  } = useTrophies();
-  
-  const [activeCategory, setActiveCategory] = useState<string>('all');
-  const [showUnlockedOnly, setShowUnlockedOnly] = useState(false);
+  const [activeTab, setActiveTab] = useState('all');
+  const [filterCategory, setFilterCategory] = useState('all');
+  const [filterLevel, setFilterLevel] = useState('all');
+  const [sortBy, setSortBy] = useState('date');
 
-  const categories = [
-    { id: 'all', name: 'Todos', icon: Trophy, color: 'text-gray-600', bgColor: 'bg-gradient-to-r from-gray-500 to-gray-600' },
-    { id: 'consistency', name: 'Constancia', icon: Calendar, color: 'text-blue-600', bgColor: 'bg-gradient-to-r from-blue-500 to-blue-600' },
-    { id: 'composition', name: 'Composición', icon: Ruler, color: 'text-green-600', bgColor: 'bg-gradient-to-r from-green-500 to-green-600' },
-    { id: 'technique', name: 'Técnica', icon: Zap, color: 'text-yellow-600', bgColor: 'bg-gradient-to-r from-yellow-500 to-yellow-600' },
-    { id: 'lifting', name: 'Levantamientos', icon: Dumbbell, color: 'text-purple-600', bgColor: 'bg-gradient-to-r from-purple-500 to-purple-600' }
-  ];
+  // Filtros y ordenamiento mock
+  const filteredTrophies = mockTrophies.filter(trophy => {
+    let categoryMatch = filterCategory === 'all' || trophy.category === filterCategory;
+    let levelMatch = filterLevel === 'all' || trophy.level === filterLevel;
+    return categoryMatch && levelMatch;
+  });
 
-  const getCategoryIcon = (category: string) => {
-    const categoryData = categories.find(c => c.id === category);
-    if (categoryData) {
-      const Icon = categoryData.icon;
-      return <Icon className="w-5 h-5" />;
+  const sortedTrophies = [...filteredTrophies].sort((a, b) => {
+    if (sortBy === 'date') {
+      if (!a.date) return 1;
+      if (!b.date) return -1;
+      return new Date(b.date).getTime() - new Date(a.date).getTime();
     }
-    return null;
-  };
-
-  const getTrophyIcon = (trophy: any) => {
-    const iconMap: { [key: string]: string } = {
-      '🔥': 'fire',
-      '📅': 'calendar',
-      '❤️': 'heart',
-      '📏': 'ruler',
-      '💪': 'dumbbell',
-      '⚖️': 'scale',
-      '⏸️': 'pause',
-      '📈': 'trending-up',
-      '⚡': 'zap',
-      '🏋️': 'dumbbell',
-      '🏆': 'trophy'
-    };
-
-    const iconName = iconMap[trophy.icon] || 'trophy';
-    const IconMap: { [key: string]: any } = {
-      fire: TrendingUp,
-      calendar: Calendar,
-      heart: Heart,
-      ruler: Ruler,
-      dumbbell: Dumbbell,
-      scale: Weight,
-      pause: Clock,
-      'trending-up': TrendingUp,
-      zap: Zap,
-      trophy: Trophy
-    };
-
-    const Icon = IconMap[iconName] || Trophy;
-    return <Icon className="w-6 h-6" />;
-  };
-
-  const getFilteredTrophies = () => {
-    let filtered = trophies;
-    
-    if (activeCategory !== 'all') {
-      filtered = filtered.filter(t => t.category === activeCategory);
+    if (sortBy === 'level') {
+      const levels = ['Bronce', 'Plata', 'Oro', 'Platino'];
+      return levels.indexOf(b.level) - levels.indexOf(a.level);
     }
-    
-    if (showUnlockedOnly) {
-      filtered = filtered.filter(t => t.unlocked);
+    if (sortBy === 'points') {
+      return b.points - a.points;
     }
-    
-    return filtered;
-  };
-
-  const getProgressColor = (progress: number) => {
-    if (progress >= 80) return 'text-green-600';
-    if (progress >= 60) return 'text-yellow-600';
-    if (progress >= 40) return 'text-orange-600';
-    return 'text-red-600';
-  };
-
-  const getTrophyColor = (color: string) => {
-    const colorMap: { [key: string]: string } = {
-      gold: 'bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600',
-      silver: 'bg-gradient-to-r from-gray-300 via-gray-400 to-gray-500',
-      bronze: 'bg-gradient-to-r from-orange-400 via-orange-500 to-orange-600',
-      blue: 'bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600',
-      green: 'bg-gradient-to-r from-green-400 via-green-500 to-green-600',
-      purple: 'bg-gradient-to-r from-purple-400 via-purple-500 to-purple-600',
-      red: 'bg-gradient-to-r from-red-400 via-red-500 to-red-600',
-      orange: 'bg-gradient-to-r from-orange-400 via-orange-500 to-orange-600',
-      yellow: 'bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600',
-      brown: 'bg-gradient-to-r from-yellow-600 via-orange-600 to-orange-800'
-    };
-    return colorMap[color] || 'bg-gradient-to-r from-gray-400 via-gray-500 to-gray-600';
-  };
+    return 0;
+  });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-orange-50 to-red-50">
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        {/* Header with animated background */}
-        <div className="mb-8 relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 opacity-10"></div>
-          <div className="relative">
-            <div className="flex items-center gap-4 mb-6">
-              <div className="w-16 h-16 bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 rounded-2xl flex items-center justify-center shadow-2xl animate-pulse">
-                <Trophy className="w-8 h-8 text-white" />
+    <div className="space-y-8">
+      {/* Header y estadísticas */}
+      <div className="fitness-card">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h1 className="text-3xl font-bold text-white mb-2">Trofeos</h1>
+            <p className="text-gray-300">Celebra tus logros y conquista nuevos desafíos</p>
+          </div>
+          <div className="flex gap-2">
+            <ModernButton icon={Filter} variant="secondary" onClick={() => console.log('Abrir filtros')}>
+              Filtros
+            </ModernButton>
+            <ModernButton icon={Search} variant="glass" onClick={() => console.log('Buscar trofeo')}>
+              Buscar
+            </ModernButton>
+          </div>
+        </div>
+        {/* Estadísticas rápidas */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="stats-card">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-xl flex items-center justify-center">
+                <Trophy className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h1 className="text-5xl font-bold text-gray-900 mb-2">
-                  Trofeos
-                </h1>
-                <p className="text-xl text-gray-600">
-                  Desbloquea logros y gana recompensas
-                </p>
+                <p className="text-sm text-gray-300">Total Trofeos</p>
+                <p className="text-2xl font-bold text-white">{mockStats.total}</p>
               </div>
             </div>
-
-            {/* Floating elements */}
-            <div className="absolute top-0 right-0 opacity-20">
-              <Sparkles className="w-12 h-12 text-yellow-500 animate-bounce" />
+          </div>
+          <div className="stats-card">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl flex items-center justify-center">
+                <Unlock className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-300">Desbloqueados</p>
+                <p className="text-2xl font-bold text-white">{mockStats.unlocked}</p>
+              </div>
             </div>
-            <div className="absolute top-10 right-10 opacity-20">
-              <Crown className="w-8 h-8 text-orange-500 animate-pulse" />
+          </div>
+          <div className="stats-card">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
+                <Star className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-300">Puntos Totales</p>
+                <p className="text-2xl font-bold text-white">{mockStats.totalPoints}</p>
+              </div>
+            </div>
+          </div>
+          <div className="stats-card">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center">
+                <TrendingUp className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-300">Progreso</p>
+                <p className="text-2xl font-bold text-white">{mockStats.progress}%</p>
+              </div>
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Stats with enhanced design */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white p-6 rounded-2xl shadow-xl border border-gray-200 hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
-                <Trophy className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <div className="text-3xl font-bold text-gray-900">{unlockedCount}</div>
-                <div className="text-sm text-gray-500">Desbloqueados</div>
-              </div>
-            </div>
-            <div className="mt-4 flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-yellow-500" />
-              <span className="text-xs text-gray-500">¡Excelente progreso!</span>
-            </div>
-          </div>
-
-          <div className="bg-white p-6 rounded-2xl shadow-xl border border-gray-200 hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-gradient-to-r from-gray-500 to-gray-600 rounded-xl flex items-center justify-center shadow-lg">
-                <Lock className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <div className="text-3xl font-bold text-gray-900">{totalTrophies - unlockedCount}</div>
-                <div className="text-sm text-gray-500">Bloqueados</div>
-              </div>
-            </div>
-            <div className="mt-4 flex items-center gap-2">
-              <Target className="w-4 h-4 text-gray-500" />
-              <span className="text-xs text-gray-500">Por desbloquear</span>
-            </div>
-          </div>
-
-          <div className="bg-white p-6 rounded-2xl shadow-xl border border-gray-200 hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-green-600 rounded-xl flex items-center justify-center shadow-lg">
-                <Target className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <div className="text-3xl font-bold text-gray-900">
-                  {Math.round((unlockedCount / totalTrophies) * 100)}%
-                </div>
-                <div className="text-sm text-gray-500">Completado</div>
-              </div>
-            </div>
-            <div className="mt-4 flex items-center gap-2">
-              <TrendingUp className="w-4 h-4 text-green-500" />
-              <span className="text-xs text-gray-500">Progreso total</span>
-            </div>
-          </div>
-
-          <div className="bg-white p-6 rounded-2xl shadow-xl border border-gray-200 hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-xl flex items-center justify-center shadow-lg">
-                <Award className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <div className="text-3xl font-bold text-gray-900">{totalCoins}</div>
-                <div className="text-sm text-gray-500">Monedas Ganadas</div>
-              </div>
-            </div>
-            <div className="mt-4 flex items-center gap-2">
-              <Star className="w-4 h-4 text-yellow-500" />
-              <span className="text-xs text-gray-500">Recompensas</span>
-            </div>
-          </div>
+      {/* Tabs y filtros */}
+      <div className="fitness-card">
+        <div className="flex items-center gap-1 p-1 bg-white/5 rounded-xl mb-4">
+          {[
+            { id: 'all', label: 'Todos' },
+            { id: 'unlocked', label: 'Desbloqueados' },
+            { id: 'locked', label: 'Bloqueados' },
+            { id: 'recent', label: 'Recientes' }
+          ].map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-300 ${
+                activeTab === tab.id
+                  ? 'bg-gradient-to-r from-yellow-500 to-orange-500 text-white shadow-lg'
+                  : 'text-gray-300 hover:text-white hover:bg-white/10'
+              }`}
+            >
+              <span className="font-medium">{tab.label}</span>
+            </button>
+          ))}
         </div>
-
-        {/* Enhanced Filters */}
-        <div className="mb-8">
-          <div className="flex flex-wrap gap-3 mb-6">
-            {categories.map((category) => {
-              const Icon = category.icon;
-              return (
-                <button
-                  key={category.id}
-                  onClick={() => setActiveCategory(category.id)}
-                  className={`flex items-center gap-3 px-6 py-3 rounded-xl transition-all duration-300 transform hover:scale-105 ${
-                    activeCategory === category.id
-                      ? `${category.bgColor} text-white shadow-xl`
-                      : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200 shadow-lg hover:shadow-xl'
-                  }`}
-                >
-                  <Icon className="w-5 h-5" />
-                  {category.name}
-                </button>
-              );
-            })}
-          </div>
-
-          <div className="flex items-center gap-4">
-            <label className="flex items-center gap-3 p-3 bg-white rounded-xl border border-gray-200 shadow-lg">
-              <input
-                type="checkbox"
-                checked={showUnlockedOnly}
-                onChange={(e) => setShowUnlockedOnly(e.target.checked)}
-                className="w-5 h-5 text-blue-600 rounded focus:ring-blue-500"
-              />
-              <span className="text-sm text-gray-600 font-medium">Solo desbloqueados</span>
-            </label>
-          </div>
+        {/* Filtros adicionales */}
+        <div className="flex flex-wrap gap-2 mb-2">
+          <select
+            className="px-3 py-2 rounded-lg bg-white/10 text-white border border-white/20"
+            value={filterCategory}
+            onChange={e => setFilterCategory(e.target.value)}
+          >
+            <option value="all">Todas las categorías</option>
+            <option value="Progreso">Progreso</option>
+            <option value="Consistencia">Consistencia</option>
+            <option value="Desafío">Desafío</option>
+          </select>
+          <select
+            className="px-3 py-2 rounded-lg bg-white/10 text-white border border-white/20"
+            value={filterLevel}
+            onChange={e => setFilterLevel(e.target.value)}
+          >
+            <option value="all">Todos los niveles</option>
+            <option value="Bronce">Bronce</option>
+            <option value="Plata">Plata</option>
+            <option value="Oro">Oro</option>
+            <option value="Platino">Platino</option>
+          </select>
+          <select
+            className="px-3 py-2 rounded-lg bg-white/10 text-white border border-white/20"
+            value={sortBy}
+            onChange={e => setSortBy(e.target.value)}
+          >
+            <option value="date">Ordenar por fecha</option>
+            <option value="level">Ordenar por nivel</option>
+            <option value="points">Ordenar por puntos</option>
+          </select>
         </div>
+      </div>
 
-        {/* Enhanced Trophies Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {getFilteredTrophies().map((trophy) => {
-            const progress = getTrophyProgress(trophy.id);
-            const Icon = trophy.unlocked ? Unlock : Lock;
-            
-            return (
-              <div
-                key={trophy.id}
-                className={`bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden transition-all duration-300 hover:shadow-2xl transform hover:scale-105 ${
-                  trophy.unlocked ? 'ring-4 ring-yellow-400 ring-opacity-50' : ''
-                }`}
-              >
-                {/* Enhanced Trophy Header */}
-                <div className={`p-6 ${getTrophyColor(trophy.color)} relative overflow-hidden`}>
-                  <div className="absolute inset-0 bg-black bg-opacity-10"></div>
-                  <div className="relative flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center backdrop-blur-sm">
-                        {getTrophyIcon(trophy)}
-                      </div>
-                      <div>
-                        <div className="font-bold text-white text-lg">{trophy.name}</div>
-                        <div className="text-white text-opacity-90 text-sm">
-                          {trophy.condition.requirement}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      {trophy.unlocked && <Medal className="w-6 h-6 text-yellow-300" />}
-                      <Icon className={`w-6 h-6 ${trophy.unlocked ? 'text-white' : 'text-white text-opacity-60'}`} />
-                    </div>
-                  </div>
-                </div>
+      {/* Lista de trofeos */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {sortedTrophies.map(trophy => (
+          <ModernCard
+            key={trophy.id}
+            title={trophy.name}
+            description={trophy.level + ' - ' + trophy.category}
+            icon={Trophy}
+            gradient={
+              trophy.level === 'Oro'
+                ? 'from-yellow-500 to-orange-500'
+                : trophy.level === 'Plata'
+                ? 'from-gray-400 to-gray-200'
+                : trophy.level === 'Platino'
+                ? 'from-blue-500 to-cyan-500'
+                : 'from-amber-700 to-yellow-400'
+            }
+            variant="fitness"
+          >
+            <div className="flex items-center gap-2 mb-2">
+              <ModernBadge variant={trophy.unlocked ? 'success' : 'default'} size="sm">
+                {trophy.unlocked ? 'Desbloqueado' : 'Bloqueado'}
+              </ModernBadge>
+              <ModernBadge variant="info" size="sm">
+                {trophy.points} pts
+              </ModernBadge>
+              <ModernBadge variant="secondary" size="sm">
+                {trophy.level}
+              </ModernBadge>
+            </div>
+            <div className="flex items-center gap-2 text-xs text-gray-400">
+              {trophy.unlocked && trophy.date && (
+                <span>Obtenido: {trophy.date}</span>
+              )}
+            </div>
+          </ModernCard>
+        ))}
+      </div>
 
-                {/* Enhanced Trophy Content */}
-                <div className="p-6">
-                  <p className="text-gray-600 text-sm mb-6 leading-relaxed">{trophy.description}</p>
-                  
-                  {/* Enhanced Progress */}
-                  <div className="mb-6">
-                    <div className="flex items-center justify-between text-sm mb-3">
-                      <span className="text-gray-500 font-medium">Progreso</span>
-                      <span className={`font-bold ${getProgressColor(progress)}`}>
-                        {trophy.progress}/{trophy.maxProgress}
-                      </span>
-                    </div>
-                    <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
-                      <div
-                        className={`h-3 rounded-full transition-all duration-500 ${
-                          progress >= 100 ? 'bg-gradient-to-r from-green-500 to-green-600' : 'bg-gradient-to-r from-blue-500 to-purple-500'
-                        }`}
-                        style={{ width: `${Math.min(progress, 100)}%` }}
-                      />
-                    </div>
-                  </div>
+      {/* Progreso hacia el siguiente trofeo */}
+      <div className="fitness-card">
+        <h2 className="text-lg font-bold text-white mb-2">Progreso hacia el siguiente trofeo</h2>
+        <div className="w-full bg-white/10 rounded-full h-4 mb-2">
+          <div
+            className="bg-gradient-to-r from-yellow-500 to-orange-500 h-4 rounded-full transition-all duration-500"
+            style={{ width: `${mockProgressToNextTrophy}%` }}
+          ></div>
+        </div>
+        <p className="text-sm text-gray-300">{mockProgressToNextTrophy}% completado para el próximo trofeo</p>
+      </div>
 
-                  {/* Enhanced Rewards */}
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4 text-sm">
-                      <div className="flex items-center gap-2 bg-yellow-50 px-3 py-1 rounded-full">
-                        <Star className="w-4 h-4 text-yellow-500" />
-                        <span className="text-gray-700 font-medium">{trophy.reward.xp} XP</span>
-                      </div>
-                      <div className="flex items-center gap-2 bg-blue-50 px-3 py-1 rounded-full">
-                        <Award className="w-4 h-4 text-blue-500" />
-                        <span className="text-gray-700 font-medium">{trophy.reward.coins} monedas</span>
-                      </div>
-                    </div>
-                    
-                    {trophy.unlocked && trophy.unlockedAt && (
-                      <div className="text-xs text-gray-500 bg-gray-50 px-2 py-1 rounded-full">
-                        {new Date(trophy.unlockedAt).toLocaleDateString()}
-                      </div>
-                    )}
-                  </div>
-                </div>
+      {/* Últimos trofeos desbloqueados */}
+      <div className="fitness-card">
+        <h2 className="text-lg font-bold text-white mb-4">Últimos trofeos desbloqueados</h2>
+        <div className="flex flex-wrap gap-4">
+          {mockRecentUnlocks.map(trophy => (
+            <div key={trophy.id} className="flex items-center gap-3 bg-white/10 rounded-xl px-4 py-2">
+              <Trophy className="w-6 h-6 text-yellow-400" />
+              <div>
+                <p className="text-white font-medium">{trophy.name}</p>
+                <p className="text-xs text-gray-400">{trophy.date} - {trophy.points} pts</p>
               </div>
-            );
-          })}
+            </div>
+          ))}
         </div>
-
-        {/* Enhanced Empty State */}
-        {getFilteredTrophies().length === 0 && (
-          <div className="text-center py-16">
-            <div className="w-24 h-24 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-2xl">
-              <Trophy className="w-12 h-12 text-white" />
-            </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">
-              No hay trofeos disponibles
-            </h3>
-            <p className="text-gray-500 text-lg">
-              {showUnlockedOnly 
-                ? 'No tienes trofeos desbloqueados en esta categoría'
-                : 'No hay trofeos en esta categoría'
-              }
-            </p>
-            <div className="mt-6 flex items-center justify-center gap-2 text-gray-400">
-              <Sparkles className="w-5 h-5" />
-              <span className="text-sm">¡Sigue entrenando para desbloquear más!</span>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

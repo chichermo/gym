@@ -90,21 +90,20 @@ const ModernSelect: React.FC<ModernSelectProps> = ({
       </button>
 
       {isOpen && (
-        <div className="absolute z-50 w-full mt-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-xl shadow-xl max-h-60 overflow-hidden">
-          <div className="p-2 border-b border-gray-100 dark:border-gray-700">
+        <div className="absolute z-50 w-full mt-2 bg-gray-900/90 backdrop-blur-xl border border-white/20 rounded-xl shadow-xl max-h-60 overflow-hidden">
+          <div className="p-2 border-b border-white/10">
             <input
               type="text"
               placeholder="Buscar..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full px-3 py-2 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 text-sm bg-gray-800/80 text-white border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               autoFocus
             />
           </div>
-          
           <div className="max-h-48 overflow-y-auto">
             {filteredOptions.length === 0 ? (
-              <div className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400 text-center">
+              <div className="px-4 py-3 text-sm text-gray-400 text-center">
                 No se encontraron opciones
               </div>
             ) : (
@@ -115,15 +114,14 @@ const ModernSelect: React.FC<ModernSelectProps> = ({
                   onClick={() => !option.disabled && handleSelect(option.value)}
                   disabled={option.disabled}
                   className={`
-                    w-full px-4 py-3 text-left hover:bg-blue-50 dark:hover:bg-blue-900/20 
-                    transition-colors duration-150 flex items-center justify-between
+                    w-full px-4 py-3 text-left hover:bg-blue-700/40 transition-colors duration-150 flex items-center justify-between
                     ${option.disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
-                    ${option.value === value ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' : 'text-gray-700 dark:text-gray-300'}
+                    ${option.value === value ? 'bg-blue-700/60 text-white font-semibold' : 'text-white'}
                   `}
                 >
                   <span>{option.label}</span>
                   {option.value === value && (
-                    <Check className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                    <Check className="w-4 h-4 text-blue-400" />
                   )}
                 </button>
               ))

@@ -1,380 +1,218 @@
 import React, { useState } from 'react';
-import WorkoutCalendar from '../../components/WorkoutCalendar';
-import { 
-  Calendar, 
-  TrendingUp, 
-  Target, 
-  Clock, 
-  CheckCircle,
-  BarChart3,
-  Plus,
-  Filter,
-  Zap
-} from 'lucide-react';
+import { Calendar, Plus, Edit, Trash2, Clock, Star, CheckCircle, ChevronLeft, ChevronRight, Bell, List, Activity } from 'lucide-react';
+import { ModernCard, ModernButton } from '../../components/ModernUI';
 
-interface WorkoutEvent {
-  id: string;
-  date: string;
-  title: string;
-  type: 'strength' | 'cardio' | 'flexibility' | 'rest';
-  duration: number;
-  completed: boolean;
-  notes?: string;
+// Datos mock para eventos
+const mockEvents = [
+  { id: 1, title: 'Entrenamiento de Piernas', date: '2024-06-10', time: '08:00', type: 'Entrenamiento', completed: false },
+  { id: 2, title: 'Yoga', date: '2024-06-11', time: '19:00', type: 'Bienestar', completed: true },
+  { id: 3, title: 'Cardio', date: '2024-06-12', time: '07:30', type: 'Entrenamiento', completed: false },
+  { id: 4, title: 'Recordatorio: Hidratación', date: '2024-06-12', time: '12:00', type: 'Recordatorio', completed: false },
+  { id: 5, title: 'Descanso', date: '2024-06-13', time: '', type: 'Descanso', completed: false }
+];
+
+const weekDays = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+
+function getCurrentWeekDates() {
+  const today = new Date();
+  const first = today.getDate() - today.getDay() + 1;
+  return Array.from({ length: 7 }, (_, i) => {
+    const d = new Date(today);
+    d.setDate(first + i);
+    return d;
+  });
 }
 
 const CalendarPage: React.FC = () => {
-  const [events, setEvents] = useState<WorkoutEvent[]>([
-    {
-      id: '1',
-      date: '2024-01-15',
-      title: 'Entrenamiento de pecho',
-      type: 'strength',
-      duration: 60,
-      completed: true,
-      notes: '3 series de press de banca, inclinado y declinado'
-    },
-    {
-      id: '2',
-      date: '2024-01-16',
-      title: 'Cardio HIIT',
-      type: 'cardio',
-      duration: 45,
-      completed: true,
-      notes: '20 minutos de sprints, 25 minutos de bicicleta'
-    },
-    {
-      id: '3',
-      date: '2024-01-17',
-      title: 'Yoga y estiramientos',
-      type: 'flexibility',
-      duration: 30,
-      completed: false,
-      notes: 'Sesión de yoga para recuperación'
-    },
-    {
-      id: '4',
-      date: '2024-01-18',
-      title: 'Entrenamiento de espalda',
-      type: 'strength',
-      duration: 75,
-      completed: false,
-      notes: 'Dominadas, remo con barra, pull-ups'
-    },
-    {
-      id: '5',
-      date: '2024-01-19',
-      title: 'Descanso activo',
-      type: 'rest',
-      duration: 0,
-      completed: false,
-      notes: 'Caminata ligera de 30 minutos'
-    },
-    {
-      id: '6',
-      date: '2024-01-20',
-      title: 'Entrenamiento de piernas',
-      type: 'strength',
-      duration: 90,
-      completed: false,
-      notes: 'Sentadillas, peso muerto, extensiones'
-    },
-    {
-      id: '7',
-      date: '2024-01-21',
-      title: 'Natación',
-      type: 'cardio',
-      duration: 60,
-      completed: false,
-      notes: '40 largos de piscina'
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [events, setEvents] = useState(mockEvents);
+  const [newEvent, setNewEvent] = useState('');
+  const [showAdd, setShowAdd] = useState(false);
+  const weekDates = getCurrentWeekDates();
+
+  const handleAddEvent = () => {
+    if (newEvent.trim()) {
+      setEvents([
+        ...events,
+        {
+          id: events.length + 1,
+          title: newEvent,
+          date: selectedDate.toISOString().split('T')[0],
+          time: '',
+          type: 'Personal',
+          completed: false
+        }
+      ]);
+      setNewEvent('');
+      setShowAdd(false);
     }
-  ]);
-
-  const [filterType, setFilterType] = useState<string>('all');
-  const [showCompleted, setShowCompleted] = useState(true);
-
-  const filteredEvents = events.filter(event => {
-    if (filterType !== 'all' && event.type !== filterType) return false;
-    if (!showCompleted && event.completed) return false;
-    return true;
-  });
-
-  const stats = {
-    total: events.length,
-    completed: events.filter(e => e.completed).length,
-    strength: events.filter(e => e.type === 'strength').length,
-    cardio: events.filter(e => e.type === 'cardio').length,
-    flexibility: events.filter(e => e.type === 'flexibility').length,
-    rest: events.filter(e => e.type === 'rest').length,
-    totalDuration: events.reduce((sum, e) => sum + e.duration, 0)
   };
 
-  const handleAddEvent = (event: WorkoutEvent) => {
-    setEvents(prev => [...prev, event]);
-  };
-
-  const handleEditEvent = (updatedEvent: WorkoutEvent) => {
-    setEvents(prev => prev.map(e => e.id === updatedEvent.id ? updatedEvent : e));
-  };
-
-  const handleDeleteEvent = (id: string) => {
-    setEvents(prev => prev.filter(e => e.id !== id));
-  };
-
-  const handleToggleComplete = (id: string) => {
-    setEvents(prev => prev.map(e => 
-      e.id === id ? { ...e, completed: !e.completed } : e
-    ));
-  };
+  const eventsForSelected = events.filter(e => e.date === selectedDate.toISOString().split('T')[0]);
+  const upcomingEvents = events.filter(e => new Date(e.date) >= new Date() && !e.completed).slice(0, 3);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex flex-col lg:pl-64">
-      {/* Banner Demo Mejorado */}
-      <div className="w-full bg-gradient-to-r from-amber-200 via-yellow-100 to-orange-100 border-b border-amber-300 py-3 px-4 flex items-center justify-center shadow-sm">
-        <div className="flex items-center gap-2">
-          <Zap className="w-4 h-4 text-amber-700" />
-          <span className="text-amber-800 text-sm font-semibold">Modo DEMO: Datos simulados de calendario</span>
+    <div className="space-y-8">
+      {/* Header y acciones rápidas */}
+      <div className="fitness-card">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h1 className="text-3xl font-bold text-white mb-2">Calendario</h1>
+            <p className="text-gray-300">Organiza tus entrenamientos, actividades y recordatorios</p>
+          </div>
+          <div className="flex gap-2">
+            <ModernButton icon={Plus} onClick={() => setShowAdd(true)}>
+              Nuevo Evento
+            </ModernButton>
+            <ModernButton icon={List} variant="glass">
+              Ver Todos
+            </ModernButton>
+          </div>
+        </div>
+        {/* Selector de semana */}
+        <div className="flex items-center gap-2 mb-2">
+          <ModernButton icon={ChevronLeft} variant="glass" onClick={() => setSelectedDate(new Date(selectedDate.setDate(selectedDate.getDate() - 7)))} />
+          <span className="text-white font-medium text-lg">Semana del {weekDates[0].toLocaleDateString()} al {weekDates[6].toLocaleDateString()}</span>
+          <ModernButton icon={ChevronRight} variant="glass" onClick={() => setSelectedDate(new Date(selectedDate.setDate(selectedDate.getDate() + 7)))} />
+        </div>
+        {/* Calendario semanal */}
+        <div className="grid grid-cols-7 gap-2 mt-2">
+          {weekDates.map((date, idx) => {
+            const isToday = date.toDateString() === new Date().toDateString();
+            const isSelected = date.toDateString() === selectedDate.toDateString();
+            return (
+              <button
+                key={idx}
+                onClick={() => setSelectedDate(new Date(date))}
+                className={`flex flex-col items-center p-2 rounded-xl transition-all duration-200 border-2 ${
+                  isSelected
+                    ? 'bg-gradient-to-br from-blue-500 to-cyan-500 text-white border-blue-400 shadow-lg'
+                    : isToday
+                    ? 'bg-white/10 text-blue-400 border-blue-300'
+                    : 'bg-white/5 text-gray-200 border-white/10 hover:bg-white/10'
+                }`}
+              >
+                <span className="text-xs font-medium mb-1">{weekDays[idx]}</span>
+                <span className="text-lg font-bold">{date.getDate()}</span>
+              </button>
+            );
+          })}
         </div>
       </div>
 
-      <main className="flex-1 w-full max-w-7xl mx-auto px-4 py-8">
-        {/* Header Mejorado */}
-        <div className="mb-8">
-          <div className="flex items-center gap-4 mb-4">
-            <div className="p-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl shadow-lg">
-              <Calendar className="w-8 h-8 text-white" />
-            </div>
-            <div>
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
-                Calendario de Entrenamientos
-              </h1>
-              <p className="text-slate-600 mt-1">Planifica y organiza tus rutinas de entrenamiento</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Estadísticas mejoradas */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div className="bg-gradient-to-br from-white to-blue-50/50 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-white/30 hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl">
-                <Target className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <p className="text-sm text-slate-600 font-medium">Total Entrenamientos</p>
-                <p className="text-2xl font-bold text-slate-800">{stats.total}</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-gradient-to-br from-white to-blue-50/50 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-white/30 hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl">
-                <CheckCircle className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <p className="text-sm text-slate-600 font-medium">Completados</p>
-                <p className="text-2xl font-bold text-slate-800">{stats.completed}</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-gradient-to-br from-white to-blue-50/50 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-white/30 hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl">
-                <Clock className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <p className="text-sm text-slate-600 font-medium">Horas Totales</p>
-                <p className="text-2xl font-bold text-slate-800">
-                  {Math.round(stats.totalDuration / 60 * 10) / 10}h
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-gradient-to-br from-white to-blue-50/50 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-white/30 hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl">
-                <TrendingUp className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <p className="text-sm text-slate-600 font-medium">Progreso</p>
-                <p className="text-2xl font-bold text-slate-800">
-                  {stats.total > 0 ? Math.round((stats.completed / stats.total) * 100) : 0}%
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Filtros mejorados */}
-        <div className="bg-gradient-to-br from-white to-blue-50/50 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-white/30 mb-8">
-          <div className="flex items-center gap-4 mb-6">
-            <div className="p-2 bg-gradient-to-br from-slate-500 to-slate-600 rounded-xl">
-              <Filter className="w-6 h-6 text-white" />
-            </div>
-            <div>
-              <h3 className="text-2xl font-bold text-slate-800">Filtros</h3>
-              <p className="text-slate-600">Personaliza tu vista del calendario</p>
-            </div>
-          </div>
-          
-          <div className="flex flex-wrap gap-6">
-            <div className="flex items-center gap-3">
-              <label className="text-sm font-semibold text-slate-700">Tipo:</label>
-              <select
-                value={filterType}
-                onChange={(e) => setFilterType(e.target.value)}
-                className="px-4 py-3 border-2 border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 bg-white/80 backdrop-blur-sm"
-              >
-                <option value="all">Todos</option>
-                <option value="strength">Fuerza</option>
-                <option value="cardio">Cardio</option>
-                <option value="flexibility">Flexibilidad</option>
-                <option value="rest">Descanso</option>
-              </select>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <input
-                type="checkbox"
-                id="showCompleted"
-                checked={showCompleted}
-                onChange={(e) => setShowCompleted(e.target.checked)}
-                className="w-5 h-5 text-blue-600 border-2 border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:ring-offset-0"
-              />
-              <label htmlFor="showCompleted" className="text-sm font-semibold text-slate-700">
-                Mostrar completados
-              </label>
-            </div>
-          </div>
-        </div>
-
-        {/* Calendario y panel lateral */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2">
-            <div className="bg-gradient-to-br from-white to-blue-50/50 backdrop-blur-sm rounded-3xl shadow-xl border border-white/30 p-8">
-              <WorkoutCalendar
-                events={filteredEvents}
-                onAddEvent={handleAddEvent}
-                onEditEvent={handleEditEvent}
-                onDeleteEvent={handleDeleteEvent}
-                onToggleComplete={handleToggleComplete}
-              />
-            </div>
-          </div>
-
-          {/* Panel lateral mejorado */}
-          <div className="space-y-6">
-            {/* Próximos entrenamientos */}
-            <div className="bg-gradient-to-br from-white to-blue-50/50 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-white/30">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="p-2 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl">
-                  <Target className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold text-slate-800">Próximos Entrenamientos</h3>
-                  <p className="text-slate-600">Tu agenda fitness</p>
-                </div>
-              </div>
-              <div className="space-y-4">
-                {events
-                  .filter(e => !e.completed)
-                  .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-                  .slice(0, 5)
-                  .map(event => (
-                    <div key={event.id} className="flex items-center gap-4 p-4 bg-white/60 backdrop-blur-sm rounded-2xl border border-white/30 hover:shadow-lg transition-all duration-300 transform hover:scale-105">
-                      <div className={`w-4 h-4 rounded-full ${getTypeColor(event.type)}`} />
-                      <div className="flex-1">
-                        <p className="text-sm font-bold text-slate-800">{event.title}</p>
-                        <p className="text-xs text-slate-600">
-                          {new Date(event.date).toLocaleDateString('es-ES', {
-                            weekday: 'short',
-                            month: 'short',
-                            day: 'numeric'
-                          })}
-                        </p>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Calendario y eventos del día */}
+        <div className="lg:col-span-2 space-y-6">
+          <ModernCard title={`Eventos para el ${selectedDate.toLocaleDateString()}`} icon={Calendar} gradient="from-blue-500 to-cyan-500" variant="fitness">
+            {eventsForSelected.length === 0 ? (
+              <p className="text-gray-300">No hay eventos para este día.</p>
+            ) : (
+              <div className="space-y-3">
+                {eventsForSelected.map(event => (
+                  <div key={event.id} className="flex items-center justify-between bg-white/5 rounded-xl p-3">
+                    <div className="flex items-center gap-3">
+                      <Activity className="w-6 h-6 text-blue-400" />
+                      <div>
+                        <p className="text-white font-medium">{event.title}</p>
+                        <p className="text-xs text-gray-400">{event.time ? event.time : 'Sin hora'} - {event.type}</p>
                       </div>
-                      <span className="text-xs font-semibold text-slate-600 bg-white/50 backdrop-blur-sm px-2 py-1 rounded-lg">{event.duration}min</span>
                     </div>
-                  ))}
+                    <div className="flex gap-2">
+                      <ModernButton icon={Edit} size="sm" variant="glass" />
+                      <ModernButton icon={Trash2} size="sm" variant="glass" />
+                      {event.completed && <CheckCircle className="w-5 h-5 text-green-400" />}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </ModernCard>
+
+          {/* Resumen semanal */}
+          <ModernCard title="Resumen Semanal" icon={Star} gradient="from-yellow-500 to-orange-500" variant="stats">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="flex flex-col items-center">
+                <Activity className="w-6 h-6 text-blue-400 mb-1" />
+                <span className="text-white font-bold text-lg">4</span>
+                <span className="text-xs text-gray-300">Entrenamientos</span>
+              </div>
+              <div className="flex flex-col items-center">
+                <Clock className="w-6 h-6 text-green-400 mb-1" />
+                <span className="text-white font-bold text-lg">5h 30m</span>
+                <span className="text-xs text-gray-300">Total</span>
+              </div>
+              <div className="flex flex-col items-center">
+                <CheckCircle className="w-6 h-6 text-emerald-400 mb-1" />
+                <span className="text-white font-bold text-lg">3</span>
+                <span className="text-xs text-gray-300">Completados</span>
+              </div>
+              <div className="flex flex-col items-center">
+                <Bell className="w-6 h-6 text-yellow-400 mb-1" />
+                <span className="text-white font-bold text-lg">2</span>
+                <span className="text-xs text-gray-300">Recordatorios</span>
               </div>
             </div>
+          </ModernCard>
+        </div>
 
-            {/* Resumen por tipo */}
-            <div className="bg-gradient-to-br from-white to-blue-50/50 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-white/30">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="p-2 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl">
-                  <BarChart3 className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold text-slate-800">Resumen por Tipo</h3>
-                  <p className="text-slate-600">Distribución de entrenamientos</p>
-                </div>
+        {/* Panel lateral: próximos eventos y acciones rápidas */}
+        <div className="space-y-6">
+          <ModernCard title="Próximos Eventos" icon={Clock} gradient="from-purple-500 to-pink-500" variant="stats">
+            {upcomingEvents.length === 0 ? (
+              <p className="text-gray-300">No hay eventos próximos.</p>
+            ) : (
+              <div className="space-y-2">
+                {upcomingEvents.map(event => (
+                  <div key={event.id} className="flex items-center gap-3 bg-white/5 rounded-lg px-3 py-2">
+                    <Activity className="w-5 h-5 text-blue-400" />
+                    <div>
+                      <p className="text-white font-medium">{event.title}</p>
+                      <p className="text-xs text-gray-400">{event.date} {event.time && `- ${event.time}`}</p>
+                    </div>
+                  </div>
+                ))}
               </div>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between p-3 bg-white/60 backdrop-blur-sm rounded-2xl border border-white/30">
-                  <div className="flex items-center gap-3">
-                    <div className="w-4 h-4 bg-blue-500 rounded-full" />
-                    <span className="text-sm font-semibold text-slate-700">Fuerza</span>
-                  </div>
-                  <span className="text-sm font-bold text-slate-800 bg-white/50 backdrop-blur-sm px-3 py-1 rounded-lg">{stats.strength}</span>
-                </div>
-                <div className="flex items-center justify-between p-3 bg-white/60 backdrop-blur-sm rounded-2xl border border-white/30">
-                  <div className="flex items-center gap-3">
-                    <div className="w-4 h-4 bg-rose-500 rounded-full" />
-                    <span className="text-sm font-semibold text-slate-700">Cardio</span>
-                  </div>
-                  <span className="text-sm font-bold text-slate-800 bg-white/50 backdrop-blur-sm px-3 py-1 rounded-lg">{stats.cardio}</span>
-                </div>
-                <div className="flex items-center justify-between p-3 bg-white/60 backdrop-blur-sm rounded-2xl border border-white/30">
-                  <div className="flex items-center gap-3">
-                    <div className="w-4 h-4 bg-emerald-500 rounded-full" />
-                    <span className="text-sm font-semibold text-slate-700">Flexibilidad</span>
-                  </div>
-                  <span className="text-sm font-bold text-slate-800 bg-white/50 backdrop-blur-sm px-3 py-1 rounded-lg">{stats.flexibility}</span>
-                </div>
-                <div className="flex items-center justify-between p-3 bg-white/60 backdrop-blur-sm rounded-2xl border border-white/30">
-                  <div className="flex items-center gap-3">
-                    <div className="w-4 h-4 bg-slate-500 rounded-full" />
-                    <span className="text-sm font-semibold text-slate-700">Descanso</span>
-                  </div>
-                  <span className="text-sm font-bold text-slate-800 bg-white/50 backdrop-blur-sm px-3 py-1 rounded-lg">{stats.rest}</span>
-                </div>
-              </div>
+            )}
+          </ModernCard>
+
+          <ModernCard title="Acciones Rápidas" icon={Plus} gradient="from-green-500 to-emerald-500" variant="stats">
+            <div className="flex flex-col gap-3">
+              <ModernButton icon={Plus} onClick={() => setShowAdd(true)}>
+                Añadir Evento
+              </ModernButton>
+              <ModernButton icon={List} variant="glass">
+                Ver Todos los Eventos
+              </ModernButton>
             </div>
+          </ModernCard>
+        </div>
+      </div>
 
-            {/* Consejos rápidos mejorados */}
-            <div className="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-3xl p-8 text-white shadow-xl">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="p-2 bg-white/20 rounded-xl">
-                  <Zap className="w-6 h-6" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold">💡 Consejo del Día</h3>
-                  <p className="text-sm opacity-90">Maximiza tu progreso</p>
-                </div>
-              </div>
-              <p className="text-sm opacity-90 leading-relaxed">
-                "La consistencia es más importante que la intensidad. Es mejor entrenar 30 minutos 
-                todos los días que 3 horas una vez por semana."
-              </p>
+      {/* Modal para añadir evento */}
+      {showAdd && (
+        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center">
+          <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-8 w-full max-w-md shadow-2xl border border-white/20">
+            <h2 className="text-xl font-bold text-white mb-4">Nuevo Evento</h2>
+            <input
+              type="text"
+              value={newEvent}
+              onChange={e => setNewEvent(e.target.value)}
+              placeholder="Título del evento"
+              className="w-full px-4 py-3 mb-4 bg-white/20 border border-white/30 rounded-xl text-white focus:outline-none focus:border-blue-500/50"
+            />
+            <div className="flex gap-2 justify-end">
+              <ModernButton variant="glass" onClick={() => setShowAdd(false)}>
+                Cancelar
+              </ModernButton>
+              <ModernButton icon={Plus} onClick={handleAddEvent}>
+                Añadir
+              </ModernButton>
             </div>
           </div>
         </div>
-      </main>
+      )}
     </div>
   );
-};
-
-const getTypeColor = (type: string) => {
-  switch (type) {
-    case 'strength': return 'bg-blue-500';
-    case 'cardio': return 'bg-rose-500';
-    case 'flexibility': return 'bg-emerald-500';
-    case 'rest': return 'bg-slate-500';
-    default: return 'bg-blue-500';
-  }
 };
 
 export default CalendarPage; 

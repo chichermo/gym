@@ -12,11 +12,11 @@ import { WorkoutsProvider } from './contexts/WorkoutsContext';
 import { ProgressProvider } from './contexts/ProgressContext';
 import { ARProvider } from './contexts/ARContext';
 import { ExperienceProvider } from './contexts/ExperienceContext';
+import { NutritionProvider } from './contexts/NutritionContext';
 import NavBar from './components/NavBar';
 
 // Páginas
 import DashboardPage from './pages/Dashboard/DashboardPage';
-import WorkoutsPage from './pages/Workouts/WorkoutsPage';
 import ProgressPage from './pages/Progress/ProgressPage';
 import ProfilePage from './pages/Profile/ProfilePage';
 import TrophiesPage from './pages/Trophies/TrophiesPage';
@@ -26,11 +26,13 @@ import CommunityPage from './pages/Community/CommunityPage';
 import GamificationPage from './pages/Gamification/GamificationPage';
 import CalendarPage from './pages/Calendar/CalendarPage';
 import PlanPage from './pages/Plan/PlanPage';
-import ProgramPage from './pages/Program/ProgramPage';
-import ARPage from './pages/AR/ARPage';
 import LoginPage from './pages/Auth/LoginPage';
 import RegisterPage from './pages/Auth/RegisterPage';
 import NotFoundPage from './pages/NotFoundPage';
+import EntrenamientoYProgramaPage from './pages/EntrenamientoYPrograma/EntrenamientoYProgramaPage';
+import EntrenamientosHistPage from './pages/Entrenamientos/EntrenamientosHistPage';
+import { ARWorkoutGuide } from './components/AR/ARWorkoutGuide';
+import CoachCesarLugoPage from './pages/CoachCesarLugoPage';
 
 function App() {
   return (
@@ -46,7 +48,8 @@ function App() {
                       <ProgressProvider>
                         <ARProvider>
                           <ExperienceProvider>
-                            <Router>
+                            <NutritionProvider>
+                              <Router>
                               <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
                                 {/* Fondo animado con partículas */}
                                 <div className="fixed inset-0 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
@@ -103,8 +106,8 @@ function App() {
                                         <Routes>
                                           <Route path="/" element={<DashboardPage />} />
                                           <Route path="/dashboard" element={<DashboardPage />} />
-                                          <Route path="/workouts" element={<WorkoutsPage />} />
-                                          <Route path="/program" element={<ProgramPage />} />
+                                          <Route path="/entrenamiento-programa" element={<EntrenamientoYProgramaPage />} />
+                                          <Route path="/entrenamiento-programa/historial" element={<EntrenamientosHistPage />} />
                                           <Route path="/progress" element={<ProgressPage />} />
                                           <Route path="/profile" element={<ProfilePage />} />
                                           <Route path="/trophies" element={<TrophiesPage />} />
@@ -114,7 +117,8 @@ function App() {
                                           <Route path="/gamification" element={<GamificationPage />} />
                                           <Route path="/calendar" element={<CalendarPage />} />
                                           <Route path="/plan" element={<PlanPage />} />
-                                          <Route path="/ar" element={<ARPage />} />
+                                          <Route path="/ar" element={<ARWorkoutGuide exerciseName="Sentadilla" />} />
+                                          <Route path="/coach-cesar-lugo" element={<CoachCesarLugoPage />} />
                                           <Route path="/login" element={<LoginPage />} />
                                           <Route path="/register" element={<RegisterPage />} />
                                           <Route path="*" element={<NotFoundPage />} />
@@ -132,6 +136,7 @@ function App() {
                                 </div>
                               </div>
                             </Router>
+                            </NutritionProvider>
                           </ExperienceProvider>
                         </ARProvider>
                       </ProgressProvider>

@@ -48,16 +48,15 @@ const ExerciseModel: React.FC<{ step: ExerciseStep; isActive: boolean }> = ({ st
           transparent
         />
       </Box>
-      
-      {/* Indicadores de movimiento */}
+      {/* Indicadores de movimiento: reemplazados por Box pequeñas */}
       {isActive && (
         <>
-          <group position={[step.scale[0] + 0.5, 0, 0]} scale={0.3}>
-            <ArrowRight />
-          </group>
-          <group position={[-step.scale[0] - 0.5, 0, 0]} scale={0.3}>
-            <ArrowLeft />
-          </group>
+          <Box args={[0.2, 0.2, 0.6]} position={[step.scale[0] + 0.5, 0, 0]}>
+            <meshStandardMaterial color="#60a5fa" />
+          </Box>
+          <Box args={[0.2, 0.2, 0.6]} position={[-step.scale[0] - 0.5, 0, 0]}>
+            <meshStandardMaterial color="#f87171" />
+          </Box>
         </>
       )}
     </group>
@@ -73,7 +72,7 @@ const InstructionText: React.FC<{ text: string; position: [number, number, numbe
       color="#ffffff"
       anchorX="center"
       anchorY="middle"
-      font="/fonts/Inter-Bold.woff"
+      // font removed to avoid font loading error
     >
       {text}
     </Text>

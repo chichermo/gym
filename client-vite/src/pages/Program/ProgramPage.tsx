@@ -1,484 +1,227 @@
 import React, { useState } from 'react';
-import { 
-  Calendar, 
-  TrendingUp, 
-  Dumbbell, 
-  Zap,
-  Plus,
-  Edit,
-  Eye,
-  Play,
-  Target,
-  Clock,
-  Users,
-  Award,
-  FileText,
-  Heart,
-  Activity
-} from 'lucide-react';
+import { Play, Edit, Trash2, Plus, Star, TrendingUp, Calendar, CheckCircle, Pause, ChevronRight } from 'lucide-react';
+import { ModernCard, ModernButton } from '../../components/ModernUI';
+
+const mockPrograms = [
+  {
+    id: 1,
+    name: 'Fuerza Total',
+    start: '2024-06-01',
+    end: '2024-07-01',
+    progress: 60,
+    status: 'activo',
+    description: 'Programa de fuerza de 4 semanas para todo el cuerpo.'
+  },
+  {
+    id: 2,
+    name: 'Cardio Express',
+    start: '2024-05-10',
+    end: '2024-06-10',
+    progress: 100,
+    status: 'completado',
+    description: 'Mejora tu resistencia cardiovascular en 30 días.'
+  },
+  {
+    id: 3,
+    name: 'Flexibilidad y Movilidad',
+    start: '2024-07-05',
+    end: '2024-08-05',
+    progress: 0,
+    status: 'proximo',
+    description: 'Rutina diaria para ganar flexibilidad.'
+  }
+];
 
 const ProgramPage: React.FC = () => {
-  const [activeSection, setActiveSection] = useState<string>('program');
+  const [programs, setPrograms] = useState(mockPrograms);
+  const [showAdd, setShowAdd] = useState(false);
+  const [newProgram, setNewProgram] = useState('');
 
-  const sections = [
-    {
-      id: 'program',
-      title: 'Mi Programa',
-      description: 'Visualiza, crea y edita tu programación acorde a tu objetivo.',
-      icon: Calendar,
-      color: 'from-blue-500 to-blue-600',
-      bgColor: 'bg-blue-50',
-      borderColor: 'border-blue-200'
-    },
-    {
-      id: 'progress',
-      title: 'Mi Progreso',
-      description: 'Visualiza tu registro histórico de rutinas y ejercicios.',
-      icon: TrendingUp,
-      color: 'from-green-500 to-green-600',
-      bgColor: 'bg-green-50',
-      borderColor: 'border-green-200'
-    },
-    {
-      id: 'exercises',
-      title: 'Ejercicios',
-      description: 'Explora y filtra ejercicios según tu interés.',
-      icon: Dumbbell,
-      color: 'from-purple-500 to-purple-600',
-      bgColor: 'bg-purple-50',
-      borderColor: 'border-purple-200'
-    },
-    {
-      id: 'quick-workout',
-      title: 'Vamos a entrenar',
-      description: 'Crea una rutina rápida de ejercicios.',
-      icon: Zap,
-      color: 'from-orange-500 to-orange-600',
-      bgColor: 'bg-orange-50',
-      borderColor: 'border-orange-200'
+  const handleAddProgram = () => {
+    if (newProgram.trim()) {
+      setPrograms([
+        ...programs,
+        {
+          id: programs.length + 1,
+          name: newProgram,
+          start: new Date().toISOString().split('T')[0],
+          end: '',
+          progress: 0,
+          status: 'proximo',
+          description: 'Nuevo programa personalizado.'
+        }
+      ]);
+      setNewProgram('');
+      setShowAdd(false);
     }
-  ];
+  };
 
-  const currentSection = sections.find(s => s.id === activeSection);
+  const activePrograms = programs.filter(p => p.status === 'activo');
+  const nextPrograms = programs.filter(p => p.status === 'proximo');
+  const completedPrograms = programs.filter(p => p.status === 'completado');
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 text-white p-8 rounded-b-3xl">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex items-center gap-4 mb-6">
-            <div className="w-16 h-16 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-              <Target className="w-8 h-8" />
-            </div>
-            <div>
-              <h1 className="text-4xl font-bold mb-2">Mi Programa</h1>
-              <p className="text-xl opacity-90">Personaliza tu entrenamiento según tus objetivos</p>
-            </div>
+    <div className="space-y-8">
+      {/* Header y acciones rápidas */}
+      <div className="fitness-card">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h1 className="text-3xl font-bold text-white mb-2">Programas</h1>
+            <p className="text-gray-300">Gestiona tus programas de entrenamiento y sigue tu progreso</p>
+          </div>
+          <div className="flex gap-2">
+            <ModernButton icon={Plus} onClick={() => setShowAdd(true)}>
+              Nuevo Programa
+            </ModernButton>
           </div>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto p-6">
-        {/* Navigation Tabs */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          {sections.map((section) => {
-            const Icon = section.icon;
-            const isActive = activeSection === section.id;
-            
-            return (
-              <button
-                key={section.id}
-                onClick={() => setActiveSection(section.id)}
-                className={`
-                  p-6 rounded-xl border-2 transition-all duration-300 transform hover:scale-105
-                  ${isActive 
-                    ? `bg-gradient-to-r ${section.color} text-white shadow-lg` 
-                    : `${section.bgColor} ${section.borderColor} text-gray-700 hover:shadow-md`
-                  }
-                `}
-              >
-                <div className="flex items-center gap-4">
-                  <div className={`
-                    w-12 h-12 rounded-lg flex items-center justify-center
-                    ${isActive 
-                      ? 'bg-white bg-opacity-20' 
-                      : `bg-gradient-to-r ${section.color} text-white`
-                    }
-                  `}>
-                    <Icon className="w-6 h-6" />
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Programas activos y próximos */}
+        <div className="lg:col-span-2 space-y-6">
+          {/* Activos */}
+          <ModernCard title="Activos" icon={Play} gradient="from-blue-500 to-cyan-500" variant="fitness">
+            {activePrograms.length === 0 ? (
+              <p className="text-gray-300">No tienes programas activos.</p>
+            ) : (
+              <div className="space-y-4">
+                {activePrograms.map(program => (
+                  <div key={program.id} className="flex items-center justify-between bg-white/5 rounded-xl p-4">
+                    <div>
+                      <p className="text-white font-bold text-lg">{program.name}</p>
+                      <p className="text-xs text-gray-400 mb-1">{program.start} - {program.end}</p>
+                      <p className="text-xs text-gray-300 mb-2">{program.description}</p>
+                      <div className="w-full bg-white/10 rounded-full h-2 mb-1">
+                        <div className="bg-gradient-to-r from-blue-500 to-cyan-500 h-2 rounded-full" style={{ width: `${program.progress}%` }}></div>
+                      </div>
+                      <span className="text-xs text-blue-300">{program.progress}% completado</span>
+                    </div>
+                    <div className="flex flex-col gap-2 items-end">
+                      <ModernButton icon={ChevronRight} size="sm" variant="glass">
+                        Continuar
+                      </ModernButton>
+                      <ModernButton icon={Edit} size="sm" variant="glass" />
+                      <ModernButton icon={Trash2} size="sm" variant="glass" />
+                    </div>
                   </div>
-                  <div className="text-left">
-                    <h3 className="font-semibold text-lg">{section.title}</h3>
-                    <p className={`text-sm ${isActive ? 'opacity-90' : 'opacity-70'}`}>
-                      {section.description}
-                    </p>
+                ))}
+              </div>
+            )}
+          </ModernCard>
+
+          {/* Próximos */}
+          <ModernCard title="Próximos" icon={Pause} gradient="from-purple-500 to-pink-500" variant="fitness">
+            {nextPrograms.length === 0 ? (
+              <p className="text-gray-300">No tienes programas próximos.</p>
+            ) : (
+              <div className="space-y-4">
+                {nextPrograms.map(program => (
+                  <div key={program.id} className="flex items-center justify-between bg-white/5 rounded-xl p-4">
+                    <div>
+                      <p className="text-white font-bold text-lg">{program.name}</p>
+                      <p className="text-xs text-gray-400 mb-1">{program.start} - {program.end}</p>
+                      <p className="text-xs text-gray-300 mb-2">{program.description}</p>
+                    </div>
+                    <div className="flex flex-col gap-2 items-end">
+                      <ModernButton icon={ChevronRight} size="sm" variant="glass">
+                        Iniciar
+                      </ModernButton>
+                      <ModernButton icon={Edit} size="sm" variant="glass" />
+                      <ModernButton icon={Trash2} size="sm" variant="glass" />
+                    </div>
                   </div>
-                </div>
-              </button>
-            );
-          })}
-        </div>
+                ))}
+              </div>
+            )}
+          </ModernCard>
 
-        {/* Content Sections */}
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8">
-          {activeSection === 'program' && <ProgramSection />}
-          {activeSection === 'progress' && <ProgressSection />}
-          {activeSection === 'exercises' && <ExercisesSection />}
-          {activeSection === 'quick-workout' && <QuickWorkoutSection />}
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// Sección Mi Programa
-const ProgramSection: React.FC = () => {
-  const [showHealthForms, setShowHealthForms] = useState(false);
-
-  const healthForms = [
-    {
-      id: 'par-q',
-      name: 'Formulario PAR-Q',
-      description: 'Evaluación de preparación para actividad física',
-      status: 'pending',
-      icon: FileText,
-      color: 'blue'
-    },
-    {
-      id: 'habits',
-      name: 'Formulario Hábitos de Vida',
-      description: 'Evaluación de hábitos y estilo de vida',
-      status: 'pending',
-      icon: Users,
-      color: 'green'
-    },
-    {
-      id: 'heart-rate',
-      name: 'Test Frecuencia Cardíaca',
-      description: 'Evaluación de frecuencia cardíaca en reposo',
-      status: 'pending',
-      icon: Heart,
-      color: 'red'
-    },
-    {
-      id: 'one-rm',
-      name: 'Test 1 RM',
-      description: 'Evaluación de fuerza máxima',
-      status: 'pending',
-      icon: Activity,
-      color: 'purple'
-    }
-  ];
-
-  return (
-    <div>
-      <div className="mb-8">
-        <h2 className="text-3xl font-bold text-gray-900 mb-4">Mi Programa</h2>
-        <p className="text-gray-600 mb-6">
-          Vamos a crear tu rutina de musculación pero antes debemos contestar algunas preguntas:
-        </p>
-      </div>
-
-      {/* Formularios de Salud */}
-      <div className="mb-8">
-        <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
-          <FileText className="w-5 h-5 text-blue-600" />
-          Formularios de Salud
-        </h3>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {healthForms.map((form) => {
-            const Icon = form.icon;
-            return (
-              <div key={form.id} className="border border-gray-200 rounded-xl p-6 hover:shadow-md transition-shadow duration-300">
-                <div className="flex items-center gap-4 mb-4">
-                  <div className={`w-10 h-10 bg-${form.color}-100 rounded-lg flex items-center justify-center`}>
-                    <Icon className={`w-5 h-5 text-${form.color}-600`} />
+          {/* Historial */}
+          <ModernCard title="Completados" icon={CheckCircle} gradient="from-yellow-500 to-orange-500" variant="fitness">
+            {completedPrograms.length === 0 ? (
+              <p className="text-gray-300">No tienes programas completados.</p>
+            ) : (
+              <div className="space-y-4">
+                {completedPrograms.map(program => (
+                  <div key={program.id} className="flex items-center justify-between bg-white/5 rounded-xl p-4">
+                    <div>
+                      <p className="text-white font-bold text-lg">{program.name}</p>
+                      <p className="text-xs text-gray-400 mb-1">{program.start} - {program.end}</p>
+                      <p className="text-xs text-gray-300 mb-2">{program.description}</p>
+                      <span className="text-xs text-emerald-400 font-bold">¡Completado!</span>
+                    </div>
+                    <div className="flex flex-col gap-2 items-end">
+                      <ModernButton icon={Star} size="sm" variant="glass">
+                        Ver Logros
+                      </ModernButton>
+                    </div>
                   </div>
-                  <div>
-                    <h4 className="font-semibold text-gray-900">{form.name}</h4>
-                    <p className="text-sm text-gray-600">{form.description}</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-center justify-between">
-                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                    form.status === 'completed' 
-                      ? 'bg-green-100 text-green-700' 
-                      : 'bg-yellow-100 text-yellow-700'
-                  }`}>
-                    {form.status === 'completed' ? 'Completado' : 'Pendiente'}
-                  </span>
-                  
-                  <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200">
-                    {form.status === 'completed' ? 'Ver' : 'Completar'}
-                  </button>
-                </div>
+                ))}
               </div>
-            );
-          })}
+            )}
+          </ModernCard>
+        </div>
+
+        {/* Panel lateral: resumen y acciones rápidas */}
+        <div className="space-y-6">
+          <ModernCard title="Resumen" icon={TrendingUp} gradient="from-green-500 to-emerald-500" variant="stats">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="flex flex-col items-center">
+                <Play className="w-6 h-6 text-blue-400 mb-1" />
+                <span className="text-white font-bold text-lg">{activePrograms.length}</span>
+                <span className="text-xs text-gray-300">Activos</span>
+              </div>
+              <div className="flex flex-col items-center">
+                <Pause className="w-6 h-6 text-purple-400 mb-1" />
+                <span className="text-white font-bold text-lg">{nextPrograms.length}</span>
+                <span className="text-xs text-gray-300">Próximos</span>
+              </div>
+              <div className="flex flex-col items-center">
+                <CheckCircle className="w-6 h-6 text-emerald-400 mb-1" />
+                <span className="text-white font-bold text-lg">{completedPrograms.length}</span>
+                <span className="text-xs text-gray-300">Completados</span>
+              </div>
+              <div className="flex flex-col items-center">
+                <Calendar className="w-6 h-6 text-yellow-400 mb-1" />
+                <span className="text-white font-bold text-lg">{programs.length}</span>
+                <span className="text-xs text-gray-300">Total</span>
+              </div>
+            </div>
+          </ModernCard>
+
+          <ModernCard title="Acciones Rápidas" icon={Plus} gradient="from-blue-500 to-cyan-500" variant="stats">
+            <div className="flex flex-col gap-3">
+              <ModernButton icon={Plus} onClick={() => setShowAdd(true)}>
+                Añadir Programa
+              </ModernButton>
+            </div>
+          </ModernCard>
         </div>
       </div>
 
-      {/* Programa Actual */}
-      <div>
-        <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
-          <Calendar className="w-5 h-5 text-green-600" />
-          Programa Actual
-        </h3>
-        
-        <div className="bg-gray-50 rounded-xl p-6 text-center">
-          <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Plus className="w-8 h-8 text-gray-400" />
-          </div>
-          <h4 className="text-lg font-semibold text-gray-900 mb-2">No hay programa creado</h4>
-          <p className="text-gray-600 mb-4">
-            Completa los formularios de salud para crear tu programa personalizado
-          </p>
-          <button 
-            onClick={() => setShowHealthForms(true)}
-            className="px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl hover:from-blue-600 hover:to-purple-700 transition-all duration-300"
-          >
-            Comenzar Evaluación
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// Sección Mi Progreso
-const ProgressSection: React.FC = () => {
-  return (
-    <div>
-      <h2 className="text-3xl font-bold text-gray-900 mb-6">Mi Progreso</h2>
-      
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Estadísticas */}
-        <div className="lg:col-span-2">
-          <div className="bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl p-6 mb-6">
-            <h3 className="text-xl font-semibold mb-4">Resumen Semanal</h3>
-            <div className="grid grid-cols-3 gap-4">
-              <div className="text-center">
-                <div className="text-2xl font-bold">5</div>
-                <div className="text-sm opacity-90">Entrenamientos</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold">8.5h</div>
-                <div className="text-sm opacity-90">Tiempo Total</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold">4200</div>
-                <div className="text-sm opacity-90">Calorías</div>
-              </div>
+      {/* Modal para añadir programa */}
+      {showAdd && (
+        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center">
+          <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-8 w-full max-w-md shadow-2xl border border-white/20">
+            <h2 className="text-xl font-bold text-white mb-4">Nuevo Programa</h2>
+            <input
+              type="text"
+              value={newProgram}
+              onChange={e => setNewProgram(e.target.value)}
+              placeholder="Nombre del programa"
+              className="w-full px-4 py-3 mb-4 bg-white/20 border border-white/30 rounded-xl text-white focus:outline-none focus:border-blue-500/50"
+            />
+            <div className="flex gap-2 justify-end">
+              <ModernButton variant="glass" onClick={() => setShowAdd(false)}>
+                Cancelar
+              </ModernButton>
+              <ModernButton icon={Plus} onClick={handleAddProgram}>
+                Añadir
+              </ModernButton>
             </div>
           </div>
         </div>
-
-        {/* Actividad Reciente */}
-        <div className="bg-white border border-gray-200 rounded-xl p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Actividad Reciente</h3>
-          <div className="space-y-3">
-            <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-              <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                <Dumbbell className="w-4 h-4 text-blue-600" />
-              </div>
-              <div className="flex-1">
-                <div className="font-medium text-sm">Entrenamiento de Fuerza</div>
-                <div className="text-xs text-gray-500">Hace 2 horas</div>
-              </div>
-            </div>
-            <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-              <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
-                <Activity className="w-4 h-4 text-green-600" />
-              </div>
-              <div className="flex-1">
-                <div className="font-medium text-sm">Cardio</div>
-                <div className="text-xs text-gray-500">Hace 1 día</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// Sección Ejercicios
-const ExercisesSection: React.FC = () => {
-  return (
-    <div>
-      <h2 className="text-3xl font-bold text-gray-900 mb-6">Ejercicios</h2>
-      
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        {/* Filtros */}
-        <div className="lg:col-span-1">
-          <div className="bg-gray-50 rounded-xl p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Filtros</h3>
-            
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Grupo Muscular
-                </label>
-                <select className="w-full p-3 border border-gray-300 rounded-lg">
-                  <option>Todos</option>
-                  <option>Pecho</option>
-                  <option>Espalda</option>
-                  <option>Piernas</option>
-                  <option>Hombros</option>
-                  <option>Brazos</option>
-                </select>
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Tipo de Ejercicio
-                </label>
-                <select className="w-full p-3 border border-gray-300 rounded-lg">
-                  <option>Todos</option>
-                  <option>Fuerza</option>
-                  <option>Cardio</option>
-                  <option>Flexibilidad</option>
-                </select>
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Dificultad
-                </label>
-                <select className="w-full p-3 border border-gray-300 rounded-lg">
-                  <option>Todas</option>
-                  <option>Principiante</option>
-                  <option>Intermedio</option>
-                  <option>Avanzado</option>
-                </select>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Lista de Ejercicios */}
-        <div className="lg:col-span-3">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div key={i} className="border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow duration-300">
-                <div className="w-full h-32 bg-gray-200 rounded-lg mb-4"></div>
-                <h4 className="font-semibold text-gray-900 mb-2">Ejercicio {i}</h4>
-                <p className="text-sm text-gray-600 mb-3">Descripción del ejercicio</p>
-                <div className="flex items-center justify-between">
-                  <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full">
-                    Fuerza
-                  </span>
-                  <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
-                    Ver detalles
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// Sección Vamos a Entrenar
-const QuickWorkoutSection: React.FC = () => {
-  return (
-    <div>
-      <h2 className="text-3xl font-bold text-gray-900 mb-6">Vamos a entrenar</h2>
-      
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Crear Rutina Rápida */}
-        <div className="bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-xl p-8">
-          <div className="flex items-center gap-4 mb-6">
-            <div className="w-12 h-12 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
-              <Zap className="w-6 h-6" />
-            </div>
-            <div>
-              <h3 className="text-2xl font-bold">Crear Rutina Rápida</h3>
-              <p className="opacity-90">Personaliza tu entrenamiento en minutos</p>
-            </div>
-          </div>
-          
-          <div className="space-y-4 mb-6">
-            <div className="flex items-center gap-3">
-              <div className="w-6 h-6 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
-                <span className="text-sm font-bold">1</span>
-              </div>
-              <span>Selecciona el tipo de entrenamiento</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="w-6 h-6 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
-                <span className="text-sm font-bold">2</span>
-              </div>
-              <span>Elige los ejercicios</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="w-6 h-6 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
-                <span className="text-sm font-bold">3</span>
-              </div>
-              <span>Configura series y repeticiones</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="w-6 h-6 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
-                <span className="text-sm font-bold">4</span>
-              </div>
-              <span>¡Comienza a entrenar!</span>
-            </div>
-          </div>
-          
-          <button className="w-full bg-white text-orange-600 font-semibold py-3 px-6 rounded-xl hover:bg-gray-100 transition-colors duration-200">
-            Crear Rutina Rápida
-          </button>
-        </div>
-
-        {/* Rutinas Guardadas */}
-        <div>
-          <h3 className="text-xl font-semibold text-gray-900 mb-4">Rutinas Guardadas</h3>
-          
-          <div className="space-y-4">
-            <div className="border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow duration-300">
-              <div className="flex items-center justify-between mb-3">
-                <h4 className="font-semibold text-gray-900">Rutina de Fuerza</h4>
-                <div className="flex items-center gap-2">
-                  <button className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg">
-                    <Play className="w-4 h-4" />
-                  </button>
-                  <button className="p-2 text-gray-600 hover:bg-gray-50 rounded-lg">
-                    <Edit className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-              <p className="text-sm text-gray-600 mb-3">8 ejercicios • 45 min</p>
-              <div className="flex items-center gap-2 text-xs text-gray-500">
-                <Clock className="w-3 h-3" />
-                Última vez: hace 2 días
-              </div>
-            </div>
-            
-            <div className="border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow duration-300">
-              <div className="flex items-center justify-between mb-3">
-                <h4 className="font-semibold text-gray-900">Cardio HIIT</h4>
-                <div className="flex items-center gap-2">
-                  <button className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg">
-                    <Play className="w-4 h-4" />
-                  </button>
-                  <button className="p-2 text-gray-600 hover:bg-gray-50 rounded-lg">
-                    <Edit className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-              <p className="text-sm text-gray-600 mb-3">6 ejercicios • 30 min</p>
-              <div className="flex items-center gap-2 text-xs text-gray-500">
-                <Clock className="w-3 h-3" />
-                Última vez: hace 1 semana
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      )}
     </div>
   );
 };

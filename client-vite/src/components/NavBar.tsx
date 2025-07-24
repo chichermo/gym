@@ -1,22 +1,23 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { 
-  Home, 
-  Dumbbell, 
-  TrendingUp, 
-  User, 
+import {
+  Home,
+  Dumbbell,
+  TrendingUp,
+  User,
   Trophy,
-  BarChart3, 
-  Users, 
-  Calendar, 
+  BarChart3,
+  Users,
+  Calendar,
   Target,
   LogOut,
   Menu,
   X,
   Camera,
   Settings,
-  Bell
+  Bell,
+  List
 } from 'lucide-react';
 
 const NavBar: React.FC = () => {
@@ -25,76 +26,90 @@ const NavBar: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const navigation = [
-    { 
-      name: 'Dashboard', 
-      href: '/dashboard', 
-      icon: Home, 
+    {
+      name: 'Dashboard',
+      href: '/dashboard',
+      icon: Home,
       color: 'from-blue-500 to-cyan-500',
       description: 'Vista general'
     },
-    { 
-      name: 'Mi Programa', 
-      href: '/program', 
-      icon: Dumbbell, 
-      color: 'from-purple-500 to-pink-500',
-      description: 'Entrenamientos'
+    {
+      name: 'Coach Cesar Lugo',
+      href: '/coach-cesar-lugo',
+      icon: User,
+      color: 'from-fuchsia-500 to-pink-500',
+      description: 'Videos y shorts'
     },
-    { 
-      name: 'Progreso', 
-      href: '/progress', 
-      icon: TrendingUp, 
+    {
+      name: 'Entrenamiento y Programa',
+      href: '/entrenamiento-programa',
+      icon: Dumbbell,
+      color: 'from-purple-500 to-pink-500',
+      description: 'Programas y rutinas'
+    },
+    {
+      name: 'Historial de Entrenamientos',
+      href: '/entrenamiento-programa/historial',
+      icon: List,
+      color: 'from-yellow-500 to-orange-500',
+      description: 'Sesiones pasadas'
+    },
+    {
+      name: 'Progreso',
+      href: '/progress',
+      icon: TrendingUp,
       color: 'from-green-500 to-emerald-500',
       description: 'Estadísticas'
     },
-    { 
-      name: 'Perfil', 
-      href: '/profile', 
-      icon: User, 
+    {
+      name: 'Perfil',
+      href: '/profile',
+      icon: User,
       color: 'from-orange-500 to-red-500',
       description: 'Mi cuenta'
     },
-    { 
-      name: 'Trofeos', 
-      href: '/trophies', 
-      icon: Trophy, 
+    {
+      name: 'Trofeos',
+      href: '/trophies',
+      icon: Trophy,
       color: 'from-yellow-500 to-orange-500',
       description: 'Logros'
     },
-    { 
-      name: 'Analytics', 
-      href: '/analytics', 
-      icon: BarChart3, 
+    {
+      name: 'Analytics',
+      href: '/analytics',
+      icon: BarChart3,
       color: 'from-indigo-500 to-purple-500',
       description: 'Análisis'
     },
-    { 
-      name: 'Comunidad', 
-      href: '/community', 
-      icon: Users, 
+    {
+      name: 'Comunidad',
+      href: '/community',
+      icon: Users,
       color: 'from-pink-500 to-rose-500',
       description: 'Social'
     },
-    { 
-      name: 'Calendario', 
-      href: '/calendar', 
-      icon: Calendar, 
+    {
+      name: 'Calendario',
+      href: '/calendar',
+      icon: Calendar,
       color: 'from-teal-500 to-cyan-500',
       description: 'Agenda'
     },
-    { 
-      name: 'Plan', 
-      href: '/plan', 
-      icon: Target, 
+    {
+      name: 'Plan',
+      href: '/plan',
+      icon: Target,
       color: 'from-red-500 to-pink-500',
       description: 'Objetivos'
     },
-    { 
-      name: 'Entrenamiento AR', 
-      href: '/ar', 
-      icon: Camera, 
+    {
+      name: 'Entrenamiento AR',
+      href: '/ar',
+      icon: Camera,
       color: 'from-cyan-500 to-blue-500',
       description: 'Realidad aumentada'
-    }
+    },
   ];
 
   const isActive = (path: string) => {
@@ -123,7 +138,7 @@ const NavBar: React.FC = () => {
 
       {/* Overlay para móvil */}
       {isMobileMenuOpen && (
-        <div 
+        <div
           className="lg:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-30"
           onClick={() => setIsMobileMenuOpen(false)}
         />
@@ -173,18 +188,18 @@ const NavBar: React.FC = () => {
                 >
                   {/* Efecto de fondo animado */}
                   <div className={`absolute inset-0 bg-gradient-to-r ${item.color} opacity-0 group-hover:opacity-10 transition-opacity duration-300`}></div>
-                  
+
                   {/* Icono */}
                   <div className={`relative z-10 p-2 rounded-xl ${isActiveItem ? 'bg-white/20' : 'bg-white/5 group-hover:bg-white/10'}`}>
                     <Icon className="w-5 h-5" />
                   </div>
-                  
+
                   {/* Texto */}
                   <div className="relative z-10 flex-1">
                     <div className="font-medium">{item.name}</div>
                     <div className="text-xs opacity-70">{item.description}</div>
                   </div>
-                  
+
                   {/* Indicador activo */}
                   {isActiveItem && (
                     <div className="absolute right-2 w-2 h-2 bg-white rounded-full animate-pulse"></div>
@@ -223,7 +238,7 @@ const NavBar: React.FC = () => {
                   <button className="flex-1 p-2 bg-white/5 hover:bg-white/10 rounded-xl transition-colors duration-200">
                     <Settings className="w-4 h-4 text-gray-400" />
                   </button>
-                  <button 
+                  <button
                     onClick={handleLogout}
                     className="flex-1 p-2 bg-red-500/20 hover:bg-red-500/30 rounded-xl transition-colors duration-200"
                   >

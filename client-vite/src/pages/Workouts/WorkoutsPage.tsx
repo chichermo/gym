@@ -1,371 +1,200 @@
-import React, { useState } from "react";
-import { 
-  Plus, 
-  Target, 
-  Dumbbell, 
-  Heart, 
-  Zap, 
-  Play, 
-  Clock, 
-  Search, 
-  Star, 
-  CheckCircle, 
-  Eye, 
-  BookOpen,
-  Activity,
-  Target as TargetIcon,
-  BarChart3
-} from "lucide-react";
-import { useNavigate } from 'react-router-dom';
-import { useWorkouts } from '../../contexts/WorkoutsContext';
-import { ModernCard, ModernButton, ModernBadge } from '../../components/ModernUI';
+import React, { useState } from 'react';
+import { Play, Edit, Trash2, Plus, Star, TrendingUp, Calendar, CheckCircle, Clock, List, Activity } from 'lucide-react';
+import { ModernCard, ModernButton } from '../../components/ModernUI';
 
-// Datos simulados de entrenamientos
 const mockWorkouts = [
   {
-    _id: 'workout1',
-    name: 'Entrenamiento de Pecho y Tríceps',
-    type: 'strength',
-    duration: 75,
-    difficulty: 'Intermedio',
-    exercises: [
-      { name: 'Press de Banca', sets: 4, reps: '8-12' },
-      { name: 'Press Inclinado', sets: 3, reps: '10-12' },
-      { name: 'Fondos', sets: 3, reps: '12-15' }
-    ],
-    completed: true,
-    date: '2024-06-25',
-    rating: 4,
-    notes: 'Excelente entrenamiento, me sentí muy fuerte'
+    id: 1,
+    name: 'Piernas y Glúteos',
+    date: '2024-06-10',
+    duration: 60,
+    type: 'Fuerza',
+    completed: false
   },
   {
-    _id: 'workout2',
-    name: 'Entrenamiento de Espalda y Bíceps',
-    type: 'strength',
-    duration: 70,
-    difficulty: 'Intermedio',
-    exercises: [
-      { name: 'Dominadas', sets: 4, reps: '8-10' },
-      { name: 'Remo con Barra', sets: 4, reps: '10-12' },
-      { name: 'Curl de Bíceps', sets: 3, reps: '12-15' }
-    ],
-    completed: true,
-    date: '2024-06-23',
-    rating: 5,
-    notes: 'Muy buen bombeo en la espalda'
-  },
-  {
-    _id: 'workout3',
+    id: 2,
     name: 'Cardio HIIT',
-    type: 'cardio',
+    date: '2024-06-11',
     duration: 45,
-    difficulty: 'Intermedio',
-    exercises: [
-      { name: 'Burpees', sets: 5, reps: '30 segundos' },
-      { name: 'Mountain Climbers', sets: 5, reps: '45 segundos' },
-      { name: 'Jumping Jacks', sets: 5, reps: '60 segundos' }
-    ],
-    completed: false,
-    date: '2024-06-26',
-    rating: 0,
-    notes: ''
+    type: 'Cardio',
+    completed: true
+  },
+  {
+    id: 3,
+    name: 'Espalda y Bíceps',
+    date: '2024-06-12',
+    duration: 55,
+    type: 'Fuerza',
+    completed: false
+  },
+  {
+    id: 4,
+    name: 'Yoga',
+    date: '2024-06-13',
+    duration: 40,
+    type: 'Flexibilidad',
+    completed: false
   }
 ];
 
-
-
 const WorkoutsPage: React.FC = () => {
-  const { 
-    startWorkout
-  } = useWorkouts();
+  const [workouts, setWorkouts] = useState(mockWorkouts);
+  const [showAdd, setShowAdd] = useState(false);
+  const [newWorkout, setNewWorkout] = useState('');
 
-  const [activeTab, setActiveTab] = useState('workouts');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('all');
-
-  const navigate = useNavigate();
-
-  // Funciones auxiliares
-  const getWorkoutTypeIcon = (type: string) => {
-    switch (type) {
-      case 'strength': return Dumbbell;
-      case 'cardio': return Heart;
-      case 'flexibility': return Target;
-      case 'hiit': return Zap;
-      default: return Activity;
+  const handleAddWorkout = () => {
+    if (newWorkout.trim()) {
+      setWorkouts([
+        ...workouts,
+        {
+          id: workouts.length + 1,
+          name: newWorkout,
+          date: new Date().toISOString().split('T')[0],
+          duration: 0,
+          type: 'Personalizado',
+          completed: false
+        }
+      ]);
+      setNewWorkout('');
+      setShowAdd(false);
     }
   };
 
-  const getDifficultyColor = (difficulty: string) => {
-    switch (difficulty.toLowerCase()) {
-      case 'principiante': return 'from-green-500 to-emerald-500';
-      case 'intermedio': return 'from-yellow-500 to-orange-500';
-      case 'avanzado': return 'from-red-500 to-pink-500';
-      default: return 'from-blue-500 to-cyan-500';
-    }
-  };
-
-  const formatTime = (minutes: number) => {
-    const hours = Math.floor(minutes / 60);
-    const mins = minutes % 60;
-    return hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
-  };
-
-  const getWorkoutStats = () => {
-    const totalWorkouts = mockWorkouts.length;
-    const completedWorkouts = mockWorkouts.filter(w => w.completed).length;
-    const totalTime = mockWorkouts.reduce((acc, w) => acc + w.duration, 0);
-    const avgRating = mockWorkouts.reduce((acc, w) => acc + w.rating, 0) / totalWorkouts;
-
-    return {
-      total: totalWorkouts,
-      completed: completedWorkouts,
-      totalTime,
-      avgRating: avgRating.toFixed(1),
-      completionRate: ((completedWorkouts / totalWorkouts) * 100).toFixed(0)
-    };
-  };
-
-  const stats = getWorkoutStats();
+  const upcomingWorkouts = workouts.filter(w => !w.completed).slice(0, 3);
+  const completedWorkouts = workouts.filter(w => w.completed);
 
   return (
     <div className="space-y-8">
-      {/* Header con estadísticas */}
+      {/* Header y acciones rápidas */}
       <div className="fitness-card">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-3xl font-bold text-white mb-2">Mis Entrenamientos</h1>
-            <p className="text-gray-300">Gestiona y realiza seguimiento de tus rutinas</p>
+            <h1 className="text-3xl font-bold text-white mb-2">Entrenamientos</h1>
+            <p className="text-gray-300">Gestiona tus rutinas, programa nuevos entrenamientos y revisa tu historial</p>
           </div>
-                     <ModernButton 
-             onClick={() => navigate('/program')}
-             icon={Plus}
-             size="lg"
-           >
-             Crear Entrenamiento
-           </ModernButton>
-        </div>
-
-        {/* Estadísticas rápidas */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="stats-card">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center">
-                <Dumbbell className="w-5 h-5 text-white" />
-              </div>
-              <div>
-                <p className="text-sm text-gray-300">Total Entrenamientos</p>
-                <p className="text-2xl font-bold text-white">{stats.total}</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="stats-card">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl flex items-center justify-center">
-                <CheckCircle className="w-5 h-5 text-white" />
-              </div>
-              <div>
-                <p className="text-sm text-gray-300">Completados</p>
-                <p className="text-2xl font-bold text-white">{stats.completed}</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="stats-card">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
-                <Clock className="w-5 h-5 text-white" />
-              </div>
-              <div>
-                <p className="text-sm text-gray-300">Tiempo Total</p>
-                <p className="text-2xl font-bold text-white">{formatTime(stats.totalTime)}</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="stats-card">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-xl flex items-center justify-center">
-                <Star className="w-5 h-5 text-white" />
-              </div>
-              <div>
-                <p className="text-sm text-gray-300">Rating Promedio</p>
-                <p className="text-2xl font-bold text-white">{stats.avgRating}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Tabs de navegación */}
-      <div className="fitness-card">
-        <div className="flex items-center gap-1 p-1 bg-white/5 rounded-xl">
-          {[
-            { id: 'workouts', label: 'Entrenamientos', icon: Dumbbell },
-            { id: 'templates', label: 'Plantillas', icon: BookOpen },
-            { id: 'exercises', label: 'Ejercicios', icon: TargetIcon },
-            { id: 'stats', label: 'Estadísticas', icon: BarChart3 }
-          ].map((tab) => {
-            const Icon = tab.icon;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-300 ${
-                  activeTab === tab.id
-                    ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg'
-                    : 'text-gray-300 hover:text-white hover:bg-white/10'
-                }`}
-              >
-                <Icon className="w-4 h-4" />
-                <span className="font-medium">{tab.label}</span>
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Contenido de las tabs */}
-      {activeTab === 'workouts' && (
-        <div className="space-y-6">
-          {/* Filtros y búsqueda */}
-          <div className="fitness-card">
-            <div className="flex flex-col md:flex-row gap-4">
-              <div className="flex-1 relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <input
-                  type="text"
-                  placeholder="Buscar entrenamientos..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-blue-500/50"
-                />
-              </div>
-              <select
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-                className="px-4 py-3 bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl text-white focus:outline-none focus:border-blue-500/50"
-              >
-                <option value="all">Todas las categorías</option>
-                <option value="strength">Fuerza</option>
-                <option value="cardio">Cardio</option>
-                <option value="flexibility">Flexibilidad</option>
-                <option value="hiit">HIIT</option>
-              </select>
-            </div>
-          </div>
-
-          {/* Lista de entrenamientos */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {mockWorkouts.map((workout) => (
-              <ModernCard
-                key={workout._id}
-                title={workout.name}
-                description={`${workout.exercises.length} ejercicios • ${formatTime(workout.duration)}`}
-                icon={getWorkoutTypeIcon(workout.type)}
-                gradient={getDifficultyColor(workout.difficulty)}
-                variant="fitness"
-                                 onClick={() => navigate(`/workout/${workout._id}`)}
-              >
-                <div className="space-y-4">
-                  {/* Estado del entrenamiento */}
-                  <div className="flex items-center justify-between">
-                    <ModernBadge
-                      variant={workout.completed ? 'success' : 'default'}
-                      size="sm"
-                      icon={workout.completed ? CheckCircle : Clock}
-                    >
-                      {workout.completed ? 'Completado' : 'Pendiente'}
-                    </ModernBadge>
-                    <div className="flex items-center gap-1">
-                      {[...Array(5)].map((_, i) => (
-                        <Star
-                          key={i}
-                          className={`w-4 h-4 ${
-                            i < workout.rating ? 'text-yellow-400 fill-current' : 'text-gray-400'
-                          }`}
-                        />
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Ejercicios principales */}
-                  <div className="space-y-2">
-                    <p className="text-sm font-medium text-white">Ejercicios principales:</p>
-                    <div className="space-y-1">
-                      {workout.exercises.slice(0, 3).map((exercise, index) => (
-                        <div key={index} className="flex items-center justify-between text-sm">
-                          <span className="text-gray-300">{exercise.name}</span>
-                          <span className="text-gray-400">{exercise.sets} sets</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Acciones */}
-                  <div className="flex items-center gap-2 pt-2">
-                                         <ModernButton
-                       size="sm"
-                       variant="primary"
-                       icon={Play}
-                       onClick={() => startWorkout(workout._id)}
-                     >
-                       Iniciar
-                     </ModernButton>
-                     <ModernButton
-                       size="sm"
-                       variant="glass"
-                       icon={Eye}
-                       onClick={() => {
-                         // Ver detalles
-                       }}
-                     >
-                       Ver
-                     </ModernButton>
-                  </div>
-                </div>
-              </ModernCard>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {activeTab === 'templates' && (
-        <div className="fitness-card">
-          <div className="text-center py-12">
-            <BookOpen className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-xl font-bold text-white mb-2">Plantillas de Entrenamiento</h3>
-            <p className="text-gray-300 mb-6">Crea y gestiona plantillas reutilizables para tus rutinas</p>
-                         <ModernButton onClick={() => navigate('/program')}>
-               Crear Plantilla
-             </ModernButton>
-          </div>
-        </div>
-      )}
-
-             {activeTab === 'exercises' && (
-         <div className="fitness-card">
-           <div className="text-center py-12">
-             <TargetIcon className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-             <h3 className="text-xl font-bold text-white mb-2">Biblioteca de Ejercicios</h3>
-             <p className="text-gray-300 mb-6">Explora y descubre nuevos ejercicios</p>
-             <ModernButton onClick={() => navigate('/exercises')}>
-               Ver Ejercicios
-             </ModernButton>
-           </div>
-         </div>
-       )}
-
-      {activeTab === 'stats' && (
-        <div className="fitness-card">
-          <div className="text-center py-12">
-            <BarChart3 className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-xl font-bold text-white mb-2">Estadísticas Detalladas</h3>
-            <p className="text-gray-300 mb-6">Análisis completo de tu rendimiento y progreso</p>
-            <ModernButton onClick={() => navigate('/analytics')}>
-              Ver Analytics
+          <div className="flex gap-2">
+            <ModernButton icon={Plus} onClick={() => setShowAdd(true)}>
+              Nuevo Entrenamiento
             </ModernButton>
+            <ModernButton icon={List} variant="glass">
+              Ver Todos
+            </ModernButton>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Entrenamientos programados y completados */}
+        <div className="lg:col-span-2 space-y-6">
+          {/* Programados */}
+          <ModernCard title="Programados" icon={Play} gradient="from-blue-500 to-cyan-500" variant="fitness">
+            {upcomingWorkouts.length === 0 ? (
+              <p className="text-gray-300">No tienes entrenamientos programados.</p>
+            ) : (
+              <div className="space-y-4">
+                {upcomingWorkouts.map(workout => (
+                  <div key={workout.id} className="flex items-center justify-between bg-white/5 rounded-xl p-4">
+                    <div>
+                      <p className="text-white font-bold text-lg">{workout.name}</p>
+                      <p className="text-xs text-gray-400 mb-1">{workout.date} - {workout.type}</p>
+                      <p className="text-xs text-gray-300 mb-2">Duración: {workout.duration} min</p>
+                    </div>
+                    <div className="flex flex-col gap-2 items-end">
+                      <ModernButton icon={Play} size="sm" variant="glass">
+                        Iniciar
+                      </ModernButton>
+                      <ModernButton icon={Edit} size="sm" variant="glass" />
+                      <ModernButton icon={Trash2} size="sm" variant="glass" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </ModernCard>
+
+          {/* Historial */}
+          <ModernCard title="Historial" icon={CheckCircle} gradient="from-yellow-500 to-orange-500" variant="fitness">
+            {completedWorkouts.length === 0 ? (
+              <p className="text-gray-300">No tienes entrenamientos completados.</p>
+            ) : (
+              <div className="space-y-4">
+                {completedWorkouts.map(workout => (
+                  <div key={workout.id} className="flex items-center justify-between bg-white/5 rounded-xl p-4">
+                    <div>
+                      <p className="text-white font-bold text-lg">{workout.name}</p>
+                      <p className="text-xs text-gray-400 mb-1">{workout.date} - {workout.type}</p>
+                      <p className="text-xs text-gray-300 mb-2">Duración: {workout.duration} min</p>
+                      <span className="text-xs text-emerald-400 font-bold">¡Completado!</span>
+                    </div>
+                    <div className="flex flex-col gap-2 items-end">
+                      <ModernButton icon={Star} size="sm" variant="glass">
+                        Ver Detalles
+                      </ModernButton>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </ModernCard>
+        </div>
+
+        {/* Panel lateral: resumen y acciones rápidas */}
+        <div className="space-y-6">
+          <ModernCard title="Resumen" icon={TrendingUp} gradient="from-green-500 to-emerald-500" variant="stats">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="flex flex-col items-center">
+                <Play className="w-6 h-6 text-blue-400 mb-1" />
+                <span className="text-white font-bold text-lg">{upcomingWorkouts.length}</span>
+                <span className="text-xs text-gray-300">Programados</span>
+              </div>
+              <div className="flex flex-col items-center">
+                <CheckCircle className="w-6 h-6 text-emerald-400 mb-1" />
+                <span className="text-white font-bold text-lg">{completedWorkouts.length}</span>
+                <span className="text-xs text-gray-300">Completados</span>
+              </div>
+              <div className="flex flex-col items-center">
+                <Clock className="w-6 h-6 text-yellow-400 mb-1" />
+                <span className="text-white font-bold text-lg">{workouts.reduce((acc, w) => acc + w.duration, 0)} min</span>
+                <span className="text-xs text-gray-300">Total minutos</span>
+              </div>
+              <div className="flex flex-col items-center">
+                <Calendar className="w-6 h-6 text-purple-400 mb-1" />
+                <span className="text-white font-bold text-lg">{workouts.length}</span>
+                <span className="text-xs text-gray-300">Total sesiones</span>
+              </div>
+            </div>
+          </ModernCard>
+
+          <ModernCard title="Acciones Rápidas" icon={Plus} gradient="from-blue-500 to-cyan-500" variant="stats">
+            <div className="flex flex-col gap-3">
+              <ModernButton icon={Plus} onClick={() => setShowAdd(true)}>
+                Añadir Entrenamiento
+              </ModernButton>
+            </div>
+          </ModernCard>
+        </div>
+      </div>
+
+      {/* Modal para añadir entrenamiento */}
+      {showAdd && (
+        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center">
+          <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-8 w-full max-w-md shadow-2xl border border-white/20">
+            <h2 className="text-xl font-bold text-white mb-4">Nuevo Entrenamiento</h2>
+            <input
+              type="text"
+              value={newWorkout}
+              onChange={e => setNewWorkout(e.target.value)}
+              placeholder="Nombre del entrenamiento"
+              className="w-full px-4 py-3 mb-4 bg-white/20 border border-white/30 rounded-xl text-white focus:outline-none focus:border-blue-500/50"
+            />
+            <div className="flex gap-2 justify-end">
+              <ModernButton variant="glass" onClick={() => setShowAdd(false)}>
+                Cancelar
+              </ModernButton>
+              <ModernButton icon={Plus} onClick={handleAddWorkout}>
+                Añadir
+              </ModernButton>
+            </div>
           </div>
         </div>
       )}

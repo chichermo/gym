@@ -1,24 +1,36 @@
 import React, { useState } from 'react';
 import { useProfile } from '../../contexts/ProfileContext';
-import { useAuth } from '../../contexts/AuthContext';
 import { 
   User, 
-  Edit, 
-  Save, 
-  Camera, 
-  TrendingUp,
-  Ruler,
-  Weight,
+  Settings, 
+  Bell, 
+  Shield, 
+  Palette,
+  Download,
+  Upload,
+  Edit,
+  Save,
+  Camera,
+  Mail,
+  Phone,
+  MapPin,
   Calendar,
-  Plus,
-  Info,
+  Activity,
   Target,
-  Activity
+  Trophy,
+  Star,
+  Heart,
+  Zap,
+  CheckCircle,
+  Clock,
+  TrendingUp,
+  BarChart3,
+  LineChart,
+  PieChart
 } from 'lucide-react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { ModernCard, ModernButton, ModernBadge } from '../../components/ModernUI';
 
 const ProfilePage: React.FC = () => {
-  const { user } = useAuth();
   const { 
     profile, 
     updateExperienceLevel, 
@@ -30,568 +42,546 @@ const ProfilePage: React.FC = () => {
     getBodyTypes,
     getWeightHistory
   } = useProfile();
-  
-  const [activeTab, setActiveTab] = useState('basic');
+
+  const [activeTab, setActiveTab] = useState('overview');
   const [isEditing, setIsEditing] = useState(false);
-  const [showBodyTypeModal, setShowBodyTypeModal] = useState(false);
-  const [showPerimeterModal, setShowPerimeterModal] = useState(false);
-  const [showWeightModal, setShowWeightModal] = useState(false);
-  const [showCompositionModal, setShowCompositionModal] = useState(false);
+  const [editedProfile, setEditedProfile] = useState(profile);
 
-  const experienceLevels = [
-    { value: 'basic_1', label: 'Soy nuevo en el gym', level: 'Básico I' },
-    { value: 'basic_2', label: 'Menos de 6 meses', level: 'Básico II' },
-    { value: 'intermediate_1', label: 'De 6 meses a 1 año', level: 'Intermedio I' },
-    { value: 'intermediate_2', label: 'De 1 a 3 años', level: 'Intermedio II' },
-    { value: 'advanced_1', label: 'De 3 a 5 años', level: 'Avanzado I' },
-    { value: 'advanced_2', label: 'Más de 5 años', level: 'Avanzado II' }
+  // Datos mock para las estadísticas
+  const mockStats = {
+    workouts: 45,
+    completedGoals: 12,
+    achievements: 8,
+    points: 1250,
+    totalHours: 180,
+    caloriesBurned: 45000,
+    activeDays: 28
+  };
+
+  // Datos mock para el perfil
+  const mockProfileData = {
+    name: 'Usuario Fitness',
+    email: 'usuario@fitness.com',
+    phone: '+34 123 456 789',
+    location: 'Madrid, España',
+    bio: 'Apasionado del fitness y la vida saludable',
+    website: 'https://miperfil.com',
+    joinDate: new Date('2023-01-15')
+  };
+
+  // Datos mock para actividad
+  const mockActivityHistory = [
+    {
+      id: '1',
+      title: 'Entrenamiento de Fuerza',
+      description: 'Completaste un entrenamiento de 45 minutos',
+      type: 'workout',
+      date: '2024-01-15',
+      points: 50,
+      duration: '45 min'
+    },
+    {
+      id: '2',
+      title: 'Meta Alcanzada',
+      description: 'Lograste tu meta semanal de entrenamientos',
+      type: 'goal',
+      date: '2024-01-14',
+      points: 100,
+      duration: '7 días'
+    },
+    {
+      id: '3',
+      title: 'Nuevo Logro',
+      description: 'Desbloqueaste el trofeo "Consistencia"',
+      type: 'achievement',
+      date: '2024-01-13',
+      points: 75,
+      duration: '30 días'
+    }
   ];
 
-  const perimeterTypes = [
-    { id: 'waist', name: 'Cintura', unit: 'cm' },
-    { id: 'glute', name: 'Glúteo máximo', unit: 'cm' },
-    { id: 'thigh', name: 'Muslo', unit: 'cm' },
-    { id: 'calf', name: 'Pantorrilla', unit: 'cm' },
-    { id: 'arm_relaxed', name: 'Brazo relajado', unit: 'cm' },
-    { id: 'arm_contracted', name: 'Brazo contraído', unit: 'cm' },
-    { id: 'chest', name: 'Pectoral', unit: 'cm' }
+  // Datos mock para logros
+  const mockAchievements = [
+    {
+      id: '1',
+      name: 'Primer Entrenamiento',
+      description: 'Completaste tu primer entrenamiento',
+      level: 'bronze',
+      points: 25,
+      date: '2024-01-10'
+    },
+    {
+      id: '2',
+      name: 'Consistencia Semanal',
+      description: 'Entrenaste 5 días en una semana',
+      level: 'silver',
+      points: 50,
+      date: '2024-01-08'
+    },
+    {
+      id: '3',
+      name: 'Meta Mensual',
+      description: 'Alcanzaste tu meta de peso',
+      level: 'gold',
+      points: 100,
+      date: '2024-01-05'
+    }
   ];
 
-  const weightHistory = getWeightHistory();
-  const chartData = weightHistory.slice(-30).map(record => ({
-    date: new Date(record.date).toLocaleDateString(),
-    weight: record.weight
-  }));
+  // Datos mock para preferencias
+  const mockPreferences = {
+    notifications: {
+      'Recordatorios de entrenamiento': true,
+      'Logros desbloqueados': true,
+      'Metas alcanzadas': false,
+      'Consejos semanales': true
+    },
+    privacy: {
+      'Perfil público': false,
+      'Mostrar progreso': true,
+      'Compartir logros': false,
+      'Permitir mensajes': true
+    },
+    theme: 'dark',
+    language: 'es'
+  };
+
+  const handleSave = () => {
+    // Aquí se guardarían los cambios del perfil
+    setIsEditing(false);
+  };
+
+  const handleCancel = () => {
+    setEditedProfile(profile);
+    setIsEditing(false);
+  };
+
+  const getActivityIcon = (type: string) => {
+    switch (type) {
+      case 'workout': return Activity;
+      case 'goal': return Target;
+      case 'achievement': return Trophy;
+      case 'progress': return TrendingUp;
+      default: return Star;
+    }
+  };
+
+  const getAchievementColor = (level: string) => {
+    switch (level) {
+      case 'bronze': return 'from-yellow-600 to-orange-600';
+      case 'silver': return 'from-gray-400 to-gray-600';
+      case 'gold': return 'from-yellow-400 to-yellow-600';
+      case 'platinum': return 'from-purple-400 to-purple-600';
+      default: return 'from-blue-500 to-cyan-500';
+    }
+  };
+
+  const updatePreferences = (category: string, key: string, value: any) => {
+    // Aquí se actualizarían las preferencias
+    console.log('Actualizando preferencia:', category, key, value);
+  };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between">
+    <div className="space-y-8">
+      {/* Header y acciones */}
+      <div className="fitness-card">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-4">
+            <div className="relative">
+              <div className="w-20 h-20 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full flex items-center justify-center shadow-lg">
+                <User className="w-10 h-10 text-white" />
+              </div>
+              <button className="absolute -bottom-1 -right-1 w-8 h-8 bg-white/20 backdrop-blur-xl rounded-full flex items-center justify-center border border-white/30 hover:bg-white/30 transition-all duration-300">
+                <Camera className="w-4 h-4 text-white" />
+              </button>
+            </div>
             <div>
-              <h1 className="text-4xl font-bold text-gray-900 mb-2">
-                Perfil de Usuario
-              </h1>
-              <p className="text-lg text-gray-600">
-                Gestiona tu información personal y física
-              </p>
+              <h1 className="text-3xl font-bold text-white mb-2">{mockProfileData.name}</h1>
+              <p className="text-gray-300">{mockProfileData.email}</p>
+              <div className="flex items-center gap-2 mt-2">
+                <ModernBadge variant="success" size="sm" icon={CheckCircle}>
+                  Miembro desde {mockProfileData.joinDate.getFullYear()}
+                </ModernBadge>
+              </div>
             </div>
-            <button
-              onClick={() => setIsEditing(!isEditing)}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors duration-200"
-            >
-              {isEditing ? <Save className="w-4 h-4" /> : <Edit className="w-4 h-4" />}
-              {isEditing ? 'Guardar' : 'Editar'}
-            </button>
+          </div>
+          <div className="flex gap-2">
+            {isEditing ? (
+              <>
+                <ModernButton icon={Save} onClick={handleSave}>
+                  Guardar
+                </ModernButton>
+                <ModernButton icon={Edit} variant="secondary" onClick={handleCancel}>
+                  Cancelar
+                </ModernButton>
+              </>
+            ) : (
+              <>
+                <ModernButton icon={Edit} onClick={() => setIsEditing(true)}>
+                  Editar Perfil
+                </ModernButton>
+                <ModernButton icon={Download} variant="secondary" onClick={() => console.log('Exportar')}>
+                  Exportar
+                </ModernButton>
+                <ModernButton icon={Upload} variant="glass" onClick={() => console.log('Importar')}>
+                  Importar
+                </ModernButton>
+              </>
+            )}
           </div>
         </div>
-
-        {/* Tabs */}
-        <div className="mb-8">
-          <div className="flex space-x-1 bg-white p-1 rounded-lg shadow-sm">
-            {[
-              { id: 'basic', label: 'Información Básica', icon: User },
-              { id: 'physical', label: 'Información Física', icon: Activity },
-              { id: 'progress', label: 'Progreso', icon: TrendingUp }
-            ].map((tab) => {
-              const Icon = tab.icon;
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-md transition-colors duration-200 ${
-                    activeTab === tab.id
-                      ? 'bg-blue-500 text-white'
-                      : 'text-gray-600 hover:bg-gray-100'
-                  }`}
-                >
-                  <Icon className="w-4 h-4" />
-                  {tab.label}
-                </button>
-              );
-            })}
+        {/* Estadísticas rápidas */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="stats-card">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center">
+                <Activity className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-300">Entrenamientos</p>
+                <p className="text-2xl font-bold text-white">{mockStats.workouts}</p>
+              </div>
+            </div>
           </div>
-        </div>
-
-        {/* Tab Content */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          {activeTab === 'basic' && (
-            <div className="space-y-6">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Información Básica</h2>
-              
-              {/* Nivel de Experiencia */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                  <Target className="w-5 h-5" />
-                  Nivel de Experiencia
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {experienceLevels.map((level) => (
-                    <div
-                      key={level.value}
-                      className={`p-4 rounded-lg border cursor-pointer transition-colors duration-200 ${
-                        profile.experienceLevel === level.value
-                          ? 'border-blue-500 bg-blue-50'
-                          : 'border-gray-200 hover:border-blue-300'
-                      }`}
-                      onClick={() => updateExperienceLevel(level.value as any)}
-                    >
-                      <div className="font-semibold text-gray-900">{level.level}</div>
-                      <div className="text-sm text-gray-600">{level.label}</div>
-                    </div>
-                  ))}
-                </div>
+          <div className="stats-card">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl flex items-center justify-center">
+                <Target className="w-5 h-5 text-white" />
               </div>
-
-              {/* Tipo de Cuerpo */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                  <Info className="w-5 h-5" />
-                  Tipo de Cuerpo
-                </h3>
-                {profile.bodyType ? (
-                  <div className="p-4 bg-gray-50 rounded-lg">
-                    <div className="flex items-center gap-4">
-                      <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
-                        <span className="text-white font-bold text-lg">
-                          {profile.bodyType.name.charAt(0)}
-                        </span>
-                      </div>
-                      <div>
-                        <div className="font-semibold text-gray-900">{profile.bodyType.name}</div>
-                        <div className="text-sm text-gray-600">{profile.bodyType.description}</div>
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  <button
-                    onClick={() => setShowBodyTypeModal(true)}
-                    className="w-full p-4 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:border-blue-400 hover:text-blue-500 transition-colors duration-200"
-                  >
-                    <Plus className="w-6 h-6 mx-auto mb-2" />
-                    Seleccionar tipo de cuerpo
-                  </button>
-                )}
+              <div>
+                <p className="text-sm text-gray-300">Metas Completadas</p>
+                <p className="text-2xl font-bold text-white">{mockStats.completedGoals}</p>
               </div>
             </div>
-          )}
-
-          {activeTab === 'physical' && (
-            <div className="space-y-6">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Información Física</h2>
-              
-              {/* Información Básica Física */}
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div className="p-4 bg-gray-50 rounded-lg">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Ruler className="w-4 h-4 text-blue-500" />
-                    <span className="font-semibold text-gray-900">Altura</span>
-                  </div>
-                  <div className="text-2xl font-bold text-gray-900">{profile.height} cm</div>
-                </div>
-                
-                <div className="p-4 bg-gray-50 rounded-lg">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Weight className="w-4 h-4 text-green-500" />
-                    <span className="font-semibold text-gray-900">Peso</span>
-                  </div>
-                  <div className="text-2xl font-bold text-gray-900">{profile.weight} kg</div>
-                </div>
-                
-                <div className="p-4 bg-gray-50 rounded-lg">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Calendar className="w-4 h-4 text-purple-500" />
-                    <span className="font-semibold text-gray-900">Edad</span>
-                  </div>
-                  <div className="text-2xl font-bold text-gray-900">{profile.age} años</div>
-                </div>
-                
-                <div className="p-4 bg-gray-50 rounded-lg">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Activity className="w-4 h-4 text-orange-500" />
-                    <span className="font-semibold text-gray-900">Tipo de Cuerpo</span>
-                  </div>
-                  <div className="text-lg font-bold text-gray-900">
-                    {profile.bodyType?.name || 'No seleccionado'}
-                  </div>
-                </div>
+          </div>
+          <div className="stats-card">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
+                <Trophy className="w-5 h-5 text-white" />
               </div>
-
-              {/* Medición de Perímetros */}
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-gray-900">Medición de Perímetros</h3>
-                  <button
-                    onClick={() => setShowPerimeterModal(true)}
-                    className="flex items-center gap-2 px-3 py-1 bg-blue-500 text-white rounded-lg text-sm hover:bg-blue-600 transition-colors duration-200"
-                  >
-                    <Plus className="w-4 h-4" />
-                    Agregar Medición
-                  </button>
-                </div>
-                
-                {profile.perimeters.length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {perimeterTypes.map((type) => {
-                      const lastMeasurement = profile.perimeters
-                        .filter(p => p.id.includes(type.id))
-                        .sort((a, b) => b.date.getTime() - a.date.getTime())[0];
-                      
-                      return (
-                        <div key={type.id} className="p-4 border border-gray-200 rounded-lg">
-                          <div className="font-semibold text-gray-900">{type.name}</div>
-                          <div className="text-2xl font-bold text-blue-600">
-                            {lastMeasurement ? `${lastMeasurement.value} ${type.unit}` : 'No registrado'}
-                          </div>
-                          {lastMeasurement && (
-                            <div className="text-xs text-gray-500">
-                              {new Date(lastMeasurement.date).toLocaleDateString()}
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                ) : (
-                  <div className="text-center py-8 text-gray-500">
-                    No hay mediciones registradas
-                  </div>
-                )}
-              </div>
-
-              {/* Composición Corporal */}
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-gray-900">Composición Corporal</h3>
-                  <button
-                    onClick={() => setShowCompositionModal(true)}
-                    className="flex items-center gap-2 px-3 py-1 bg-green-500 text-white rounded-lg text-sm hover:bg-green-600 transition-colors duration-200"
-                  >
-                    <Plus className="w-4 h-4" />
-                    Agregar Medición
-                  </button>
-                </div>
-                
-                {profile.bodyComposition.length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {profile.bodyComposition.slice(-1).map((composition, index) => (
-                      <div key={index} className="p-4 border border-gray-200 rounded-lg">
-                        <div className="grid grid-cols-2 gap-4">
-                          <div>
-                            <div className="font-semibold text-gray-900">% Grasa Corporal</div>
-                            <div className="text-xl font-bold text-red-600">
-                              {composition.bodyFatPercentage ? `${composition.bodyFatPercentage}%` : 'No informado'}
-                            </div>
-                          </div>
-                          <div>
-                            <div className="font-semibold text-gray-900">% Musculatura</div>
-                            <div className="text-xl font-bold text-green-600">
-                              {composition.musclePercentage ? `${composition.musclePercentage}%` : 'No informado'}
-                            </div>
-                          </div>
-                        </div>
-                        <div className="text-xs text-gray-500 mt-2">
-                          {new Date(composition.date).toLocaleDateString()}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-8 text-gray-500">
-                    No hay mediciones de composición corporal
-                  </div>
-                )}
+              <div>
+                <p className="text-sm text-gray-300">Logros</p>
+                <p className="text-2xl font-bold text-white">{mockStats.achievements}</p>
               </div>
             </div>
-          )}
-
-          {activeTab === 'progress' && (
-            <div className="space-y-6">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Progreso</h2>
-              
-              {/* Registro de Peso */}
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-gray-900">Registro de Peso</h3>
-                  <button
-                    onClick={() => setShowWeightModal(true)}
-                    className="flex items-center gap-2 px-3 py-1 bg-blue-500 text-white rounded-lg text-sm hover:bg-blue-600 transition-colors duration-200"
-                  >
-                    <Plus className="w-4 h-4" />
-                    Agregar Peso
-                  </button>
-                </div>
-                
-                {weightHistory.length > 0 ? (
-                  <div className="space-y-4">
-                    <div className="h-64">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <LineChart data={chartData}>
-                          <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                          <XAxis dataKey="date" stroke="#6b7280" />
-                          <YAxis stroke="#6b7280" />
-                          <Tooltip 
-                            contentStyle={{ 
-                              backgroundColor: 'white', 
-                              border: '1px solid #e5e7eb',
-                              borderRadius: '8px'
-                            }}
-                          />
-                          <Line 
-                            type="monotone" 
-                            dataKey="weight" 
-                            stroke="#3b82f6" 
-                            strokeWidth={3}
-                            dot={{ fill: '#3b82f6', strokeWidth: 2, r: 4 }}
-                          />
-                        </LineChart>
-                      </ResponsiveContainer>
-                    </div>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div className="p-4 bg-gray-50 rounded-lg">
-                        <div className="text-sm text-gray-500">Peso Actual</div>
-                        <div className="text-2xl font-bold text-gray-900">
-                          {weightHistory[0]?.weight} kg
-                        </div>
-                      </div>
-                      <div className="p-4 bg-gray-50 rounded-lg">
-                        <div className="text-sm text-gray-500">Peso Inicial</div>
-                        <div className="text-2xl font-bold text-gray-900">
-                          {weightHistory[weightHistory.length - 1]?.weight} kg
-                        </div>
-                      </div>
-                      <div className="p-4 bg-gray-50 rounded-lg">
-                        <div className="text-sm text-gray-500">Diferencia</div>
-                        <div className={`text-2xl font-bold ${
-                          (weightHistory[0]?.weight || 0) - (weightHistory[weightHistory.length - 1]?.weight || 0) > 0
-                            ? 'text-green-600'
-                            : 'text-red-600'
-                        }`}>
-                          {((weightHistory[0]?.weight || 0) - (weightHistory[weightHistory.length - 1]?.weight || 0)).toFixed(1)} kg
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="text-center py-8 text-gray-500">
-                    No hay registros de peso
-                  </div>
-                )}
+          </div>
+          <div className="stats-card">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-xl flex items-center justify-center">
+                <Star className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-300">Puntos</p>
+                <p className="text-2xl font-bold text-white">{mockStats.points}</p>
               </div>
             </div>
-          )}
+          </div>
         </div>
       </div>
 
-      {/* Modales */}
-      {/* Body Type Modal */}
-      {showBodyTypeModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-6 max-w-2xl w-full mx-4">
-            <h3 className="text-xl font-bold text-gray-900 mb-4">Seleccionar Tipo de Cuerpo</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {getBodyTypes().map((bodyType) => (
-                <div
-                  key={bodyType.id}
-                  onClick={() => {
-                    updateBodyType(bodyType);
-                    setShowBodyTypeModal(false);
-                  }}
-                  className="p-4 border border-gray-200 rounded-lg cursor-pointer hover:border-blue-300 transition-colors duration-200"
-                >
-                  <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center mx-auto mb-3">
-                    <span className="text-white font-bold text-lg">{bodyType.name.charAt(0)}</span>
+      {/* Tabs de navegación */}
+      <div className="fitness-card">
+        <div className="flex items-center gap-1 p-1 bg-white/5 rounded-xl">
+          {[
+            { id: 'overview', label: 'Resumen', icon: BarChart3 },
+            { id: 'personal', label: 'Personal', icon: User },
+            { id: 'activity', label: 'Actividad', icon: Activity },
+            { id: 'achievements', label: 'Logros', icon: Trophy },
+            { id: 'preferences', label: 'Preferencias', icon: Settings }
+          ].map((tab) => {
+            const Icon = tab.icon;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-300 ${
+                  activeTab === tab.id
+                    ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg'
+                    : 'text-gray-300 hover:text-white hover:bg-white/10'
+                }`}
+              >
+                <Icon className="w-4 h-4" />
+                <span className="font-medium">{tab.label}</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Contenido de las tabs */}
+      {activeTab === 'overview' && (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Información personal */}
+          <ModernCard title="Información Personal" icon={User} gradient="from-blue-500 to-cyan-500" variant="stats">
+            <div className="space-y-4">
+              <div className="flex items-center gap-3">
+                <Mail className="w-5 h-5 text-gray-400" />
+                <span className="text-white">{mockProfileData.email}</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <Phone className="w-5 h-5 text-gray-400" />
+                <span className="text-white">{mockProfileData.phone}</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <MapPin className="w-5 h-5 text-gray-400" />
+                <span className="text-white">{mockProfileData.location}</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <Calendar className="w-5 h-5 text-gray-400" />
+                <span className="text-white">Miembro desde {mockProfileData.joinDate.toLocaleDateString()}</span>
+              </div>
+            </div>
+          </ModernCard>
+
+          {/* Estadísticas de actividad */}
+          <ModernCard title="Estadísticas de Actividad" icon={Activity} gradient="from-green-500 to-emerald-500" variant="stats">
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="text-gray-300">Entrenamientos</span>
+                <span className="text-white font-bold">{mockStats.workouts}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-gray-300">Horas Totales</span>
+                <span className="text-white font-bold">{mockStats.totalHours}h</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-gray-300">Calorías Quemadas</span>
+                <span className="text-white font-bold">{mockStats.caloriesBurned}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-gray-300">Días Activos</span>
+                <span className="text-white font-bold">{mockStats.activeDays}</span>
+              </div>
+            </div>
+          </ModernCard>
+
+          {/* Logros recientes */}
+          <ModernCard title="Logros Recientes" icon={Trophy} gradient="from-purple-500 to-pink-500" variant="stats">
+            <div className="space-y-3">
+              {mockAchievements.slice(0, 3).map((achievement, idx) => (
+                <div key={achievement.id} className="flex items-center gap-3">
+                  <div className={`w-8 h-8 bg-gradient-to-r ${getAchievementColor(achievement.level)} rounded-full flex items-center justify-center`}>
+                    <Trophy className="w-4 h-4 text-white" />
                   </div>
-                  <div className="text-center">
-                    <div className="font-semibold text-gray-900">{bodyType.name}</div>
-                    <div className="text-sm text-gray-600">{bodyType.description}</div>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-white">{achievement.name}</p>
+                    <p className="text-xs text-gray-400">{achievement.date}</p>
                   </div>
                 </div>
               ))}
             </div>
-            <button
-              onClick={() => setShowBodyTypeModal(false)}
-              className="mt-4 w-full px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors duration-200"
-            >
-              Cancelar
-            </button>
+          </ModernCard>
+        </div>
+      )}
+
+      {activeTab === 'personal' && (
+        <div className="fitness-card">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Información básica */}
+            <ModernCard title="Información Básica" icon={User} gradient="from-blue-500 to-cyan-500" variant="fitness">
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Nombre</label>
+                  <input
+                    type="text"
+                    value={mockProfileData.name}
+                    onChange={(e) => console.log('Cambiar nombre:', e.target.value)}
+                    disabled={!isEditing}
+                    className="w-full px-4 py-2 bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl text-white focus:outline-none focus:border-blue-500/50 disabled:opacity-50"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Email</label>
+                  <input
+                    type="email"
+                    value={mockProfileData.email}
+                    onChange={(e) => console.log('Cambiar email:', e.target.value)}
+                    disabled={!isEditing}
+                    className="w-full px-4 py-2 bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl text-white focus:outline-none focus:border-blue-500/50 disabled:opacity-50"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Teléfono</label>
+                  <input
+                    type="tel"
+                    value={mockProfileData.phone}
+                    onChange={(e) => console.log('Cambiar teléfono:', e.target.value)}
+                    disabled={!isEditing}
+                    className="w-full px-4 py-2 bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl text-white focus:outline-none focus:border-blue-500/50 disabled:opacity-50"
+                  />
+                </div>
+              </div>
+            </ModernCard>
+
+            {/* Información adicional */}
+            <ModernCard title="Información Adicional" icon={User} gradient="from-green-500 to-emerald-500" variant="fitness">
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Ubicación</label>
+                  <input
+                    type="text"
+                    value={mockProfileData.location}
+                    onChange={(e) => console.log('Cambiar ubicación:', e.target.value)}
+                    disabled={!isEditing}
+                    className="w-full px-4 py-2 bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl text-white focus:outline-none focus:border-blue-500/50 disabled:opacity-50"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Biografía</label>
+                  <textarea
+                    value={mockProfileData.bio}
+                    onChange={(e) => console.log('Cambiar bio:', e.target.value)}
+                    disabled={!isEditing}
+                    rows={3}
+                    className="w-full px-4 py-2 bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl text-white focus:outline-none focus:border-blue-500/50 disabled:opacity-50 resize-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Sitio Web</label>
+                  <input
+                    type="url"
+                    value={mockProfileData.website}
+                    onChange={(e) => console.log('Cambiar website:', e.target.value)}
+                    disabled={!isEditing}
+                    className="w-full px-4 py-2 bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl text-white focus:outline-none focus:border-blue-500/50 disabled:opacity-50"
+                  />
+                </div>
+              </div>
+            </ModernCard>
           </div>
         </div>
       )}
 
-      {/* Perimeter Modal */}
-      {showPerimeterModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-6 max-w-md w-full mx-4">
-            <h3 className="text-xl font-bold text-gray-900 mb-4">Agregar Medición de Perímetro</h3>
-            <form onSubmit={(e) => {
-              e.preventDefault();
-              const formData = new FormData(e.currentTarget);
-              addPerimeter({
-                name: formData.get('name') as string,
-                value: parseFloat(formData.get('value') as string),
-                unit: 'cm'
-              });
-              setShowPerimeterModal(false);
-            }}>
+      {activeTab === 'activity' && (
+        <div className="fitness-card">
+          <div className="space-y-6">
+            {mockActivityHistory.map((activity, idx) => {
+              const Icon = getActivityIcon(activity.type);
+              return (
+                <ModernCard
+                  key={activity.id}
+                  title={activity.title}
+                  description={activity.description}
+                  icon={Icon}
+                  gradient="from-blue-500 to-cyan-500"
+                  variant="fitness"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <ModernBadge variant="info" size="sm" icon={Clock}>
+                        {activity.date}
+                      </ModernBadge>
+                      <ModernBadge variant="success" size="sm" icon={Star}>
+                        {activity.points} pts
+                      </ModernBadge>
+                    </div>
+                    <span className="text-sm text-gray-400">{activity.duration}</span>
+                  </div>
+                </ModernCard>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {activeTab === 'achievements' && (
+        <div className="fitness-card">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {mockAchievements.map((achievement, idx) => (
+              <ModernCard
+                key={achievement.id}
+                title={achievement.name}
+                description={achievement.description}
+                icon={Trophy}
+                gradient={getAchievementColor(achievement.level)}
+                variant="fitness"
+              >
+                <div className="flex items-center gap-2 mb-2">
+                  <ModernBadge variant="default" size="sm" icon={Star}>
+                    {achievement.level}
+                  </ModernBadge>
+                  <span className="text-xs text-gray-400">{achievement.date}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-gray-300">{achievement.points} puntos</span>
+                </div>
+              </ModernCard>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {activeTab === 'preferences' && (
+        <div className="fitness-card">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Configuración de notificaciones */}
+            <ModernCard title="Notificaciones" icon={Bell} gradient="from-blue-500 to-cyan-500" variant="fitness">
+              <div className="space-y-4">
+                {Object.entries(mockPreferences.notifications).map(([key, value]) => (
+                  <div key={key} className="flex items-center justify-between">
+                    <span className="text-white">{key}</span>
+                    <label className="relative inline-flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={value}
+                        onChange={(e) => updatePreferences('notifications', key, e.target.checked)}
+                        className="sr-only peer"
+                      />
+                      <div className="w-11 h-6 bg-white/20 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
+                    </label>
+                  </div>
+                ))}
+              </div>
+            </ModernCard>
+
+            {/* Configuración de privacidad */}
+            <ModernCard title="Privacidad" icon={Shield} gradient="from-green-500 to-emerald-500" variant="fitness">
+              <div className="space-y-4">
+                {Object.entries(mockPreferences.privacy).map(([key, value]) => (
+                  <div key={key} className="flex items-center justify-between">
+                    <span className="text-white">{key}</span>
+                    <label className="relative inline-flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={value}
+                        onChange={(e) => updatePreferences('privacy', key, e.target.checked)}
+                        className="sr-only peer"
+                      />
+                      <div className="w-11 h-6 bg-white/20 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
+                    </label>
+                  </div>
+                ))}
+              </div>
+            </ModernCard>
+
+            {/* Configuración de tema */}
+            <ModernCard title="Apariencia" icon={Palette} gradient="from-purple-500 to-pink-500" variant="fitness">
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Tipo de Medición
-                  </label>
-                  <select name="name" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    {perimeterTypes.map((type) => (
-                      <option key={type.id} value={type.name}>{type.name}</option>
-                    ))}
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Tema</label>
+                  <select
+                    value={mockPreferences.theme}
+                    onChange={(e) => updatePreferences('theme', e.target.value)}
+                    className="w-full px-4 py-2 bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl text-white focus:outline-none focus:border-purple-500/50"
+                  >
+                    <option value="light">Claro</option>
+                    <option value="dark">Oscuro</option>
+                    <option value="auto">Automático</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Valor (cm)
-                  </label>
-                  <input
-                    type="number"
-                    name="value"
-                    step="0.1"
-                    required
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div className="flex gap-3">
-                  <button
-                    type="submit"
-                    className="flex-1 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors duration-200"
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Idioma</label>
+                  <select
+                    value={mockPreferences.language}
+                    onChange={(e) => updatePreferences('language', e.target.value)}
+                    className="w-full px-4 py-2 bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl text-white focus:outline-none focus:border-purple-500/50"
                   >
-                    Guardar
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setShowPerimeterModal(false)}
-                    className="flex-1 px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors duration-200"
-                  >
-                    Cancelar
-                  </button>
+                    <option value="es">Español</option>
+                    <option value="en">English</option>
+                  </select>
                 </div>
               </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Weight Modal */}
-      {showWeightModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-6 max-w-md w-full mx-4">
-            <h3 className="text-xl font-bold text-gray-900 mb-4">Agregar Registro de Peso</h3>
-            <form onSubmit={(e) => {
-              e.preventDefault();
-              const formData = new FormData(e.currentTarget);
-              addWeightRecord({
-                weight: parseFloat(formData.get('weight') as string),
-                notes: formData.get('notes') as string
-              });
-              setShowWeightModal(false);
-            }}>
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Peso (kg)
-                  </label>
-                  <input
-                    type="number"
-                    name="weight"
-                    step="0.1"
-                    required
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Notas (opcional)
-                  </label>
-                  <textarea
-                    name="notes"
-                    rows={3}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div className="flex gap-3">
-                  <button
-                    type="submit"
-                    className="flex-1 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors duration-200"
-                  >
-                    Guardar
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setShowWeightModal(false)}
-                    className="flex-1 px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors duration-200"
-                  >
-                    Cancelar
-                  </button>
-                </div>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Composition Modal */}
-      {showCompositionModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-6 max-w-md w-full mx-4">
-            <h3 className="text-xl font-bold text-gray-900 mb-4">Agregar Composición Corporal</h3>
-            <form onSubmit={(e) => {
-              e.preventDefault();
-              const formData = new FormData(e.currentTarget);
-              updateBodyComposition({
-                bodyFatPercentage: parseFloat(formData.get('bodyFat') as string) || undefined,
-                musclePercentage: parseFloat(formData.get('muscle') as string) || undefined
-              });
-              setShowCompositionModal(false);
-            }}>
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    % Grasa Corporal
-                  </label>
-                  <input
-                    type="number"
-                    name="bodyFat"
-                    step="0.1"
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    % Musculatura
-                  </label>
-                  <input
-                    type="number"
-                    name="muscle"
-                    step="0.1"
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div className="flex gap-3">
-                  <button
-                    type="submit"
-                    className="flex-1 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors duration-200"
-                  >
-                    Guardar
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setShowCompositionModal(false)}
-                    className="flex-1 px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors duration-200"
-                  >
-                    Cancelar
-                  </button>
-                </div>
-              </div>
-            </form>
+            </ModernCard>
           </div>
         </div>
       )}

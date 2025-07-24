@@ -20,11 +20,13 @@ import {
   Eye,
   Calendar as CalendarIcon
 } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 
 const DashboardPage: React.FC = () => {
   const { user } = useAuth();
   const { totalXP, achievements } = useGamification();
   const { userLevel } = useExperience();
+  const navigate = useNavigate();
 
   // Datos mock para las propiedades faltantes
   const recentActivity = [
@@ -312,33 +314,41 @@ const DashboardPage: React.FC = () => {
 
       {/* Acciones rápidas */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <button className="action-btn group">
-          <div className="flex items-center gap-3">
-            <Play className="w-5 h-5" />
-            <span>Iniciar Entrenamiento</span>
-          </div>
-        </button>
+        <Link to="/entrenamiento-programa">
+          <button className="action-btn group">
+            <div className="flex items-center gap-3">
+              <Play className="w-5 h-5" />
+              <span>Iniciar Entrenamiento</span>
+            </div>
+          </button>
+        </Link>
         
-        <button className="action-btn group">
-          <div className="flex items-center gap-3">
-            <CalendarIcon className="w-5 h-5" />
-            <span>Ver Calendario</span>
-          </div>
-        </button>
+        <Link to="/calendar">
+          <button className="action-btn group">
+            <div className="flex items-center gap-3">
+              <CalendarIcon className="w-5 h-5" />
+              <span>Ver Calendario</span>
+            </div>
+          </button>
+        </Link>
         
-        <button className="action-btn group">
-          <div className="flex items-center gap-3">
-            <Users className="w-5 h-5" />
-            <span>Comunidad</span>
-          </div>
-        </button>
+        <Link to="/community">
+          <button className="action-btn group">
+            <div className="flex items-center gap-3">
+              <Users className="w-5 h-5" />
+              <span>Comunidad</span>
+            </div>
+          </button>
+        </Link>
         
-        <button className="action-btn group">
-          <div className="flex items-center gap-3">
-            <Eye className="w-5 h-5" />
-            <span>Ver Progreso</span>
-          </div>
-        </button>
+        <Link to="/progress">
+          <button className="action-btn group">
+            <div className="flex items-center gap-3">
+              <Eye className="w-5 h-5" />
+              <span>Ver Progreso</span>
+            </div>
+          </button>
+        </Link>
       </div>
     </div>
   );
