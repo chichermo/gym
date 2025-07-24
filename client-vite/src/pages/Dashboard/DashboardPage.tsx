@@ -1,354 +1,232 @@
 import React from 'react';
-import { useAuth } from '../../contexts/AuthContext';
-import { useGamification } from '../../contexts/GamificationContext';
-import { useExperience } from '../../contexts/ExperienceContext';
+import { Link } from 'react-router-dom';
 import { 
-  TrendingUp, 
+  Activity, 
   Target, 
-  Flame,
-  Star,
-  Trophy,
-  Dumbbell,
+  TrendingUp, 
+  Flame, 
+  Heart, 
+  Clock, 
+  Trophy, 
+  Zap,
+  Play,
+  Calendar,
   Users,
   BarChart3,
-  Play,
-  Clock,
-  ArrowUp,
-  Crown,
-  Medal,
-  Target as TargetIcon,
-  Eye,
-  Calendar as CalendarIcon
+  Apple,
+  Camera
 } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
 
 const DashboardPage: React.FC = () => {
-  const { user } = useAuth();
-  const { totalXP, achievements } = useGamification();
-  const { userLevel } = useExperience();
-  const navigate = useNavigate();
-
-  // Datos mock para las propiedades faltantes
-  const recentActivity = [
+  // Datos mock para el dashboard
+  const stats = [
     {
-      title: 'Entrenamiento de Fuerza Completado',
-      description: 'Rutina de piernas y glúteos',
-      time: 'Hace 2 horas',
-      xp: 150,
-      type: 'workout',
-      icon: Dumbbell
+      title: "Entrenamientos",
+      value: "24",
+      change: "+12%",
+      icon: Activity,
+      color: "from-blue-500 to-cyan-500",
+      bgColor: "bg-blue-500/20",
+      borderColor: "border-blue-500/30"
     },
     {
-      title: 'Meta Semanal Alcanzada',
-      description: '5 entrenamientos esta semana',
-      time: 'Hace 1 día',
-      xp: 200,
-      type: 'achievement',
-      icon: Trophy
+      title: "Calorías Quemadas",
+      value: "2,847",
+      change: "+8%",
+      icon: Flame,
+      color: "from-orange-500 to-red-500",
+      bgColor: "bg-orange-500/20",
+      borderColor: "border-orange-500/30"
     },
     {
-      title: 'Nuevo Logro Desbloqueado',
-      description: 'Maestro de la Fuerza',
-      time: 'Hace 3 días',
-      xp: 100,
-      type: 'achievement',
-      icon: Medal
+      title: "Tiempo Activo",
+      value: "18h",
+      change: "+15%",
+      icon: Clock,
+      color: "from-green-500 to-emerald-500",
+      bgColor: "bg-green-500/20",
+      borderColor: "border-green-500/30"
+    },
+    {
+      title: "Logros",
+      value: "12",
+      change: "+3",
+      icon: Trophy,
+      color: "from-yellow-500 to-orange-500",
+      bgColor: "bg-yellow-500/20",
+      borderColor: "border-yellow-500/30"
     }
   ];
 
-  const weeklyStats = {
-    workouts: 5,
-    totalTime: 8.5,
-    calories: 4200,
-    improvement: 15
-  };
+  const quickActions = [
+    {
+      title: "Iniciar Entrenamiento",
+      description: "Comienza tu rutina diaria",
+      icon: Play,
+      link: "/entrenamiento-programa",
+      color: "from-red-500 to-red-700",
+      bgColor: "bg-red-500/10",
+      borderColor: "border-red-500/30"
+    },
+    {
+      title: "Ver Progreso",
+      description: "Revisa tus estadísticas",
+      icon: TrendingUp,
+      link: "/progress",
+      color: "from-blue-500 to-blue-700",
+      bgColor: "bg-blue-500/10",
+      borderColor: "border-blue-500/30"
+    },
+    {
+      title: "Programar Entrenamiento",
+      description: "Organiza tu semana",
+      icon: Calendar,
+      link: "/calendar",
+      color: "from-green-500 to-green-700",
+      bgColor: "bg-green-500/10",
+      borderColor: "border-green-500/30"
+    },
+    {
+      title: "Comunidad",
+      description: "Conecta con otros",
+      icon: Users,
+      link: "/community",
+      color: "from-purple-500 to-purple-700",
+      bgColor: "bg-purple-500/10",
+      borderColor: "border-purple-500/30"
+    }
+  ];
 
-  // Usar el sistema de XP real
-  const progressToNextLevel = userLevel.progress;
+  const features = [
+    {
+      title: "Analíticas Avanzadas",
+      description: "Estadísticas detalladas de tu rendimiento",
+      icon: BarChart3,
+      link: "/analytics",
+      color: "from-purple-500 to-purple-700"
+    },
+    {
+      title: "Plan Nutricional",
+      description: "Dietas personalizadas y seguimiento",
+      icon: Apple,
+      link: "/nutrition",
+      color: "from-green-500 to-green-700"
+    },
+    {
+      title: "Entrenamiento AR",
+      description: "Realidad aumentada para ejercicios",
+      icon: Camera,
+      link: "/ar",
+      color: "from-cyan-500 to-cyan-700"
+    }
+  ];
 
   return (
-    <div className="space-y-8">
-      {/* Header con saludo personalizado */}
-      <div className="fitness-card">
-        <div className="flex items-center justify-between">
-          <div className="space-y-2">
-            <h1 className="text-3xl lg:text-4xl font-bold text-white">
-              ¡Hola, {user?.name || 'Atleta'}! 🏋️‍♂️
-            </h1>
-            <p className="text-gray-300 text-lg">
-              Prepárate para otro día increíble de entrenamiento
+    <div className="dashboard-section bg-gradient-to-b from-gray-900 to-black min-h-screen">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+        {/* Header del Dashboard */}
+        <div className="text-center mb-8 lg:mb-12">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4">
+            <span className="bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+              TU
+            </span>
+            <br />
+            <span className="bg-gradient-to-r from-red-400 to-red-600 bg-clip-text text-transparent">
+              DASHBOARD
+            </span>
+          </h1>
+          <p className="text-lg sm:text-xl text-gray-300 max-w-2xl mx-auto px-4">
+            Bienvenido de vuelta. Aquí tienes todo lo que necesitas para continuar tu transformación.
+          </p>
+        </div>
+
+        {/* Estadísticas Principales */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-8 lg:mb-12">
+          {stats.map((stat, index) => (
+            <div 
+              key={index}
+              className={`${stat.bgColor} ${stat.borderColor} border rounded-2xl lg:rounded-3xl p-4 lg:p-6 backdrop-blur-xl`}
+            >
+              <div className="flex items-center justify-between mb-3 lg:mb-4">
+                <div className={`w-10 h-10 lg:w-12 lg:h-12 bg-gradient-to-r ${stat.color} rounded-xl lg:rounded-2xl flex items-center justify-center`}>
+                  <stat.icon className="w-5 h-5 lg:w-6 lg:h-6 text-white" />
+                </div>
+                <span className="text-xs lg:text-sm font-medium text-green-400">{stat.change}</span>
+              </div>
+              <div>
+                <h3 className="text-xl lg:text-2xl font-bold text-white mb-1">{stat.value}</h3>
+                <p className="text-gray-400 text-sm">{stat.title}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Acciones Rápidas */}
+        <div className="mb-8 lg:mb-12">
+          <h2 className="text-xl lg:text-2xl font-bold text-white mb-4 lg:mb-6 px-4">Acciones Rápidas</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+            {quickActions.map((action, index) => (
+              <Link 
+                key={index}
+                to={action.link}
+                className={`${action.bgColor} ${action.borderColor} border rounded-2xl lg:rounded-3xl p-4 lg:p-6 backdrop-blur-xl hover:scale-105 transition-all duration-300 group`}
+              >
+                <div className={`w-10 h-10 lg:w-12 lg:h-12 bg-gradient-to-r ${action.color} rounded-xl lg:rounded-2xl flex items-center justify-center mb-3 lg:mb-4 group-hover:scale-110 transition-transform duration-300`}>
+                  <action.icon className="w-5 h-5 lg:w-6 lg:h-6 text-white" />
+                </div>
+                <h3 className="text-base lg:text-lg font-bold text-white mb-2">{action.title}</h3>
+                <p className="text-gray-400 text-sm">{action.description}</p>
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        {/* Características Destacadas */}
+        <div className="mb-8 lg:mb-12">
+          <h2 className="text-xl lg:text-2xl font-bold text-white mb-4 lg:mb-6 px-4">Características Destacadas</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6">
+            {features.map((feature, index) => (
+              <Link
+                key={index}
+                to={feature.link}
+                className="bg-black/20 backdrop-blur-xl border border-white/10 rounded-2xl lg:rounded-3xl p-4 lg:p-6 hover:scale-105 transition-all duration-300 group"
+              >
+                <div className={`w-12 h-12 lg:w-16 lg:h-16 bg-gradient-to-r ${feature.color} rounded-xl lg:rounded-2xl flex items-center justify-center mb-3 lg:mb-4 group-hover:scale-110 transition-transform duration-300`}>
+                  <feature.icon className="w-6 h-6 lg:w-8 lg:h-8 text-white" />
+                </div>
+                <h3 className="text-lg lg:text-xl font-bold text-white mb-2">{feature.title}</h3>
+                <p className="text-gray-400 text-sm">{feature.description}</p>
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        {/* Sección de Motivación */}
+        <div className="bg-gradient-to-r from-gray-900/50 to-red-900/30 rounded-2xl lg:rounded-3xl p-6 lg:p-8 border border-white/10 mx-4 lg:mx-0">
+          <div className="text-center">
+            <div className="w-12 h-12 lg:w-16 lg:h-16 bg-gradient-to-r from-red-500 to-red-700 rounded-full flex items-center justify-center mx-auto mb-4 lg:mb-6">
+              <Zap className="w-6 h-6 lg:w-8 lg:h-8 text-white" />
+            </div>
+            <h2 className="text-2xl lg:text-3xl font-bold text-white mb-4">¡NO PAIN, NO GAIN!</h2>
+            <p className="text-gray-300 text-base lg:text-lg mb-4 lg:mb-6 max-w-2xl mx-auto px-4">
+              Cada entrenamiento te acerca más a tu objetivo. Mantén la consistencia y verás resultados extraordinarios.
             </p>
-            <div className="flex items-center gap-4 pt-2">
-              <div className="flex items-center gap-2 px-3 py-1.5 bg-green-500/20 rounded-full border border-green-500/30">
-                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                <span className="text-xs text-green-300 font-medium">Online</span>
+            <div className="flex items-center justify-center gap-4 text-sm text-gray-400 flex-wrap">
+              <div className="flex items-center gap-2">
+                <Heart className="w-4 h-4 text-red-400" />
+                <span>Fuerza</span>
               </div>
-              <div className="text-sm text-gray-400">
-                Última actividad: Hace 2 horas
+              <div className="flex items-center gap-2">
+                <Target className="w-4 h-4 text-blue-400" />
+                <span>Enfoque</span>
               </div>
-            </div>
-          </div>
-          <div className="hidden lg:flex items-center gap-4">
-            <div className="relative">
-              <div className="w-16 h-16 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/25">
-                <Dumbbell className="w-8 h-8 text-white" />
-              </div>
-              <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-white animate-pulse"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Tarjetas de estadísticas principales */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="stats-card hover-lift">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center shadow-lg">
-              <TrendingUp className="w-6 h-6 text-white" />
-            </div>
-            <div className="flex-1">
-              <p className="text-sm font-medium text-gray-300">Nivel Actual</p>
-              <p className="text-2xl font-bold text-white">{userLevel.level}</p>
-              <div className="flex items-center gap-2 mt-1">
-                <div className="flex-1 bg-gray-600 rounded-full h-2">
-                  <div 
-                    className="bg-gradient-to-r from-blue-500 to-cyan-500 h-2 rounded-full transition-all duration-500"
-                    style={{ width: `${progressToNextLevel}%` }}
-                  ></div>
-                </div>
-                <span className="text-xs text-gray-400">{progressToNextLevel}%</span>
+              <div className="flex items-center gap-2">
+                <Trophy className="w-4 h-4 text-yellow-400" />
+                <span>Éxito</span>
               </div>
             </div>
           </div>
         </div>
-
-        <div className="stats-card hover-lift">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl flex items-center justify-center shadow-lg">
-              <Target className="w-6 h-6 text-white" />
-            </div>
-            <div className="flex-1">
-              <p className="text-sm font-medium text-gray-300">Entrenamientos</p>
-              <p className="text-2xl font-bold text-white">{weeklyStats.workouts}</p>
-              <div className="flex items-center gap-1 mt-1">
-                <ArrowUp className="w-4 h-4 text-green-400" />
-                <span className="text-xs text-green-400">+{weeklyStats.improvement}%</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="stats-card hover-lift">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg">
-              <Clock className="w-6 h-6 text-white" />
-            </div>
-            <div className="flex-1">
-              <p className="text-sm font-medium text-gray-300">Tiempo Total</p>
-              <p className="text-2xl font-bold text-white">{weeklyStats.totalTime}h</p>
-              <div className="flex items-center gap-1 mt-1">
-                <span className="text-xs text-gray-400">Esta semana</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="stats-card hover-lift">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-gradient-to-r from-orange-500 to-red-500 rounded-xl flex items-center justify-center shadow-lg">
-              <Flame className="w-6 h-6 text-white" />
-            </div>
-            <div className="flex-1">
-              <p className="text-sm font-medium text-gray-300">Calorías</p>
-              <p className="text-2xl font-bold text-white">{weeklyStats.calories}</p>
-              <div className="flex items-center gap-1 mt-1">
-                <span className="text-xs text-gray-400">Quemadas</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Sección de logros y XP */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 fitness-card">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold text-white">Progreso y Logros</h2>
-            <div className="flex items-center gap-2">
-              <Crown className="w-5 h-5 text-yellow-400" />
-              <span className="text-sm text-gray-300">Nivel {userLevel.level}</span>
-            </div>
-          </div>
-          
-          <div className="space-y-4">
-            <div className="flex items-center justify-between p-4 bg-white/5 rounded-xl">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-lg flex items-center justify-center">
-                  <Star className="w-5 h-5 text-white" />
-                </div>
-                <div>
-                  <p className="font-medium text-white">Experiencia Total</p>
-                  <p className="text-sm text-gray-400">{totalXP} XP</p>
-                </div>
-              </div>
-                             <div className="text-right">
-                 <p className="text-lg font-bold text-white">{userLevel.totalXP || 0}</p>
-                 <p className="text-xs text-gray-400">XP actual</p>
-               </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="p-4 bg-white/5 rounded-xl text-center">
-                <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center mx-auto mb-3">
-                  <Trophy className="w-6 h-6 text-white" />
-                </div>
-                <p className="font-medium text-white">{achievements?.length || 0}</p>
-                <p className="text-xs text-gray-400">Logros</p>
-              </div>
-              
-              <div className="p-4 bg-white/5 rounded-xl text-center">
-                <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl flex items-center justify-center mx-auto mb-3">
-                  <TargetIcon className="w-6 h-6 text-white" />
-                </div>
-                <p className="font-medium text-white">12</p>
-                <p className="text-xs text-gray-400">Metas</p>
-              </div>
-              
-              <div className="p-4 bg-white/5 rounded-xl text-center">
-                <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center mx-auto mb-3">
-                  <Medal className="w-6 h-6 text-white" />
-                </div>
-                <p className="font-medium text-white">8</p>
-                <p className="text-xs text-gray-400">Insignias</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="fitness-card">
-          <h2 className="text-xl font-bold text-white mb-6">Actividad Reciente</h2>
-          <div className="space-y-4">
-            {recentActivity.map((activity, index) => {
-              const Icon = activity.icon;
-              return (
-                <div key={index} className="flex items-start gap-3 p-3 bg-white/5 rounded-xl hover:bg-white/10 transition-colors duration-200">
-                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-                    activity.type === 'workout' ? 'bg-gradient-to-r from-blue-500 to-cyan-500' :
-                    activity.type === 'achievement' ? 'bg-gradient-to-r from-yellow-500 to-orange-500' :
-                    'bg-gradient-to-r from-purple-500 to-pink-500'
-                  }`}>
-                    <Icon className="w-4 h-4 text-white" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-medium text-white text-sm">{activity.title}</p>
-                    <p className="text-xs text-gray-400">{activity.description}</p>
-                    <div className="flex items-center justify-between mt-1">
-                      <span className="text-xs text-gray-500">{activity.time}</span>
-                      <span className="text-xs text-green-400">+{activity.xp} XP</span>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-
-      {/* Recomendaciones de IA */}
-      <div className="fitness-card">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-bold text-white">Recomendaciones IA</h2>
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
-            <span className="text-sm text-gray-300">En tiempo real</span>
-          </div>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div className="p-4 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 rounded-xl border border-blue-500/30">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
-                <Dumbbell className="w-4 h-4 text-white" />
-              </div>
-              <span className="font-medium text-white">Entrenamiento Sugerido</span>
-            </div>
-            <p className="text-sm text-gray-300 mb-3">
-              Basado en tu progreso, te recomendamos un entrenamiento de fuerza para piernas
-            </p>
-            <button className="btn-modern w-full">
-              Ver Entrenamiento
-            </button>
-          </div>
-
-          <div className="p-4 bg-gradient-to-r from-green-500/20 to-emerald-500/20 rounded-xl border border-green-500/30">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
-                <Target className="w-4 h-4 text-white" />
-              </div>
-              <span className="font-medium text-white">Meta Personalizada</span>
-            </div>
-            <p className="text-sm text-gray-300 mb-3">
-              Establece una nueva meta de 3 entrenamientos esta semana
-            </p>
-            <button className="btn-modern w-full">
-              Establecer Meta
-            </button>
-          </div>
-
-          <div className="p-4 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-xl border border-purple-500/30">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="w-8 h-8 bg-purple-500 rounded-lg flex items-center justify-center">
-                <BarChart3 className="w-4 h-4 text-white" />
-              </div>
-              <span className="font-medium text-white">Análisis de Progreso</span>
-            </div>
-            <p className="text-sm text-gray-300 mb-3">
-              Tu fuerza ha mejorado un 15% en el último mes
-            </p>
-            <button className="btn-modern w-full">
-              Ver Análisis
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Acciones rápidas */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Link to="/entrenamiento-programa">
-          <button className="action-btn group">
-            <div className="flex items-center gap-3">
-              <Play className="w-5 h-5" />
-              <span>Iniciar Entrenamiento</span>
-            </div>
-          </button>
-        </Link>
-        
-        <Link to="/calendar">
-          <button className="action-btn group">
-            <div className="flex items-center gap-3">
-              <CalendarIcon className="w-5 h-5" />
-              <span>Ver Calendario</span>
-            </div>
-          </button>
-        </Link>
-        
-        <Link to="/community">
-          <button className="action-btn group">
-            <div className="flex items-center gap-3">
-              <Users className="w-5 h-5" />
-              <span>Comunidad</span>
-            </div>
-          </button>
-        </Link>
-        
-        <Link to="/progress">
-          <button className="action-btn group">
-            <div className="flex items-center gap-3">
-              <Eye className="w-5 h-5" />
-              <span>Ver Progreso</span>
-            </div>
-          </button>
-        </Link>
       </div>
     </div>
   );

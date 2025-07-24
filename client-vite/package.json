@@ -23,7 +23,7 @@
     "canvas": "^3.1.2",
     "chart.js": "^4.5.0",
     "d3": "^7.9.0",
-    "framer-motion": "^12.23.6",
+    "framer-motion": "^12.23.9",
     "lottie-react": "^2.4.1",
     "lucide-react": "^0.523.0",
     "particles.js": "^2.0.0",
