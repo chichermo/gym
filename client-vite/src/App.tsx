@@ -31,6 +31,7 @@ import CalendarPage from './pages/Calendar/CalendarPage';
 import ProgramPage from './pages/Program/ProgramPage';
 import PlanPage from './pages/Plan/PlanPage';
 import EntrenamientosHistPage from './pages/Entrenamientos/EntrenamientosHistPage';
+import RutinasPage from './pages/Rutinas/RutinasPage';
 import CoachCesarLugoPage from './pages/CoachCesarLugoPage';
 import NotFoundPage from './pages/NotFoundPage';
 
@@ -64,6 +65,7 @@ const AppContent: React.FC = () => {
     '/program',
     '/plan',
     '/entrenamientos-hist',
+    '/rutinas',
     '/coach-cesar-lugo'
   ];
 
@@ -108,6 +110,7 @@ const AppContent: React.FC = () => {
               <Route path="/program" element={<ProgramPage />} />
               <Route path="/plan" element={<PlanPage />} />
               <Route path="/entrenamientos-hist" element={<EntrenamientosHistPage />} />
+              <Route path="/rutinas" element={<RutinasPage />} />
               <Route path="/coach-cesar-lugo" element={<CoachCesarLugoPage />} />
             </Routes>
           </div>

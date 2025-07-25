@@ -115,8 +115,8 @@ const ModernForm: React.FC<ModernFormProps> = ({
             onChange={(e) => handleChange(field.name, e.target.value)}
             placeholder={field.placeholder}
             className={`
-              w-full px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-xl
-              bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100
+              input-glass w-full px-4 py-3 rounded-xl
+              text-white placeholder-blue-200
               focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
               transition-all duration-200 resize-none
               ${error ? 'border-red-300 focus:ring-red-500' : ''}
@@ -134,8 +134,8 @@ const ModernForm: React.FC<ModernFormProps> = ({
               onChange={(e) => handleChange(field.name, e.target.value)}
               placeholder={field.placeholder}
               className={`
-                w-full px-4 py-3 pr-12 border border-gray-200 dark:border-gray-600 rounded-xl
-                bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100
+                input-glass w-full px-4 py-3 pr-12 rounded-xl
+                text-white placeholder-blue-200
                 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
                 transition-all duration-200
                 ${error ? 'border-red-300 focus:ring-red-500' : ''}
@@ -144,7 +144,7 @@ const ModernForm: React.FC<ModernFormProps> = ({
             <button
               type="button"
               onClick={() => setShowPassword(prev => ({ ...prev, [field.name]: !prev[field.name] }))}
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-blue-300 hover:text-blue-200"
             >
               {showPassword[field.name] ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
             </button>
@@ -159,8 +159,8 @@ const ModernForm: React.FC<ModernFormProps> = ({
             onChange={(e) => handleChange(field.name, e.target.value)}
             placeholder={field.placeholder}
             className={`
-              w-full px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-xl
-              bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100
+              input-glass w-full px-4 py-3 rounded-xl
+              text-white placeholder-blue-200
               focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
               transition-all duration-200
               ${error ? 'border-red-300 focus:ring-red-500' : ''}
@@ -174,13 +174,13 @@ const ModernForm: React.FC<ModernFormProps> = ({
     <form onSubmit={handleSubmit} className={`space-y-6 ${className}`}>
       {fields.map((field) => (
         <div key={field.name}>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-blue-200 mb-2">
             {field.label}
-            {field.required && <span className="text-red-500 ml-1">*</span>}
+            {field.required && <span className="text-red-400 ml-1">*</span>}
           </label>
           {renderField(field)}
           {errors[field.name] && (
-            <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+            <p className="mt-1 text-sm text-red-400">
               {errors[field.name]}
             </p>
           )}

@@ -15,7 +15,8 @@ import {
   Calendar,
   Target,
   Camera,
-  Star
+  Star,
+  History
 } from 'lucide-react';
 
 const LandingHero: React.FC = () => {
@@ -57,6 +58,15 @@ const LandingHero: React.FC = () => {
       color: "from-green-500 to-green-700",
       bgColor: "bg-green-500/10",
       borderColor: "border-green-500/30"
+    },
+    {
+      title: "Rutinas",
+      subtitle: "Mis entrenamientos",
+      icon: History,
+      link: "/rutinas",
+      color: "from-teal-500 to-teal-700",
+      bgColor: "bg-teal-500/10",
+      borderColor: "border-teal-500/30"
     },
     {
       title: "Progreso",

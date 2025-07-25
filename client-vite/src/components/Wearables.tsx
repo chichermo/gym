@@ -340,12 +340,12 @@ const Wearables: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-3xl font-bold text-slate-800">Wearables</h2>
-          <p className="text-slate-600">Conecta y gestiona tus dispositivos fitness</p>
+          <h2 className="text-3xl font-bold text-white">Wearables</h2>
+          <p className="text-blue-200">Conecta y gestiona tus dispositivos fitness</p>
         </div>
         <button
           onClick={() => setShowConnectionModal(true)}
-          className="flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-2xl hover:from-emerald-600 hover:to-teal-700 transition-all duration-300 font-semibold shadow-lg"
+          className="btn-primary flex items-center gap-3 px-6 py-3 font-semibold"
         >
           <Plus className="w-5 h-5" />
           Conectar Dispositivo
@@ -354,76 +354,76 @@ const Wearables: React.FC = () => {
 
       {/* Estadísticas principales */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-        <div className="bg-gradient-to-br from-white to-blue-50/50 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-white/30">
+        <div className="fitness-card">
           <div className="flex items-center gap-4 mb-4">
             <div className="p-3 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl">
               <Activity className="w-6 h-6 text-white" />
             </div>
             <div>
-              <p className="text-sm text-slate-600 font-medium">Pasos Totales</p>
-              <p className="text-2xl font-bold text-slate-800">{stats.totalSteps.toLocaleString()}</p>
+              <p className="text-sm text-blue-200 font-medium">Pasos Totales</p>
+              <p className="text-2xl font-bold text-white">{stats.totalSteps.toLocaleString()}</p>
             </div>
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-white to-blue-50/50 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-white/30">
+        <div className="fitness-card">
           <div className="flex items-center gap-4 mb-4">
             <div className="p-3 bg-gradient-to-br from-rose-500 to-pink-600 rounded-xl">
               <Heart className="w-6 h-6 text-white" />
             </div>
             <div>
-              <p className="text-sm text-slate-600 font-medium">Frecuencia Cardíaca</p>
-              <p className="text-2xl font-bold text-slate-800">{stats.avgHeartRate} BPM</p>
+              <p className="text-sm text-blue-200 font-medium">Frecuencia Cardíaca</p>
+              <p className="text-2xl font-bold text-white">{stats.avgHeartRate} BPM</p>
             </div>
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-white to-blue-50/50 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-white/30">
+        <div className="fitness-card">
           <div className="flex items-center gap-4 mb-4">
             <div className="p-3 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl">
               <Zap className="w-6 h-6 text-white" />
             </div>
             <div>
-              <p className="text-sm text-slate-600 font-medium">Calorías</p>
-              <p className="text-2xl font-bold text-slate-800">{stats.totalCalories}</p>
+              <p className="text-sm text-blue-200 font-medium">Calorías</p>
+              <p className="text-2xl font-bold text-white">{stats.totalCalories}</p>
             </div>
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-white to-blue-50/50 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-white/30">
+        <div className="fitness-card">
           <div className="flex items-center gap-4 mb-4">
             <div className="p-3 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl">
               <TrendingUp className="w-6 h-6 text-white" />
             </div>
             <div>
-              <p className="text-sm text-slate-600 font-medium">Entrenamientos</p>
-              <p className="text-2xl font-bold text-slate-800">{stats.workouts}</p>
+              <p className="text-sm text-blue-200 font-medium">Entrenamientos</p>
+              <p className="text-2xl font-bold text-white">{stats.workouts}</p>
             </div>
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-white to-blue-50/50 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-white/30">
+        <div className="fitness-card">
           <div className="flex items-center gap-4 mb-4">
             <div className="p-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl">
               <Watch className="w-6 h-6 text-white" />
             </div>
             <div>
-              <p className="text-sm text-slate-600 font-medium">Sueño</p>
-              <p className="text-2xl font-bold text-slate-800">{stats.sleepHours}h</p>
+              <p className="text-sm text-blue-200 font-medium">Sueño</p>
+              <p className="text-2xl font-bold text-white">{stats.sleepHours}h</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Dispositivos conectados */}
-      <div className="bg-gradient-to-br from-white to-blue-50/50 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-white/30">
+      <div className="fitness-card">
         <div className="flex items-center gap-3 mb-6">
           <div className="p-2 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl">
             <Activity className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h3 className="text-2xl font-bold text-slate-800">Dispositivos Conectados</h3>
-            <p className="text-slate-600">Gestiona tus wearables</p>
+            <h3 className="text-2xl font-bold text-white">Dispositivos Conectados</h3>
+            <p className="text-blue-200">Gestiona tus wearables</p>
           </div>
         </div>
 
@@ -432,11 +432,11 @@ const Wearables: React.FC = () => {
             <div className="p-4 bg-gradient-to-br from-slate-500 to-slate-600 rounded-2xl w-20 h-20 mx-auto mb-6 flex items-center justify-center">
               <Watch className="w-10 h-10 text-white" />
             </div>
-            <h3 className="text-xl font-bold text-slate-800 mb-2">No hay dispositivos conectados</h3>
-            <p className="text-slate-600 mb-6">Conecta tu primer dispositivo para comenzar</p>
+            <h3 className="text-xl font-bold text-white mb-2">No hay dispositivos conectados</h3>
+            <p className="text-blue-200 mb-6">Conecta tu primer dispositivo para comenzar</p>
             <button
               onClick={() => setShowConnectionModal(true)}
-              className="px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-xl hover:from-emerald-600 hover:to-teal-700 transition-all duration-300 font-semibold"
+              className="btn-primary px-6 py-3 font-semibold"
             >
               Conectar Dispositivo
             </button>
@@ -448,40 +448,40 @@ const Wearables: React.FC = () => {
               const deviceColor = getDeviceColor(device.deviceType);
               
               return (
-                <div key={device.id} className="bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-white/30 hover:shadow-lg transition-all duration-300">
+                <div key={device.id} className="glass rounded-2xl p-6 hover:shadow-lg transition-all duration-300">
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-3">
                       <div className={`p-3 bg-gradient-to-br ${deviceColor} rounded-xl`}>
                         <DeviceIcon className="w-6 h-6 text-white" />
                       </div>
                       <div>
-                        <h4 className="font-bold text-slate-800">{device.name}</h4>
-                        <p className="text-sm text-slate-600 capitalize">{device.deviceType.replace('_', ' ')}</p>
+                        <h4 className="font-bold text-white">{device.name}</h4>
+                        <p className="text-sm text-blue-200 capitalize">{device.deviceType.replace('_', ' ')}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
                       {device.status === 'connected' ? (
-                        <CheckCircle className="w-5 h-5 text-emerald-500" />
+                        <CheckCircle className="w-5 h-5 text-emerald-400" />
                       ) : device.status === 'connecting' ? (
-                        <RefreshCw className="w-5 h-5 text-amber-500 animate-spin" />
+                        <RefreshCw className="w-5 h-5 text-amber-400 animate-spin" />
                       ) : (
-                        <AlertCircle className="w-5 h-5 text-rose-500" />
+                        <AlertCircle className="w-5 h-5 text-rose-400" />
                       )}
                     </div>
                   </div>
 
                   <div className="space-y-3 mb-4">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-slate-600">Batería</span>
+                      <span className="text-sm text-blue-200">Batería</span>
                       <div className="flex items-center gap-2">
-                        <Battery className="w-4 h-4 text-slate-500" />
-                        <span className="text-sm font-semibold text-slate-800">{device.batteryLevel}%</span>
+                        <Battery className="w-4 h-4 text-blue-300" />
+                        <span className="text-sm font-semibold text-white">{device.batteryLevel}%</span>
                       </div>
                     </div>
                     
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-slate-600">Última sincronización</span>
-                      <span className="text-sm text-slate-800">
+                      <span className="text-sm text-blue-200">Última sincronización</span>
+                      <span className="text-sm text-white">
                         {device.lastSync.toLocaleTimeString()}
                       </span>
                     </div>
@@ -490,14 +490,14 @@ const Wearables: React.FC = () => {
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => syncDeviceData(device.id)}
-                      className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl hover:from-blue-600 hover:to-indigo-700 transition-all duration-300 text-sm font-semibold"
+                      className="btn-primary flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm font-semibold"
                     >
                       <RefreshCw className="w-4 h-4" />
                       Sincronizar
                     </button>
                     <button
                       onClick={() => disconnectDevice(device.id)}
-                      className="px-4 py-2 text-rose-600 hover:bg-rose-50 rounded-xl transition-all duration-300"
+                      className="glass px-4 py-2 text-rose-400 hover:bg-rose-900/30 rounded-xl transition-all duration-300"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -512,22 +512,22 @@ const Wearables: React.FC = () => {
       {/* Modal de conexión */}
       {showConnectionModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="bg-white rounded-3xl p-8 max-w-2xl w-full mx-4 shadow-2xl">
+          <div className="modal-content max-w-2xl w-full mx-4">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-2xl font-bold text-slate-800">Conectar Dispositivo</h3>
+              <h3 className="text-2xl font-bold text-white">Conectar Dispositivo</h3>
               <button
                 onClick={() => setShowConnectionModal(false)}
-                className="p-2 text-slate-500 hover:text-slate-700 transition-colors"
+                className="p-2 text-blue-300 hover:text-blue-200 transition-colors"
               >
                 <Trash2 className="w-6 h-6" />
               </button>
             </div>
 
             {connectionError && (
-              <div className="mb-6 p-4 bg-rose-50 border border-rose-200 rounded-xl">
+              <div className="mb-6 p-4 glass border border-red-500/30 rounded-xl">
                 <div className="flex items-center gap-2">
-                  <AlertCircle className="w-5 h-5 text-rose-500" />
-                  <span className="text-rose-700 font-medium">{connectionError}</span>
+                  <AlertCircle className="w-5 h-5 text-red-400" />
+                  <span className="text-red-300 font-medium">{connectionError}</span>
                 </div>
               </div>
             )}
@@ -541,14 +541,14 @@ const Wearables: React.FC = () => {
                     key={device.type}
                     onClick={() => connectDevice(device.type)}
                     disabled={isConnecting}
-                    className="flex items-center gap-4 p-6 bg-gradient-to-br from-white to-blue-50/50 backdrop-blur-sm rounded-2xl border border-white/30 hover:shadow-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="glass flex items-center gap-4 p-6 rounded-2xl hover:shadow-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <div className={`p-3 bg-gradient-to-br ${device.color} rounded-xl`}>
                       <DeviceIcon className="w-6 h-6 text-white" />
                     </div>
                     <div className="text-left">
-                      <h4 className="font-bold text-slate-800">{device.name}</h4>
-                      <p className="text-sm text-slate-600">{device.description}</p>
+                      <h4 className="font-bold text-white">{device.name}</h4>
+                      <p className="text-sm text-blue-200">{device.description}</p>
                     </div>
                   </button>
                 );
@@ -556,7 +556,7 @@ const Wearables: React.FC = () => {
             </div>
 
             <div className="mt-6 text-center">
-              <p className="text-sm text-slate-500">
+              <p className="text-sm text-blue-200">
                 Al conectar un dispositivo, autorizas el acceso a tus datos de fitness
               </p>
             </div>
