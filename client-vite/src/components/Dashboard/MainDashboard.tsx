@@ -77,6 +77,17 @@ const MainDashboard: React.FC = () => {
       borderColor: 'border-orange-500/30',
       textColor: 'text-orange-300',
       features: ['Sesiones AR', 'Detección de postura', 'Instructor virtual', 'Análisis de movimiento']
+    },
+    {
+      id: 'community',
+      title: 'Comunidad',
+      description: 'Red social y conexión con otros fitness lovers',
+      icon: <Users className="w-8 h-8" />,
+      path: '/community-dashboard',
+      color: 'from-pink-500/20 to-pink-700/20',
+      borderColor: 'border-pink-500/30',
+      textColor: 'text-pink-300',
+      features: ['Feed social', 'Desafíos', 'Descubrir usuarios', 'Amigos']
     }
   ];
 
@@ -131,10 +142,10 @@ const MainDashboard: React.FC = () => {
         <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl p-6 mb-8">
           <h2 className="text-xl font-semibold text-white mb-4">Resumen de Funcionalidades</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="text-center">
-              <div className="text-2xl font-bold text-purple-400">5</div>
-              <div className="text-sm text-gray-400">Módulos Activos</div>
-            </div>
+                         <div className="text-center">
+               <div className="text-2xl font-bold text-purple-400">6</div>
+               <div className="text-sm text-gray-400">Módulos Activos</div>
+             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-blue-400">15+</div>
               <div className="text-sm text-gray-400">Funciones IA</div>
@@ -212,7 +223,7 @@ const MainDashboard: React.FC = () => {
       <AnimatedCard delay={0.7}>
         <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl p-6 mt-8">
           <h2 className="text-xl font-semibold text-white mb-4">Acciones Rápidas</h2>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                     <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
             <AnimatedButton delay={0.8} asButton={false}>
               <PulseButton 
                 className="w-full px-4 py-3 bg-purple-500/20 border border-purple-500/30 text-purple-300 rounded-xl hover:bg-purple-500/30 transition-all duration-300"
@@ -249,17 +260,29 @@ const MainDashboard: React.FC = () => {
               </PulseButton>
             </AnimatedButton>
             
-            <AnimatedButton delay={1.1} asButton={false}>
-              <PulseButton 
-                className="w-full px-4 py-3 bg-orange-500/20 border border-orange-500/30 text-orange-300 rounded-xl hover:bg-orange-500/30 transition-all duration-300"
-                onClick={() => handleNavigate('/ar-dashboard')}
-              >
-                <div className="flex items-center gap-2">
-                  <Camera className="w-4 h-4" />
-                  <span>Iniciar AR</span>
-                </div>
-              </PulseButton>
-            </AnimatedButton>
+                         <AnimatedButton delay={1.1} asButton={false}>
+               <PulseButton 
+                 className="w-full px-4 py-3 bg-orange-500/20 border border-orange-500/30 text-orange-300 rounded-xl hover:bg-orange-500/30 transition-all duration-300"
+                 onClick={() => handleNavigate('/ar-dashboard')}
+               >
+                 <div className="flex items-center gap-2">
+                   <Camera className="w-4 h-4" />
+                   <span>Iniciar AR</span>
+                 </div>
+               </PulseButton>
+             </AnimatedButton>
+             
+             <AnimatedButton delay={1.2} asButton={false}>
+               <PulseButton 
+                 className="w-full px-4 py-3 bg-pink-500/20 border border-pink-500/30 text-pink-300 rounded-xl hover:bg-pink-500/30 transition-all duration-300"
+                 onClick={() => handleNavigate('/community-dashboard')}
+               >
+                 <div className="flex items-center gap-2">
+                   <Users className="w-4 h-4" />
+                   <span>Ver Comunidad</span>
+                 </div>
+               </PulseButton>
+             </AnimatedButton>
           </div>
         </div>
       </AnimatedCard>
