@@ -46,6 +46,7 @@ import LandingContact from './components/Layout/LandingContact';
 import LandingFooter from './components/Layout/LandingFooter';
 import AIDashboard from './components/AI/AIDashboard';
 import MobileSettings from './components/Mobile/MobileSettings';
+import WearableDashboard from './components/Wearables/WearableDashboard';
 
 // Componente para manejar la lógica de mostrar/ocultar landing
 const AppContent: React.FC = () => {
@@ -147,6 +148,7 @@ const AppContent: React.FC = () => {
                               <Route path="/coach-cesar-lugo" element={<CoachCesarLugoPage />} />
                 <Route path="/ai-dashboard" element={<AIDashboard />} />
                 <Route path="/mobile-settings" element={<MobileSettings />} />
+                <Route path="/wearables" element={<WearableDashboard />} />
             </Routes>
           </div>
         )}
