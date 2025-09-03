@@ -10,14 +10,16 @@ import {
   Users, 
   BarChart3,
   ArrowRight,
-  Sparkles
+  Sparkles,
+  TestTube
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { AnimatedCard, AnimatedText, AnimatedButton } from '../Animations/AnimatedComponents';
 import { PulseButton } from '../Animations/MicroInteractions';
 
 const MainDashboard: React.FC = () => {
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   const dashboardSections = [
     {
@@ -66,6 +68,11 @@ const MainDashboard: React.FC = () => {
     }
   ];
 
+  const handleNavigate = (path: string) => {
+    console.log('Navegando a:', path);
+    navigate(path);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-6">
       {/* Header */}
@@ -82,6 +89,30 @@ const MainDashboard: React.FC = () => {
           </div>
         </div>
       </AnimatedText>
+
+      {/* Debug Info */}
+      <AnimatedCard delay={0.15}>
+        <div className="bg-red-500/10 backdrop-blur-2xl border border-red-500/30 rounded-3xl p-4 mb-6">
+          <div className="flex items-center gap-2 mb-2">
+            <TestTube className="w-5 h-5 text-red-400" />
+            <span className="text-red-400 font-semibold">Modo Debug - Verificando Rutas</span>
+          </div>
+          <p className="text-red-300 text-sm mb-3">
+            Haz clic en las tarjetas para navegar a cada funcionalidad. Si no funciona, usa los botones de prueba.
+          </p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+            {dashboardSections.map((section) => (
+              <button
+                key={section.id}
+                onClick={() => handleNavigate(section.path)}
+                className="px-3 py-2 bg-red-500/20 border border-red-500/30 text-red-300 rounded-lg hover:bg-red-500/30 transition-all duration-300 text-xs"
+              >
+                Probar {section.title}
+              </button>
+            ))}
+          </div>
+        </div>
+      </AnimatedCard>
 
       {/* Stats Overview */}
       <AnimatedCard delay={0.2}>
@@ -112,56 +143,55 @@ const MainDashboard: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {dashboardSections.map((section, index) => (
           <AnimatedCard key={section.id} delay={0.3 + index * 0.1}>
-            <Link to={section.path}>
+            <motion.div
+              className={`bg-gradient-to-br ${section.color} backdrop-blur-2xl border ${section.borderColor} rounded-3xl p-6 h-full transition-all duration-300 cursor-pointer group`}
+              onHoverStart={() => setHoveredCard(section.id)}
+              onHoverEnd={() => setHoveredCard(null)}
+              whileHover={{ 
+                scale: 1.02,
+                boxShadow: "0 20px 40px rgba(0,0,0,0.3)"
+              }}
+              onClick={() => handleNavigate(section.path)}
+            >
+              <div className="flex items-start justify-between mb-4">
+                <div className={`p-3 bg-white/10 rounded-2xl ${section.textColor}`}>
+                  {section.icon}
+                </div>
+                <motion.div
+                  animate={{ 
+                    x: hoveredCard === section.id ? 5 : 0,
+                    opacity: hoveredCard === section.id ? 1 : 0.7
+                  }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <ArrowRight className="w-5 h-5 text-white" />
+                </motion.div>
+              </div>
+              
+              <div className="mb-4">
+                <h3 className="text-xl font-semibold text-white mb-2">{section.title}</h3>
+                <p className="text-gray-300 text-sm">{section.description}</p>
+              </div>
+              
+              <div className="space-y-2">
+                {section.features.map((feature, idx) => (
+                  <div key={idx} className="flex items-center gap-2">
+                    <Sparkles className="w-3 h-3 text-white/60" />
+                    <span className="text-xs text-gray-300">{feature}</span>
+                  </div>
+                ))}
+              </div>
+              
               <motion.div
-                className={`bg-gradient-to-br ${section.color} backdrop-blur-2xl border ${section.borderColor} rounded-3xl p-6 h-full transition-all duration-300 cursor-pointer group`}
-                onHoverStart={() => setHoveredCard(section.id)}
-                onHoverEnd={() => setHoveredCard(null)}
-                whileHover={{ 
-                  scale: 1.02,
-                  boxShadow: "0 20px 40px rgba(0,0,0,0.3)"
+                className="mt-4 flex items-center gap-2 text-sm font-medium"
+                animate={{ 
+                  color: hoveredCard === section.id ? section.textColor : 'text-gray-400'
                 }}
               >
-                <div className="flex items-start justify-between mb-4">
-                  <div className={`p-3 bg-white/10 rounded-2xl ${section.textColor}`}>
-                    {section.icon}
-                  </div>
-                  <motion.div
-                    animate={{ 
-                      x: hoveredCard === section.id ? 5 : 0,
-                      opacity: hoveredCard === section.id ? 1 : 0.7
-                    }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <ArrowRight className="w-5 h-5 text-white" />
-                  </motion.div>
-                </div>
-                
-                <div className="mb-4">
-                  <h3 className="text-xl font-semibold text-white mb-2">{section.title}</h3>
-                  <p className="text-gray-300 text-sm">{section.description}</p>
-                </div>
-                
-                <div className="space-y-2">
-                  {section.features.map((feature, idx) => (
-                    <div key={idx} className="flex items-center gap-2">
-                      <Sparkles className="w-3 h-3 text-white/60" />
-                      <span className="text-xs text-gray-300">{feature}</span>
-                    </div>
-                  ))}
-                </div>
-                
-                <motion.div
-                  className="mt-4 flex items-center gap-2 text-sm font-medium"
-                  animate={{ 
-                    color: hoveredCard === section.id ? section.textColor : 'text-gray-400'
-                  }}
-                >
-                  <span>Explorar</span>
-                  <ArrowRight className="w-4 h-4" />
-                </motion.div>
+                <span>Explorar</span>
+                <ArrowRight className="w-4 h-4" />
               </motion.div>
-            </Link>
+            </motion.div>
           </AnimatedCard>
         ))}
       </div>
@@ -172,7 +202,10 @@ const MainDashboard: React.FC = () => {
           <h2 className="text-xl font-semibold text-white mb-4">Acciones Rápidas</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <AnimatedButton delay={0.8} asButton={false}>
-              <PulseButton className="w-full px-4 py-3 bg-purple-500/20 border border-purple-500/30 text-purple-300 rounded-xl hover:bg-purple-500/30 transition-all duration-300">
+              <PulseButton 
+                className="w-full px-4 py-3 bg-purple-500/20 border border-purple-500/30 text-purple-300 rounded-xl hover:bg-purple-500/30 transition-all duration-300"
+                onClick={() => handleNavigate('/ai-dashboard')}
+              >
                 <div className="flex items-center gap-2">
                   <Brain className="w-4 h-4" />
                   <span>Consultar IA</span>
@@ -181,7 +214,10 @@ const MainDashboard: React.FC = () => {
             </AnimatedButton>
             
             <AnimatedButton delay={0.9} asButton={false}>
-              <PulseButton className="w-full px-4 py-3 bg-blue-500/20 border border-blue-500/30 text-blue-300 rounded-xl hover:bg-blue-500/30 transition-all duration-300">
+              <PulseButton 
+                className="w-full px-4 py-3 bg-blue-500/20 border border-blue-500/30 text-blue-300 rounded-xl hover:bg-blue-500/30 transition-all duration-300"
+                onClick={() => handleNavigate('/wearables')}
+              >
                 <div className="flex items-center gap-2">
                   <Watch className="w-4 h-4" />
                   <span>Escanear Dispositivos</span>
@@ -190,7 +226,10 @@ const MainDashboard: React.FC = () => {
             </AnimatedButton>
             
             <AnimatedButton delay={1.0} asButton={false}>
-              <PulseButton className="w-full px-4 py-3 bg-yellow-500/20 border border-yellow-500/30 text-yellow-300 rounded-xl hover:bg-yellow-500/30 transition-all duration-300">
+              <PulseButton 
+                className="w-full px-4 py-3 bg-yellow-500/20 border border-yellow-500/30 text-yellow-300 rounded-xl hover:bg-yellow-500/30 transition-all duration-300"
+                onClick={() => handleNavigate('/gamification')}
+              >
                 <div className="flex items-center gap-2">
                   <Trophy className="w-4 h-4" />
                   <span>Ver Logros</span>
