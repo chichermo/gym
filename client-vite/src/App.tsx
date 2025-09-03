@@ -51,6 +51,7 @@ import GamificationDashboard from './components/Gamification/GamificationDashboa
 import MainDashboard from './components/Dashboard/MainDashboard';
 import ARDashboard from './components/AR/ARDashboard';
 import CommunityDashboard from './components/Community/CommunityDashboard';
+import AnalyticsDashboard from './components/Analytics/AnalyticsDashboard';
 
 // Componente para manejar la lógica de mostrar/ocultar landing
 const AppContent: React.FC = () => {
@@ -81,7 +82,8 @@ const AppContent: React.FC = () => {
     '/gamification',
     '/dashboard',
     '/ar-dashboard',
-    '/community-dashboard'
+    '/community-dashboard',
+    '/analytics-dashboard'
   ];
 
   const isInternalPage = internalPages.includes(location.pathname);
@@ -162,6 +164,7 @@ const AppContent: React.FC = () => {
               <Route path="/dashboard" element={<MainDashboard />} />
               <Route path="/ar-dashboard" element={<ARDashboard />} />
               <Route path="/community-dashboard" element={<CommunityDashboard />} />
+              <Route path="/analytics-dashboard" element={<AnalyticsDashboard />} />
             </Routes>
           </div>
         )}
