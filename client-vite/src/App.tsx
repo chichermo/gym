@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './contexts/AuthContext';
 import { NotificationProvider } from './contexts/NotificationContext';
 import { GamificationProvider } from './contexts/GamificationContext';
@@ -44,6 +45,7 @@ import LandingGallery from './components/Layout/LandingGallery';
 import LandingContact from './components/Layout/LandingContact';
 import LandingFooter from './components/Layout/LandingFooter';
 import AIDashboard from './components/AI/AIDashboard';
+import MobileSettings from './components/Mobile/MobileSettings';
 
 // Componente para manejar la lógica de mostrar/ocultar landing
 const AppContent: React.FC = () => {
@@ -68,7 +70,8 @@ const AppContent: React.FC = () => {
     '/entrenamientos-hist',
     '/rutinas',
     '/coach-cesar-lugo',
-    '/ai-dashboard'
+    '/ai-dashboard',
+    '/mobile-settings'
   ];
 
   const isInternalPage = internalPages.includes(location.pathname);
@@ -141,8 +144,9 @@ const AppContent: React.FC = () => {
               <Route path="/plan" element={<PlanPage />} />
               <Route path="/entrenamientos-hist" element={<EntrenamientosHistPage />} />
               <Route path="/rutinas" element={<RutinasPage />} />
-              <Route path="/coach-cesar-lugo" element={<CoachCesarLugoPage />} />
-              <Route path="/ai-dashboard" element={<AIDashboard />} />
+                              <Route path="/coach-cesar-lugo" element={<CoachCesarLugoPage />} />
+                <Route path="/ai-dashboard" element={<AIDashboard />} />
+                <Route path="/mobile-settings" element={<MobileSettings />} />
             </Routes>
           </div>
         )}
@@ -178,6 +182,19 @@ function App() {
                             <NutritionProvider>
                               <Router>
                                 <AppContent />
+                                <Toaster 
+                                  position="top-right"
+                                  toastOptions={{
+                                    duration: 4000,
+                                    style: {
+                                      background: 'rgba(255, 255, 255, 0.95)',
+                                      backdropFilter: 'blur(10px)',
+                                      border: '1px solid rgba(0, 0, 0, 0.1)',
+                                      borderRadius: '12px',
+                                      boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+                                    }
+                                  }}
+                                />
                               </Router>
                             </NutritionProvider>
                           </ExperienceProvider>
