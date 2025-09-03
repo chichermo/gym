@@ -52,6 +52,8 @@ import MainDashboard from './components/Dashboard/MainDashboard';
 import ARDashboard from './components/AR/ARDashboard';
 import CommunityDashboard from './components/Community/CommunityDashboard';
 import AnalyticsDashboard from './components/Analytics/AnalyticsDashboard';
+import CalendarDashboard from './components/Calendar/CalendarDashboard';
+import MLDashboard from './components/ML/MLDashboard';
 
 // Componente para manejar la lógica de mostrar/ocultar landing
 const AppContent: React.FC = () => {
@@ -81,9 +83,11 @@ const AppContent: React.FC = () => {
     '/wearables',
     '/gamification',
     '/dashboard',
-    '/ar-dashboard',
-    '/community-dashboard',
-    '/analytics-dashboard'
+              '/ar-dashboard',
+          '/community-dashboard',
+          '/analytics-dashboard',
+          '/calendar-dashboard',
+          '/ml-dashboard'
   ];
 
   const isInternalPage = internalPages.includes(location.pathname);
@@ -162,9 +166,11 @@ const AppContent: React.FC = () => {
               <Route path="/wearables" element={<WearableDashboard />} />
               <Route path="/gamification" element={<GamificationDashboard />} />
               <Route path="/dashboard" element={<MainDashboard />} />
-              <Route path="/ar-dashboard" element={<ARDashboard />} />
-              <Route path="/community-dashboard" element={<CommunityDashboard />} />
-              <Route path="/analytics-dashboard" element={<AnalyticsDashboard />} />
+                              <Route path="/ar-dashboard" element={<ARDashboard />} />
+                <Route path="/community-dashboard" element={<CommunityDashboard />} />
+                <Route path="/analytics-dashboard" element={<AnalyticsDashboard />} />
+                <Route path="/calendar-dashboard" element={<CalendarDashboard />} />
+                <Route path="/ml-dashboard" element={<MLDashboard />} />
             </Routes>
           </div>
         )}

@@ -12,7 +12,9 @@ import {
   ArrowRight,
   Sparkles,
   TestTube,
-  Camera
+  Camera,
+  Calendar,
+  Cpu
 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AnimatedCard, AnimatedText, AnimatedButton } from '../Animations/AnimatedComponents';
@@ -89,17 +91,39 @@ const MainDashboard: React.FC = () => {
       textColor: 'text-pink-300',
       features: ['Feed social', 'Desafíos', 'Descubrir usuarios', 'Amigos']
     },
-    {
-      id: 'analytics',
-      title: 'Analytics Avanzado',
-      description: 'Business Intelligence y métricas de rendimiento',
-      icon: <BarChart3 className="w-8 h-8" />,
-      path: '/analytics-dashboard',
-      color: 'from-indigo-500/20 to-indigo-700/20',
-      borderColor: 'border-indigo-500/30',
-      textColor: 'text-indigo-300',
-      features: ['Métricas clave', 'Segmentación', 'Rendimiento', 'Ingresos']
-    }
+            {
+          id: 'analytics',
+          title: 'Analytics Avanzado',
+          description: 'Business Intelligence y métricas de rendimiento',
+          icon: <BarChart3 className="w-8 h-8" />,
+          path: '/analytics-dashboard',
+          color: 'from-indigo-500/20 to-indigo-700/20',
+          borderColor: 'border-indigo-500/30',
+          textColor: 'text-indigo-300',
+          features: ['Métricas clave', 'Segmentación', 'Rendimiento', 'Ingresos']
+        },
+                 {
+           id: 'calendar',
+           title: 'Calendario Inteligente',
+           description: 'Planificación avanzada y gestión de entrenamientos',
+           icon: <Calendar className="w-8 h-8" />,
+           path: '/calendar-dashboard',
+           color: 'from-orange-500/20 to-orange-700/20',
+           borderColor: 'border-orange-500/30',
+           textColor: 'text-orange-300',
+           features: ['Eventos', 'Planes', 'Recordatorios', 'Sincronización']
+         },
+         {
+           id: 'ml',
+           title: 'Machine Learning',
+           description: 'Predicciones inteligentes y análisis de patrones',
+           icon: <Cpu className="w-8 h-8" />,
+           path: '/ml-dashboard',
+           color: 'from-indigo-500/20 to-indigo-700/20',
+           borderColor: 'border-indigo-500/30',
+           textColor: 'text-indigo-300',
+           features: ['Predicciones', 'Patrones', 'Analytics', 'Modelos']
+         }
   ];
 
   const handleNavigate = (path: string) => {
@@ -154,7 +178,7 @@ const MainDashboard: React.FC = () => {
           <h2 className="text-xl font-semibold text-white mb-4">Resumen de Funcionalidades</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                          <div className="text-center">
-               <div className="text-2xl font-bold text-purple-400">7</div>
+                               <div className="text-2xl font-bold text-purple-400">9</div>
                <div className="text-sm text-gray-400">Módulos Activos</div>
              </div>
             <div className="text-center">
@@ -234,7 +258,7 @@ const MainDashboard: React.FC = () => {
       <AnimatedCard delay={0.7}>
         <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl p-6 mt-8">
           <h2 className="text-xl font-semibold text-white mb-4">Acciones Rápidas</h2>
-                     <div className="grid grid-cols-1 md:grid-cols-7 gap-4">
+                     <div className="grid grid-cols-1 md:grid-cols-9 gap-4">
             <AnimatedButton delay={0.8} asButton={false}>
               <PulseButton 
                 className="w-full px-4 py-3 bg-purple-500/20 border border-purple-500/30 text-purple-300 rounded-xl hover:bg-purple-500/30 transition-all duration-300"
@@ -306,6 +330,30 @@ const MainDashboard: React.FC = () => {
                  </div>
                </PulseButton>
              </AnimatedButton>
+             
+                           <AnimatedButton delay={1.4} asButton={false}>
+                <PulseButton
+                  className="w-full px-4 py-3 bg-orange-500/20 border border-orange-500/30 text-orange-300 rounded-xl hover:bg-orange-500/30 transition-all duration-300"
+                  onClick={() => handleNavigate('/calendar-dashboard')}
+                >
+                  <div className="flex items-center gap-2">
+                    <Calendar className="w-4 h-4" />
+                    <span>Ver Calendario</span>
+                  </div>
+                </PulseButton>
+              </AnimatedButton>
+              
+              <AnimatedButton delay={1.5} asButton={false}>
+                <PulseButton
+                  className="w-full px-4 py-3 bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 rounded-xl hover:bg-indigo-500/30 transition-all duration-300"
+                  onClick={() => handleNavigate('/ml-dashboard')}
+                >
+                  <div className="flex items-center gap-2">
+                    <Cpu className="w-4 h-4" />
+                    <span>Ver ML</span>
+                  </div>
+                </PulseButton>
+              </AnimatedButton>
           </div>
         </div>
       </AnimatedCard>
