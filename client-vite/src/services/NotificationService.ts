@@ -242,13 +242,7 @@ class NotificationService {
     const color = this.getNotificationColor(notification.type);
 
     toast(
-      <div className="flex items-start gap-3">
-        <div className={`text-${color} text-lg`}>{icon}</div>
-        <div className="flex-1">
-          <h4 className="font-semibold text-sm">{notification.title}</h4>
-          <p className="text-xs text-gray-600 mt-1">{notification.body}</p>
-        </div>
-      </div>,
+      `${icon} ${notification.title}: ${notification.body}`,
       {
         duration: 4000,
         position: 'top-right',

@@ -18,11 +18,11 @@ import {
   Moon,
   Sun
 } from 'lucide-react';
-import notificationService from '../services/NotificationService';
-import offlineSyncService from '../services/OfflineSyncService';
-import touchGestureService from '../services/TouchGestureService';
-import { AnimatedCard, AnimatedText, AnimatedButton } from '../Animations/AnimatedComponents';
-import { Toast, LoadingSpinner, PulseButton } from '../Animations/MicroInteractions';
+import notificationService from '../../services/NotificationService';
+import offlineSyncService from '../../services/OfflineSyncService';
+import touchGestureService from '../../services/TouchGestureService';
+import { AnimatedCard, AnimatedText, AnimatedButton } from '../../components/Animations/AnimatedComponents';
+import { Toast, LoadingSpinner, PulseButton } from '../../components/Animations/MicroInteractions';
 
 const MobileSettings: React.FC = () => {
   const [notificationSettings, setNotificationSettings] = useState(notificationService.getSettings());
