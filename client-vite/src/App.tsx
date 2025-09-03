@@ -49,6 +49,7 @@ import MobileSettings from './components/Mobile/MobileSettings';
 import WearableDashboard from './components/Wearables/WearableDashboard';
 import GamificationDashboard from './components/Gamification/GamificationDashboard';
 import MainDashboard from './components/Dashboard/MainDashboard';
+import ARDashboard from './components/AR/ARDashboard';
 
 // Componente para manejar la lógica de mostrar/ocultar landing
 const AppContent: React.FC = () => {
@@ -77,7 +78,8 @@ const AppContent: React.FC = () => {
     '/mobile-settings',
     '/wearables',
     '/gamification',
-    '/dashboard'
+    '/dashboard',
+    '/ar-dashboard'
   ];
 
   const isInternalPage = internalPages.includes(location.pathname);
@@ -156,6 +158,7 @@ const AppContent: React.FC = () => {
               <Route path="/wearables" element={<WearableDashboard />} />
               <Route path="/gamification" element={<GamificationDashboard />} />
               <Route path="/dashboard" element={<MainDashboard />} />
+              <Route path="/ar-dashboard" element={<ARDashboard />} />
             </Routes>
           </div>
         )}
