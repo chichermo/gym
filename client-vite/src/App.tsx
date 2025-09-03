@@ -47,6 +47,8 @@ import LandingFooter from './components/Layout/LandingFooter';
 import AIDashboard from './components/AI/AIDashboard';
 import MobileSettings from './components/Mobile/MobileSettings';
 import WearableDashboard from './components/Wearables/WearableDashboard';
+import GamificationDashboard from './components/Gamification/GamificationDashboard';
+import MainDashboard from './components/Dashboard/MainDashboard';
 
 // Componente para manejar la lógica de mostrar/ocultar landing
 const AppContent: React.FC = () => {
@@ -72,7 +74,10 @@ const AppContent: React.FC = () => {
     '/rutinas',
     '/coach-cesar-lugo',
     '/ai-dashboard',
-    '/mobile-settings'
+    '/mobile-settings',
+    '/wearables',
+    '/gamification',
+    '/dashboard'
   ];
 
   const isInternalPage = internalPages.includes(location.pathname);
@@ -146,9 +151,11 @@ const AppContent: React.FC = () => {
               <Route path="/entrenamientos-hist" element={<EntrenamientosHistPage />} />
               <Route path="/rutinas" element={<RutinasPage />} />
                               <Route path="/coach-cesar-lugo" element={<CoachCesarLugoPage />} />
-                <Route path="/ai-dashboard" element={<AIDashboard />} />
-                <Route path="/mobile-settings" element={<MobileSettings />} />
-                <Route path="/wearables" element={<WearableDashboard />} />
+              <Route path="/ai-dashboard" element={<AIDashboard />} />
+              <Route path="/mobile-settings" element={<MobileSettings />} />
+              <Route path="/wearables" element={<WearableDashboard />} />
+              <Route path="/gamification" element={<GamificationDashboard />} />
+              <Route path="/dashboard" element={<MainDashboard />} />
             </Routes>
           </div>
         )}
