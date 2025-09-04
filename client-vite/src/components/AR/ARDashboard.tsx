@@ -29,7 +29,8 @@ import {
   Sparkles,
   CheckCircle,
   AlertCircle,
-  Info
+  Info,
+  X
 } from 'lucide-react';
 import { AnimatedCard, AnimatedText, AnimatedButton } from '../Animations/AnimatedComponents';
 import { Toast, LoadingSpinner, PulseButton } from '../Animations/MicroInteractions';
@@ -67,6 +68,7 @@ const ARDashboard: React.FC = () => {
   const [toastMessage, setToastMessage] = useState('');
   const [toastType, setToastType] = useState<'success' | 'error' | 'warning' | 'info'>('success');
   const [selectedDevice, setSelectedDevice] = useState<ARDevice | null>(null);
+  const [currentWorkout, setCurrentWorkout] = useState<any>(null);
   const [arSettings, setArSettings] = useState({
     soundEnabled: true,
     hapticFeedback: true,
@@ -82,6 +84,18 @@ const ARDashboard: React.FC = () => {
     initializeARSessions();
     initializeARDevices();
     startDeviceDetection();
+    
+    // Verificar si hay un entrenamiento activo desde localStorage
+    const savedWorkout = localStorage.getItem('currentWorkout');
+    if (savedWorkout) {
+      try {
+        const workout = JSON.parse(savedWorkout);
+        setCurrentWorkout(workout);
+        showNotification('Entrenamiento detectado', 'info');
+      } catch (error) {
+        console.error('Error parsing workout:', error);
+      }
+    }
   }, []);
 
   useEffect(() => {
@@ -345,6 +359,77 @@ const ARDashboard: React.FC = () => {
           </div>
         </div>
       </AnimatedText>
+
+      {/* Current Workout Info */}
+      {currentWorkout && (
+        <AnimatedCard delay={0.1}>
+          <div className="bg-gradient-to-br from-purple-500/20 to-purple-700/20 backdrop-blur-2xl border border-purple-500/30 rounded-3xl p-6 mb-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-purple-500/20 rounded-xl">
+                  <Target className="w-6 h-6 text-purple-300" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-semibold text-white">Entrenamiento Activo</h2>
+                  <p className="text-purple-300 text-sm">{currentWorkout.name}</p>
+                  <p className="text-purple-200 text-xs">{currentWorkout.type} • {currentWorkout.duration} min</p>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-2">
+                <AnimatedButton delay={0.2} asButton={false}>
+                  <PulseButton
+                    onClick={() => startARSession({
+                      id: 'workout',
+                      name: currentWorkout.name,
+                      type: 'workout',
+                      duration: currentWorkout.duration,
+                      difficulty: 'intermediate',
+                      calories: 300,
+                      status: 'active',
+                      description: 'Entrenamiento guiado con AR',
+                      features: ['Instrucciones 3D', 'Análisis de forma', 'Seguimiento de repeticiones']
+                    })}
+                    className="px-4 py-2 bg-purple-500/20 border border-purple-500/30 text-purple-300 rounded-xl hover:bg-purple-500/30 transition-all duration-300"
+                  >
+                    <Play className="w-4 h-4" />
+                    Iniciar AR
+                  </PulseButton>
+                </AnimatedButton>
+                
+                <AnimatedButton delay={0.3} asButton={false}>
+                  <PulseButton
+                    onClick={() => {
+                      localStorage.removeItem('currentWorkout');
+                      setCurrentWorkout(null);
+                      showNotification('Entrenamiento cancelado', 'warning');
+                    }}
+                    className="px-4 py-2 bg-red-500/20 border border-red-500/30 text-red-300 rounded-xl hover:bg-red-500/30 transition-all duration-300"
+                  >
+                    <X className="w-4 h-4" />
+                    Cancelar
+                  </PulseButton>
+                </AnimatedButton>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-3 gap-4 text-center">
+              <div>
+                <div className="text-lg font-bold text-white">{currentWorkout.duration}</div>
+                <div className="text-xs text-gray-400">Minutos</div>
+              </div>
+              <div>
+                <div className="text-lg font-bold text-white">{currentWorkout.type}</div>
+                <div className="text-xs text-gray-400">Tipo</div>
+              </div>
+              <div>
+                <div className="text-lg font-bold text-white">AR</div>
+                <div className="text-xs text-gray-400">Modo</div>
+              </div>
+            </div>
+          </div>
+        </AnimatedCard>
+      )}
 
       {/* Debug Info */}
       {showDebug && (

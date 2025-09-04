@@ -21,7 +21,7 @@ import {
   Search
 } from 'lucide-react';
 import { ModernCard, ModernButton } from '../../components/ModernUI';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 // Definir tipo para el workout
 interface Workout {
@@ -966,6 +966,7 @@ const EntrenamientoYProgramaPage: React.FC = () => {
   const [exerciseSearch, setExerciseSearch] = useState('');
   const [programFilter, setProgramFilter] = useState('all');
   const [currentRecordIndex, setCurrentRecordIndex] = useState(0);
+  const navigate = useNavigate();
 
   // Función para rotar las mejores marcas cada 5 segundos
   useEffect(() => {
@@ -1088,6 +1089,36 @@ const EntrenamientoYProgramaPage: React.FC = () => {
   const handleProgramClick = (program: EightWeekProgram) => {
     setSelectedProgram(program);
     setShowProgramDetail(true);
+  };
+
+  // Función para iniciar un entrenamiento
+  const handleStartWorkout = (workout: Workout) => {
+    console.log('Iniciando entrenamiento:', workout);
+    
+    // Guardar el entrenamiento actual en localStorage para que esté disponible en AR
+    localStorage.setItem('currentWorkout', JSON.stringify(workout));
+    
+    // Navegar al AR Dashboard para entrenamiento guiado
+    navigate('/ar-dashboard');
+  };
+
+  // Función para iniciar un programa
+  const handleStartProgram = (program: any) => {
+    console.log('Iniciando programa:', program);
+    
+    // Crear un entrenamiento basado en el programa
+    const workout: Workout = {
+      id: Date.now(),
+      name: program.name,
+      date: new Date().toISOString().split('T')[0],
+      duration: 45, // Duración por defecto
+      type: 'Programa',
+      completed: false
+    };
+    
+    // Guardar y navegar
+    localStorage.setItem('currentWorkout', JSON.stringify(workout));
+    navigate('/ar-dashboard');
   };
 
   const getDifficultyColor = (difficulty: string) => {
@@ -1233,7 +1264,12 @@ const EntrenamientoYProgramaPage: React.FC = () => {
                         <p className="text-xs text-blue-200 mb-2">{program.description}</p>
                       </div>
                       <div className="flex flex-col gap-2 items-end">
-                        <ModernButton icon={ChevronRight} size="sm" variant="glass">
+                        <ModernButton 
+                          icon={ChevronRight} 
+                          size="sm" 
+                          variant="glass"
+                          onClick={() => handleStartProgram(program)}
+                        >
                           Iniciar
                         </ModernButton>
                         <ModernButton icon={Edit} size="sm" variant="glass">
@@ -1294,7 +1330,12 @@ const EntrenamientoYProgramaPage: React.FC = () => {
                         <p className="text-xs text-blue-200 mb-2">Duración: {workout.duration} min</p>
                       </div>
                       <div className="flex flex-col gap-2 items-end">
-                        <ModernButton icon={Play} size="sm" variant="glass">
+                        <ModernButton 
+                          icon={Play} 
+                          size="sm" 
+                          variant="glass"
+                          onClick={() => handleStartWorkout(workout)}
+                        >
                           Iniciar
                         </ModernButton>
                         <ModernButton icon={Edit} size="sm" variant="glass">
