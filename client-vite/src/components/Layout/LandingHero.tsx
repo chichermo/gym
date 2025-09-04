@@ -16,17 +16,19 @@ import {
   Target,
   Camera,
   Star,
-  History
+  History,
+  Clock,
+  Activity
 } from 'lucide-react';
 
 const LandingHero: React.FC = () => {
   // Accesos rápidos para el hero section
   const quickAccess = [
     {
-      title: "Dashboard",
-      subtitle: "Vista general",
+      title: "Dashboard Avanzado",
+      subtitle: "Todas las funcionalidades",
       icon: Home,
-      link: "/",
+      link: "/dashboard",
       color: "from-blue-500 to-blue-700",
       bgColor: "bg-blue-500/10",
       borderColor: "border-blue-500/30"
@@ -42,103 +44,94 @@ const LandingHero: React.FC = () => {
       featured: true
     },
     {
-      title: "Entrenamiento",
-      subtitle: "Programas y rutinas",
-      icon: Dumbbell,
-      link: "/entrenamiento-programa",
+      title: "Inteligencia Artificial",
+      subtitle: "IA y predicciones",
+      icon: BarChart3,
+      link: "/ai-dashboard",
       color: "from-purple-500 to-purple-700",
       bgColor: "bg-purple-500/10",
       borderColor: "border-purple-500/30"
     },
     {
-      title: "Historial",
-      subtitle: "Sesiones pasadas",
-      icon: List,
-      link: "/entrenamientos-hist",
+      title: "Wearables & IoT",
+      subtitle: "Dispositivos inteligentes",
+      icon: Clock,
+      link: "/wearables",
       color: "from-green-500 to-green-700",
       bgColor: "bg-green-500/10",
       borderColor: "border-green-500/30"
     },
     {
-      title: "Rutinas",
-      subtitle: "Mis entrenamientos",
-      icon: History,
-      link: "/rutinas",
-      color: "from-teal-500 to-teal-700",
-      bgColor: "bg-teal-500/10",
-      borderColor: "border-teal-500/30"
-    },
-    {
-      title: "Progreso",
-      subtitle: "Estadísticas",
-      icon: TrendingUp,
-      link: "/progress",
-      color: "from-cyan-500 to-cyan-700",
-      bgColor: "bg-cyan-500/10",
-      borderColor: "border-cyan-500/30"
-    },
-    {
-      title: "Perfil",
-      subtitle: "Mi cuenta",
-      icon: User,
-      link: "/profile",
-      color: "from-pink-500 to-pink-700",
-      bgColor: "bg-pink-500/10",
-      borderColor: "border-pink-500/30"
-    },
-    {
-      title: "Trofeos",
-      subtitle: "Logros",
+      title: "Gamificación",
+      subtitle: "Logros y recompensas",
       icon: Award,
-      link: "/trophies",
+      link: "/gamification",
       color: "from-yellow-500 to-yellow-700",
       bgColor: "bg-yellow-500/10",
       borderColor: "border-yellow-500/30"
     },
     {
-      title: "Analytics",
-      subtitle: "Análisis",
-      icon: BarChart3,
-      link: "/analytics",
-      color: "from-indigo-500 to-indigo-700",
-      bgColor: "bg-indigo-500/10",
-      borderColor: "border-indigo-500/30"
-    },
-    {
-      title: "Comunidad",
-      subtitle: "Social",
-      icon: Users,
-      link: "/community",
-      color: "from-emerald-500 to-emerald-700",
-      bgColor: "bg-emerald-500/10",
-      borderColor: "border-emerald-500/30"
-    },
-    {
-      title: "Calendario",
-      subtitle: "Agenda",
-      icon: Calendar,
-      link: "/calendar",
+      title: "Realidad Aumentada",
+      subtitle: "Entrenamiento AR",
+      icon: Camera,
+      link: "/ar-dashboard",
       color: "from-orange-500 to-orange-700",
       bgColor: "bg-orange-500/10",
       borderColor: "border-orange-500/30"
     },
     {
-      title: "Plan",
-      subtitle: "Objetivos",
+      title: "Comunidad",
+      subtitle: "Red social",
+      icon: Users,
+      link: "/community-dashboard",
+      color: "from-pink-500 to-pink-700",
+      bgColor: "bg-pink-500/10",
+      borderColor: "border-pink-500/30"
+    },
+    {
+      title: "Analytics",
+      subtitle: "Análisis avanzado",
+      icon: TrendingUp,
+      link: "/analytics-dashboard",
+      color: "from-indigo-500 to-indigo-700",
+      bgColor: "bg-indigo-500/10",
+      borderColor: "border-indigo-500/30"
+    },
+    {
+      title: "Calendario",
+      subtitle: "Planificación",
+      icon: Calendar,
+      link: "/calendar-dashboard",
+      color: "from-teal-500 to-teal-700",
+      bgColor: "bg-teal-500/10",
+      borderColor: "border-teal-500/30"
+    },
+    {
+      title: "Machine Learning",
+      subtitle: "Predicciones ML",
       icon: Target,
-      link: "/plan",
+      link: "/ml-dashboard",
+      color: "from-cyan-500 to-cyan-700",
+      bgColor: "bg-cyan-500/10",
+      borderColor: "border-cyan-500/30"
+    },
+    {
+      title: "Entrenamiento",
+      subtitle: "Programas y rutinas",
+      icon: Dumbbell,
+      link: "/entrenamiento-programa",
+      color: "from-emerald-500 to-emerald-700",
+      bgColor: "bg-emerald-500/10",
+      borderColor: "border-emerald-500/30"
+    },
+    {
+      title: "Progreso",
+      subtitle: "Estadísticas",
+      icon: Activity,
+      link: "/progress",
       color: "from-rose-500 to-rose-700",
       bgColor: "bg-rose-500/10",
       borderColor: "border-rose-500/30"
-    },
-    {
-      title: "Entrenamiento AR",
-      subtitle: "Realidad aumentada",
-      icon: Camera,
-      link: "/ar",
-      color: "from-violet-500 to-violet-700",
-      bgColor: "bg-violet-500/10",
-      borderColor: "border-violet-500/30"
     }
   ];
 

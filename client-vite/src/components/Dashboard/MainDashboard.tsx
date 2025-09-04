@@ -119,9 +119,9 @@ const MainDashboard: React.FC = () => {
            description: 'Predicciones inteligentes y análisis de patrones',
            icon: <Cpu className="w-8 h-8" />,
            path: '/ml-dashboard',
-           color: 'from-indigo-500/20 to-indigo-700/20',
-           borderColor: 'border-indigo-500/30',
-           textColor: 'text-indigo-300',
+           color: 'from-teal-500/20 to-teal-700/20',
+           borderColor: 'border-teal-500/30',
+           textColor: 'text-teal-300',
            features: ['Predicciones', 'Patrones', 'Analytics', 'Modelos']
          }
   ];
@@ -345,7 +345,7 @@ const MainDashboard: React.FC = () => {
               
               <AnimatedButton delay={1.5} asButton={false}>
                 <PulseButton
-                  className="w-full px-4 py-3 bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 rounded-xl hover:bg-indigo-500/30 transition-all duration-300"
+                  className="w-full px-4 py-3 bg-teal-500/20 border border-teal-500/30 text-teal-300 rounded-xl hover:bg-teal-500/30 transition-all duration-300"
                   onClick={() => handleNavigate('/ml-dashboard')}
                 >
                   <div className="flex items-center gap-2">

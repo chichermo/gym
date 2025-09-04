@@ -50,7 +50,6 @@ import {
   Cloud,
   Wifi,
   Bluetooth,
-  Signal,
   Radio,
   Antenna,
   Router,
@@ -82,9 +81,7 @@ import {
   Harmonic,
   Wave,
   Pulse,
-  Signal,
   Noise,
-  Filter,
   Amplifier,
   Modulator,
   Demodulator,
@@ -122,7 +119,6 @@ import {
   StochasticGradientDescent,
   Adam,
   RMSprop,
-  Momentum,
   Nesterov,
   AdaGrad,
   AdaDelta,
@@ -351,12 +347,12 @@ const MLDashboard: React.FC = () => {
           </div>
           
           <div className="flex items-center gap-3">
-            <AnimatedButton delay={0.2} asButton={false}>
-              <PulseButton
-                onClick={handleTrainModels}
-                disabled={isTraining}
-                className="px-4 py-2 bg-purple-500/20 border border-purple-500/30 text-purple-300 rounded-xl hover:bg-purple-500/30 transition-all duration-300 disabled:opacity-50"
-              >
+                         <AnimatedButton delay={0.2} asButton={false}>
+               <PulseButton
+                 onClick={handleTrainModels}
+                 disabled={isTraining}
+                 className="px-4 py-2 bg-teal-500/20 border border-teal-500/30 text-teal-300 rounded-xl hover:bg-teal-500/30 transition-all duration-300 disabled:opacity-50"
+               >
                 <div className="flex items-center gap-2">
                   {isTraining ? <LoadingSpinner size="small" /> : <Cpu className="w-4 h-4" />}
                   {isTraining ? 'Entrenando...' : 'Entrenar Modelos'}
@@ -392,11 +388,11 @@ const MLDashboard: React.FC = () => {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-300 ${
-                  activeTab === tab.id
-                    ? 'bg-purple-500/20 border border-purple-500/30 text-purple-300'
-                    : 'text-gray-300 hover:text-white hover:bg-white/10'
-                }`}
+                                 className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-300 ${
+                   activeTab === tab.id
+                     ? 'bg-teal-500/20 border border-teal-500/30 text-teal-300'
+                     : 'text-gray-300 hover:text-white hover:bg-white/10'
+                 }`}
               >
                 {tab.icon}
                 {tab.label}

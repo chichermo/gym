@@ -11,7 +11,6 @@ const LandingHeader: React.FC = () => {
     { name: 'Entrenamiento', path: '/entrenamiento-programa' },
     { name: 'Progreso', path: '/progress' },
     { name: 'Analíticas', path: '/analytics' },
-    { name: 'Dashboard', path: '/dashboard' },
     { name: 'Comunidad', path: '/community' },
     { name: 'Coach Cesar', path: '/coach-cesar-lugo' },
   ];

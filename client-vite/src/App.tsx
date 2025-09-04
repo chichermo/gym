@@ -179,7 +179,7 @@ const AppContent: React.FC = () => {
         {isHomePage && (
           <div className="dashboard-section">
             <Routes>
-              <Route path="/" element={<DashboardPage />} />
+              <Route path="/" element={<MainDashboard />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </div>
