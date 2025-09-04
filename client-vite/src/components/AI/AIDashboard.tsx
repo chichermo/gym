@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAI } from '../../contexts/AIContext';
 import { AnimatedCard, AnimatedText, AnimatedButton } from '../Animations/AnimatedComponents';
 import { Toast, LoadingSpinner, PulseButton } from '../Animations/MicroInteractions';
+import AIOnboarding from './AIOnboarding';
+import AISummary from './AISummary';
 import { 
   Brain, 
   TrendingUp, 
@@ -18,7 +20,10 @@ import {
   BarChart3,
   Calendar,
   Dumbbell,
-  Heart
+  Heart,
+  ArrowRight,
+  Plus,
+  Info
 } from 'lucide-react';
 
 const AIDashboard: React.FC = () => {
@@ -42,13 +47,29 @@ const AIDashboard: React.FC = () => {
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [toastType, setToastType] = useState<'success' | 'error' | 'warning' | 'info'>('success');
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [showDetailedView, setShowDetailedView] = useState(false);
   const [selectedGoals, setSelectedGoals] = useState<string[]>([]);
   const [selectedLevel, setSelectedLevel] = useState<string>('intermediate');
+
+  // Mostrar onboarding si es la primera vez
+  useEffect(() => {
+    const hasSeenOnboarding = localStorage.getItem('ai-onboarding-completed');
+    if (!hasSeenOnboarding) {
+      setShowOnboarding(true);
+    }
+  }, []);
 
   const showNotification = (message: string, type: 'success' | 'error' | 'warning' | 'info' = 'success') => {
     setToastMessage(message);
     setToastType(type);
     setShowToast(true);
+  };
+
+  const handleOnboardingComplete = () => {
+    setShowOnboarding(false);
+    localStorage.setItem('ai-onboarding-completed', 'true');
+    showNotification('¡IA configurada exitosamente!', 'success');
   };
 
   const handleGenerateRecommendations = async () => {
@@ -80,23 +101,12 @@ const AIDashboard: React.FC = () => {
     }
   };
 
-  const getPerformanceColor = (performance: string) => {
-    switch (performance) {
-      case 'excellent': return 'text-green-400';
-      case 'good': return 'text-blue-400';
-      case 'improving': return 'text-yellow-400';
-      case 'needs_attention': return 'text-red-400';
-      default: return 'text-gray-400';
-    }
+  const handleViewDetails = () => {
+    setShowDetailedView(true);
   };
 
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case 'high': return 'bg-red-500/20 border-red-500/30 text-red-300';
-      case 'medium': return 'bg-yellow-500/20 border-yellow-500/30 text-yellow-300';
-      case 'low': return 'bg-green-500/20 border-green-500/30 text-green-300';
-      default: return 'bg-gray-500/20 border-gray-500/30 text-gray-300';
-    }
+  const handleBackToSummary = () => {
+    setShowDetailedView(false);
   };
 
   const goals = [
@@ -114,36 +124,102 @@ const AIDashboard: React.FC = () => {
     { value: 'advanced', label: 'Avanzado' }
   ];
 
+  // Vista simplificada (por defecto)
+  if (!showDetailedView) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-6">
+        {/* Header */}
+        <AnimatedText delay={0.1}>
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center gap-3">
+              <div className="p-3 bg-white/10 backdrop-blur-2xl rounded-2xl border border-white/20">
+                <Brain className="w-8 h-8 text-purple-400" />
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold text-white">Inteligencia Artificial</h1>
+                <p className="text-gray-300">Tu asistente personal de entrenamiento</p>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-3">
+              <AnimatedButton delay={0.2} asButton={false}>
+                <PulseButton
+                  onClick={() => setShowOnboarding(true)}
+                  className="px-4 py-2 bg-white/10 backdrop-blur-2xl border border-white/20 rounded-xl hover:bg-white/20 transition-all duration-300"
+                >
+                  <Info className="w-4 h-4 text-white" />
+                </PulseButton>
+              </AnimatedButton>
+              
+              <AnimatedButton delay={0.3} asButton={false}>
+                <PulseButton
+                  onClick={toggleAI}
+                  className={`px-6 py-3 rounded-2xl backdrop-blur-2xl border transition-all duration-300 ${
+                    isAIActive 
+                      ? 'bg-green-500/20 border-green-500/30 text-green-300 hover:bg-green-500/30' 
+                      : 'bg-red-500/20 border-red-500/30 text-red-300 hover:bg-red-500/30'
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <Settings className="w-5 h-5" />
+                    {isAIActive ? 'IA Activa' : 'IA Inactiva'}
+                  </div>
+                </PulseButton>
+              </AnimatedButton>
+            </div>
+          </div>
+        </AnimatedText>
+
+        {/* Vista Resumida */}
+        <AISummary
+          analysis={analysis}
+          recommendations={recommendations}
+          onViewDetails={handleViewDetails}
+          onGeneratePlan={handleGenerateWorkoutPlan}
+        />
+
+        {/* Toast Notifications */}
+        {showToast && (
+          <div className="fixed top-4 right-4 z-50">
+            <Toast
+              message={toastMessage}
+              type={toastType}
+              onClose={() => setShowToast(false)}
+            />
+          </div>
+        )}
+
+        {/* Onboarding */}
+        <AIOnboarding
+          isOpen={showOnboarding}
+          onClose={() => setShowOnboarding(false)}
+          onComplete={handleOnboardingComplete}
+        />
+      </div>
+    );
+  }
+
+  // Vista detallada (cuando el usuario hace clic en "Ver Análisis Completo")
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-6">
-      {/* Header */}
+      {/* Header con botón de regreso */}
       <AnimatedText delay={0.1}>
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-3">
+            <PulseButton
+              onClick={handleBackToSummary}
+              className="p-2 bg-white/10 backdrop-blur-2xl border border-white/20 rounded-xl hover:bg-white/20 transition-all duration-300"
+            >
+              <ArrowRight className="w-5 h-5 text-white rotate-180" />
+            </PulseButton>
             <div className="p-3 bg-white/10 backdrop-blur-2xl rounded-2xl border border-white/20">
               <Brain className="w-8 h-8 text-purple-400" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-white">Dashboard de IA</h1>
-              <p className="text-gray-300">Tu asistente personal de entrenamiento</p>
+              <h1 className="text-3xl font-bold text-white">Análisis Completo de IA</h1>
+              <p className="text-gray-300">Detalles avanzados y configuración</p>
             </div>
           </div>
-          
-          <AnimatedButton delay={0.2} asButton={false}>
-            <PulseButton
-              onClick={toggleAI}
-              className={`px-6 py-3 rounded-2xl backdrop-blur-2xl border transition-all duration-300 ${
-                isAIActive 
-                  ? 'bg-green-500/20 border-green-500/30 text-green-300 hover:bg-green-500/30' 
-                  : 'bg-red-500/20 border-red-500/30 text-red-300 hover:bg-red-500/30'
-              }`}
-            >
-              <div className="flex items-center gap-2">
-                <Settings className="w-5 h-5" />
-                {isAIActive ? 'IA Activa' : 'IA Inactiva'}
-              </div>
-            </PulseButton>
-          </AnimatedButton>
         </div>
       </AnimatedText>
 
@@ -161,7 +237,12 @@ const AIDashboard: React.FC = () => {
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <span className="text-gray-300">Rendimiento General:</span>
-                  <span className={`font-semibold ${getPerformanceColor(analysis.performance)}`}>
+                  <span className={`font-semibold ${
+                    analysis.performance === 'excellent' ? 'text-green-400' :
+                    analysis.performance === 'good' ? 'text-blue-400' :
+                    analysis.performance === 'improving' ? 'text-yellow-400' :
+                    'text-red-400'
+                  }`}>
                     {analysis.performance === 'excellent' && 'Excelente'}
                     {analysis.performance === 'good' && 'Bueno'}
                     {analysis.performance === 'improving' && 'Mejorando'}
@@ -302,7 +383,11 @@ const AIDashboard: React.FC = () => {
               <div className="space-y-4 max-h-96 overflow-y-auto">
                 {recommendations.map((rec, index) => (
                   <AnimatedCard key={rec.id} delay={0.5 + index * 0.1}>
-                    <div className={`p-4 rounded-2xl border backdrop-blur-2xl ${getPriorityColor(rec.priority)}`}>
+                    <div className={`p-4 rounded-2xl border backdrop-blur-2xl ${
+                      rec.priority === 'high' ? 'bg-red-500/20 border-red-500/30 text-red-300' :
+                      rec.priority === 'medium' ? 'bg-yellow-500/20 border-yellow-500/30 text-yellow-300' :
+                      'bg-green-500/20 border-green-500/30 text-green-300'
+                    }`}>
                       <div className="flex items-start justify-between mb-2">
                         <div className="flex items-center gap-2">
                           <span className="text-xs px-2 py-1 bg-white/20 rounded-full">
@@ -462,6 +547,13 @@ const AIDashboard: React.FC = () => {
           />
         </div>
       )}
+
+      {/* Onboarding */}
+      <AIOnboarding
+        isOpen={showOnboarding}
+        onClose={() => setShowOnboarding(false)}
+        onComplete={handleOnboardingComplete}
+      />
     </div>
   );
 };

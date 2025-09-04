@@ -24,8 +24,8 @@ const AnimatedCard: React.FC<AnimatedCardProps> = ({
         ease: "easeOut"
       }}
       whileHover={hover ? { 
-        scale: 1.05, 
-        y: -5,
+        scale: 1.02, 
+        y: -2,
         transition: { duration: 0.2 }
       } : {}}
       className={className}
@@ -48,7 +48,7 @@ const AnimatedText: React.FC<AnimatedTextProps> = ({
 }) => {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 30 }}
+      initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ 
         duration: 0.6, 
@@ -83,7 +83,7 @@ const AnimatedIcon: React.FC<AnimatedIconProps> = ({
         ease: "backOut"
       }}
       whileHover={{ 
-        scale: 1.1, 
+        scale: 1.05, 
         rotate: 5,
         transition: { duration: 0.2 }
       }}
@@ -98,7 +98,6 @@ interface AnimatedButtonProps {
   children: React.ReactNode;
   delay?: number;
   className?: string;
-  onClick?: () => void;
   asButton?: boolean;
 }
 
@@ -106,39 +105,56 @@ const AnimatedButton: React.FC<AnimatedButtonProps> = ({
   children, 
   delay = 0, 
   className = "",
-  onClick,
   asButton = true
 }) => {
-  const buttonProps = {
-    initial: { opacity: 0, scale: 0.8 },
-    animate: { opacity: 1, scale: 1 },
-    transition: { 
-      duration: 0.4, 
-      delay: delay,
-      ease: "easeOut"
-    },
-    whileHover: { 
-      scale: 1.05,
-      transition: { duration: 0.2 }
-    },
-    whileTap: { 
-      scale: 0.95,
-      transition: { duration: 0.1 }
-    },
-    onClick: onClick,
-    className: className
-  };
-
-  if (asButton) {
-    return (
-      <motion.button {...buttonProps}>
-        {children}
-      </motion.button>
-    );
-  }
-
+  const Component = asButton ? motion.button : motion.div;
+  
   return (
-    <motion.div {...buttonProps}>
+    <Component
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ 
+        duration: 0.3, 
+        delay: delay,
+        ease: "easeOut"
+      }}
+      whileHover={{ 
+        scale: 1.02,
+        transition: { duration: 0.2 }
+      }}
+      whileTap={{ 
+        scale: 0.98,
+        transition: { duration: 0.1 }
+      }}
+      className={className}
+    >
+      {children}
+    </Component>
+  );
+};
+
+interface AnimatedListProps {
+  children: React.ReactNode;
+  delay?: number;
+  className?: string;
+}
+
+const AnimatedList: React.FC<AnimatedListProps> = ({ 
+  children, 
+  delay = 0, 
+  className = "" 
+}) => {
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: -20 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ 
+        duration: 0.4, 
+        delay: delay,
+        ease: "easeOut"
+      }}
+      className={className}
+    >
       {children}
     </motion.div>
   );
@@ -148,31 +164,76 @@ interface AnimatedProgressProps {
   progress: number;
   delay?: number;
   className?: string;
+  color?: string;
 }
 
 const AnimatedProgress: React.FC<AnimatedProgressProps> = ({ 
   progress, 
   delay = 0, 
-  className = "" 
+  className = "",
+  color = "bg-blue-500"
 }) => {
   return (
-    <motion.div
-      initial={{ width: 0 }}
-      animate={{ width: `${progress}%` }}
-      transition={{ 
-        duration: 1, 
-        delay: delay,
-        ease: "easeOut"
-      }}
-      className={className}
-    />
+    <div className={`w-full bg-gray-700 rounded-full h-2 ${className}`}>
+      <motion.div
+        className={`${color} h-2 rounded-full`}
+        initial={{ width: 0 }}
+        animate={{ width: `${progress}%` }}
+        transition={{ 
+          duration: 1, 
+          delay: delay,
+          ease: "easeOut"
+        }}
+      />
+    </div>
   );
 };
 
-export { 
-  AnimatedCard, 
-  AnimatedText, 
-  AnimatedIcon, 
-  AnimatedButton, 
-  AnimatedProgress 
+interface AnimatedCounterProps {
+  value: number;
+  delay?: number;
+  className?: string;
+  duration?: number;
+}
+
+const AnimatedCounter: React.FC<AnimatedCounterProps> = ({ 
+  value, 
+  delay = 0, 
+  className = "",
+  duration = 2
+}) => {
+  return (
+    <motion.span
+      initial={{ opacity: 0, scale: 0.5 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ 
+        duration: 0.5, 
+        delay: delay,
+        ease: "backOut"
+      }}
+      className={className}
+    >
+      <motion.span
+        initial={{ number: 0 }}
+        animate={{ number: value }}
+        transition={{ 
+          duration: duration, 
+          delay: delay + 0.3,
+          ease: "easeOut"
+        }}
+      >
+        {Math.round(value)}
+      </motion.span>
+    </motion.span>
+  );
+};
+
+export {
+  AnimatedCard,
+  AnimatedText,
+  AnimatedIcon,
+  AnimatedButton,
+  AnimatedList,
+  AnimatedProgress,
+  AnimatedCounter
 };

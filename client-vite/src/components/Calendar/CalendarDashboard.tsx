@@ -79,10 +79,13 @@ import {
   CalendarShare2,
   CalendarLock2,
   CalendarUnlock2,
-  CalendarRepeat2
+  CalendarRepeat2,
+  ArrowRight
 } from 'lucide-react';
 import { AnimatedCard, AnimatedText, AnimatedButton } from '../Animations/AnimatedComponents';
 import { Toast, LoadingSpinner, PulseButton } from '../Animations/MicroInteractions';
+import CalendarOnboarding from './CalendarOnboarding';
+import CalendarSummary from './CalendarSummary';
 
 interface CalendarEvent {
   id: string;
@@ -142,10 +145,42 @@ const CalendarDashboard: React.FC = () => {
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [toastType, setToastType] = useState<'success' | 'error' | 'warning' | 'info'>('success');
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [showDetailedView, setShowDetailedView] = useState(false);
 
   useEffect(() => {
     initializeData();
+    // Mostrar onboarding si es la primera vez
+    const hasSeenOnboarding = localStorage.getItem('calendar-onboarding-completed');
+    if (!hasSeenOnboarding) {
+      setShowOnboarding(true);
+    }
   }, []);
+
+  const showNotification = (message: string, type: 'success' | 'error' | 'warning' | 'info' = 'success') => {
+    setToastMessage(message);
+    setToastType(type);
+    setShowToast(true);
+  };
+
+  const handleOnboardingComplete = () => {
+    setShowOnboarding(false);
+    localStorage.setItem('calendar-onboarding-completed', 'true');
+    showNotification('¡Calendario configurado exitosamente!', 'success');
+  };
+
+  const handleViewDetails = () => {
+    setShowDetailedView(true);
+  };
+
+  const handleBackToSummary = () => {
+    setShowDetailedView(false);
+  };
+
+  const handleCreateEvent = () => {
+    setShowEventModal(true);
+    showNotification('Creando nuevo evento...', 'info');
+  };
 
   const initializeData = () => {
     setIsLoading(true);
@@ -270,12 +305,6 @@ const CalendarDashboard: React.FC = () => {
     }, 1000);
   };
 
-  const showNotification = (message: string, type: 'success' | 'error' | 'warning' | 'info' = 'success') => {
-    setToastMessage(message);
-    setToastType(type);
-    setShowToast(true);
-  };
-
   const getDaysInMonth = (date: Date) => {
     const year = date.getFullYear();
     const month = date.getMonth();
@@ -321,11 +350,6 @@ const CalendarDashboard: React.FC = () => {
 
   const handleEventClick = (event: CalendarEvent) => {
     setEditingEvent(event);
-    setShowEventModal(true);
-  };
-
-  const handleCreateEvent = () => {
-    setEditingEvent(null);
     setShowEventModal(true);
   };
 
@@ -408,18 +432,98 @@ const CalendarDashboard: React.FC = () => {
     return days;
   };
 
+  // Vista simplificada (por defecto)
+  if (!showDetailedView) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 p-6">
+        {/* Header */}
+        <AnimatedText delay={0.1}>
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center gap-3">
+              <div className="p-3 bg-white/10 backdrop-blur-2xl rounded-2xl border border-white/20">
+                <CalendarIcon className="w-8 h-8 text-blue-400" />
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold text-white">Calendario</h1>
+                <p className="text-gray-300">Organiza tu vida fitness con inteligencia</p>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-3">
+              <AnimatedButton delay={0.2} asButton={false}>
+                <PulseButton
+                  onClick={() => setShowOnboarding(true)}
+                  className="px-4 py-2 bg-white/10 backdrop-blur-2xl border border-white/20 rounded-xl hover:bg-white/20 transition-all duration-300"
+                >
+                  <Info className="w-4 h-4 text-white" />
+                </PulseButton>
+              </AnimatedButton>
+              
+              <AnimatedButton delay={0.3} asButton={false}>
+                <PulseButton
+                  onClick={handleCreateEvent}
+                  className="px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-2xl hover:from-blue-600 hover:to-cyan-600 transition-all duration-300"
+                >
+                  <div className="flex items-center gap-2">
+                    <Plus className="w-5 h-5" />
+                    Crear Evento
+                  </div>
+                </PulseButton>
+              </AnimatedButton>
+            </div>
+          </div>
+        </AnimatedText>
+
+        {/* Vista Resumida */}
+        <CalendarSummary
+          events={events}
+          workoutPlans={workoutPlans}
+          reminders={reminders}
+          onViewDetails={handleViewDetails}
+          onCreateEvent={handleCreateEvent}
+          isLoading={isLoading}
+        />
+
+        {/* Toast Notifications */}
+        {showToast && (
+          <div className="fixed top-4 right-4 z-50">
+            <Toast
+              message={toastMessage}
+              type={toastType}
+              onClose={() => setShowToast(false)}
+            />
+          </div>
+        )}
+
+        {/* Onboarding */}
+        <CalendarOnboarding
+          isOpen={showOnboarding}
+          onClose={() => setShowOnboarding(false)}
+          onComplete={handleOnboardingComplete}
+        />
+      </div>
+    );
+  }
+
+  // Vista detallada (cuando el usuario hace clic en "Ver Detalles")
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-6">
-      {/* Header */}
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 p-6">
+      {/* Header con botón de regreso */}
       <AnimatedText delay={0.1}>
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-3">
+            <PulseButton
+              onClick={handleBackToSummary}
+              className="p-2 bg-white/10 backdrop-blur-2xl border border-white/20 rounded-xl hover:bg-white/20 transition-all duration-300"
+            >
+              <ArrowRight className="w-5 h-5 text-white rotate-180" />
+            </PulseButton>
             <div className="p-3 bg-white/10 backdrop-blur-2xl rounded-2xl border border-white/20">
-              <CalendarIcon className="w-8 h-8 text-white" />
+              <CalendarIcon className="w-8 h-8 text-blue-400" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-white">Calendario Inteligente</h1>
-              <p className="text-gray-300">Planificación avanzada y gestión de entrenamientos</p>
+              <h1 className="text-3xl font-bold text-white">Calendario Completo</h1>
+              <p className="text-gray-300">Todas las funcionalidades de planificación</p>
             </div>
           </div>
           
@@ -702,6 +806,13 @@ const CalendarDashboard: React.FC = () => {
           />
         </div>
       )}
+
+      {/* Onboarding */}
+      <CalendarOnboarding
+        isOpen={showOnboarding}
+        onClose={() => setShowOnboarding(false)}
+        onComplete={handleOnboardingComplete}
+      />
     </div>
   );
 };

@@ -16,10 +16,10 @@ const Toast: React.FC<ToastProps> = ({ message, type, onClose, duration = 3000 }
   }, [duration, onClose]);
 
   const icons = {
-    success: <Check className="w-5 h-5" />,
-    error: <X className="w-5 h-5" />,
-    warning: <AlertCircle className="w-5 h-5" />,
-    info: <Info className="w-5 h-5" />
+    success: <Check className="w-4 h-4 sm:w-5 sm:h-5" />,
+    error: <X className="w-4 h-4 sm:w-5 sm:h-5" />,
+    warning: <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5" />,
+    info: <Info className="w-4 h-4 sm:w-5 sm:h-5" />
   };
 
   const colors = {
@@ -34,15 +34,15 @@ const Toast: React.FC<ToastProps> = ({ message, type, onClose, duration = 3000 }
       initial={{ opacity: 0, y: -50, scale: 0.8 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: -50, scale: 0.8 }}
-      className={`${colors[type]} backdrop-blur-2xl border rounded-2xl p-4 flex items-center gap-3 shadow-lg`}
+      className={`${colors[type]} backdrop-blur-2xl border rounded-xl sm:rounded-2xl p-3 sm:p-4 flex items-center gap-2 sm:gap-3 shadow-lg`}
     >
       {icons[type]}
-      <span className="font-medium">{message}</span>
+      <span className="font-medium text-sm sm:text-base">{message}</span>
       <button
         onClick={onClose}
         className="ml-auto p-1 hover:bg-white/10 rounded-lg transition-colors"
       >
-        <X className="w-4 h-4" />
+        <X className="w-3 h-3 sm:w-4 sm:h-4" />
       </button>
     </motion.div>
   );
@@ -55,9 +55,9 @@ interface LoadingSpinnerProps {
 
 const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({ size = 'md', color = 'text-white' }) => {
   const sizes = {
-    sm: 'w-4 h-4',
-    md: 'w-6 h-6',
-    lg: 'w-8 h-8'
+    sm: 'w-3 h-3 sm:w-4 sm:h-4',
+    md: 'w-5 h-5 sm:w-6 sm:h-6',
+    lg: 'w-6 h-6 sm:w-8 sm:h-8'
   };
 
   return (
@@ -102,32 +102,47 @@ const PulseButton: React.FC<PulseButtonProps> = ({
 
   const handleClick = () => {
     setIsPulsing(true);
-    setTimeout(() => setIsPulsing(false), 600);
+    setTimeout(() => setIsPulsing(false), 300);
     onClick?.();
   };
 
   return (
-    <div className="relative">
-      <motion.button
-        onClick={handleClick}
-        className={className}
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-      >
-        {children}
-      </motion.button>
-      
+    <motion.button
+      onClick={handleClick}
+      className={`relative ${className}`}
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.98 }}
+    >
+      {children}
       <AnimatePresence>
         {isPulsing && (
           <motion.div
             initial={{ scale: 0.8, opacity: 0.8 }}
             animate={{ scale: 2, opacity: 0 }}
             exit={{ scale: 0.8, opacity: 0 }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.3 }}
             className={`absolute inset-0 ${pulseColor} rounded-full pointer-events-none`}
           />
         )}
       </AnimatePresence>
+    </motion.button>
+  );
+};
+
+interface ShimmerEffectProps {
+  children: React.ReactNode;
+  className?: string;
+}
+
+const ShimmerEffect: React.FC<ShimmerEffectProps> = ({ children, className = "" }) => {
+  return (
+    <div className={`relative overflow-hidden ${className}`}>
+      {children}
+      <motion.div
+        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
+        animate={{ x: ['-100%', '100%'] }}
+        transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+      />
     </div>
   );
 };
@@ -135,85 +150,147 @@ const PulseButton: React.FC<PulseButtonProps> = ({
 interface RippleEffectProps {
   children: React.ReactNode;
   className?: string;
+  color?: string;
 }
 
-const RippleEffect: React.FC<RippleEffectProps> = ({ children, className = "" }) => {
+const RippleEffect: React.FC<RippleEffectProps> = ({ 
+  children, 
+  className = "",
+  color = "bg-white/20"
+}) => {
   const [ripples, setRipples] = useState<Array<{ id: number; x: number; y: number }>>([]);
 
-  const handleClick = (event: React.MouseEvent) => {
-    const rect = event.currentTarget.getBoundingClientRect();
-    const x = event.clientX - rect.left;
-    const y = event.clientY - rect.top;
+  const handleClick = (e: React.MouseEvent) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
     
     const newRipple = { id: Date.now(), x, y };
     setRipples(prev => [...prev, newRipple]);
     
     setTimeout(() => {
       setRipples(prev => prev.filter(ripple => ripple.id !== newRipple.id));
-    }, 1000);
+    }, 600);
   };
 
   return (
     <div className={`relative overflow-hidden ${className}`} onClick={handleClick}>
       {children}
-      {ripples.map(ripple => (
-        <motion.div
-          key={ripple.id}
-          initial={{ scale: 0, opacity: 0.5 }}
-          animate={{ scale: 4, opacity: 0 }}
-          transition={{ duration: 1 }}
-          className="absolute bg-white/30 rounded-full pointer-events-none"
-          style={{
-            left: ripple.x - 2,
-            top: ripple.y - 2,
-            width: 4,
-            height: 4
-          }}
-        />
-      ))}
-    </div>
-  );
-};
-
-interface HoverCardProps {
-  children: React.ReactNode;
-  hoverContent: React.ReactNode;
-  className?: string;
-}
-
-const HoverCard: React.FC<HoverCardProps> = ({ children, hoverContent, className = "" }) => {
-  const [isHovered, setIsHovered] = useState(false);
-
-  return (
-    <div 
-      className={`relative ${className}`}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      {children}
       <AnimatePresence>
-        {isHovered && (
+        {ripples.map(ripple => (
           <motion.div
-            initial={{ opacity: 0, scale: 0.8, y: 10 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.8, y: 10 }}
-            transition={{ duration: 0.2 }}
-            className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 z-50"
-          >
-            <div className="bg-white/10 backdrop-blur-2xl border border-white/20 rounded-2xl p-4 shadow-2xl">
-              {hoverContent}
-            </div>
-          </motion.div>
-        )}
+            key={ripple.id}
+            className={`absolute ${color} rounded-full pointer-events-none`}
+            style={{
+              left: ripple.x,
+              top: ripple.y,
+              transform: 'translate(-50%, -50%)'
+            }}
+            initial={{ scale: 0, opacity: 0.8 }}
+            animate={{ scale: 4, opacity: 0 }}
+            exit={{ scale: 0, opacity: 0 }}
+            transition={{ duration: 0.6 }}
+          />
+        ))}
       </AnimatePresence>
     </div>
   );
 };
 
-export { 
-  Toast, 
-  LoadingSpinner, 
-  PulseButton, 
-  RippleEffect, 
-  HoverCard 
+interface FloatingActionButtonProps {
+  children: React.ReactNode;
+  onClick?: () => void;
+  className?: string;
+  position?: 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left';
+}
+
+const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({ 
+  children, 
+  onClick, 
+  className = "",
+  position = 'bottom-right'
+}) => {
+  const positionClasses = {
+    'bottom-right': 'bottom-4 right-4',
+    'bottom-left': 'bottom-4 left-4',
+    'top-right': 'top-4 right-4',
+    'top-left': 'top-4 left-4'
+  };
+
+  return (
+    <motion.button
+      onClick={onClick}
+      className={`fixed ${positionClasses[position]} z-50 w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 ${className}`}
+      whileHover={{ scale: 1.1 }}
+      whileTap={{ scale: 0.9 }}
+      initial={{ scale: 0, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      transition={{ duration: 0.3, ease: "backOut" }}
+    >
+      {children}
+    </motion.button>
+  );
+};
+
+interface ProgressRingProps {
+  progress: number;
+  size?: number;
+  strokeWidth?: number;
+  color?: string;
+  className?: string;
+}
+
+const ProgressRing: React.FC<ProgressRingProps> = ({ 
+  progress, 
+  size = 60, 
+  strokeWidth = 4, 
+  color = "stroke-red-500",
+  className = ""
+}) => {
+  const radius = (size - strokeWidth) / 2;
+  const circumference = radius * 2 * Math.PI;
+  const strokeDasharray = circumference;
+  const strokeDashoffset = circumference - (progress / 100) * circumference;
+
+  return (
+    <div className={`relative ${className}`}>
+      <svg width={size} height={size} className="transform -rotate-90">
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          stroke="currentColor"
+          strokeWidth={strokeWidth}
+          fill="transparent"
+          className="text-gray-700"
+        />
+        <motion.circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          stroke="currentColor"
+          strokeWidth={strokeWidth}
+          fill="transparent"
+          className={color}
+          strokeDasharray={strokeDasharray}
+          initial={{ strokeDashoffset: circumference }}
+          animate={{ strokeDashoffset }}
+          transition={{ duration: 1, ease: "easeOut" }}
+        />
+      </svg>
+      <div className="absolute inset-0 flex items-center justify-center">
+        <span className="text-sm font-semibold">{Math.round(progress)}%</span>
+      </div>
+    </div>
+  );
+};
+
+export {
+  Toast,
+  LoadingSpinner,
+  PulseButton,
+  ShimmerEffect,
+  RippleEffect,
+  FloatingActionButton,
+  ProgressRing
 };

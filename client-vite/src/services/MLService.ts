@@ -470,6 +470,16 @@ class MLService {
   private analyzeRecoveryFactors(data: WorkoutData[]): any {
     const factors: any = {};
     
+    // Si no hay datos, retornar valores por defecto
+    if (data.length === 0) {
+      return {
+        workoutLoad: 0.5,
+        sleepQuality: 0.7,
+        stressLevels: 0.3,
+        age: 0.7
+      };
+    }
+    
     // Workout load
     const totalLoad = data.reduce((sum, workout) => sum + workout.intensity * workout.duration, 0);
     factors.workoutLoad = totalLoad / data.length;
@@ -516,7 +526,12 @@ class MLService {
 
   private findTimePattern(data: WorkoutData[]): UserPattern | null {
     const timeSlots = this.analyzeTimePerformance(data);
-    const mostFrequent = Object.entries(timeSlots).reduce((best, current) => 
+    const entries = Object.entries(timeSlots);
+    
+    // Si no hay datos de tiempo, retornar null
+    if (entries.length === 0) return null;
+    
+    const mostFrequent = entries.reduce((best, current) => 
       current[1] > best[1] ? current : best
     );
     
@@ -535,6 +550,9 @@ class MLService {
   }
 
   private findSleepPattern(data: WorkoutData[]): UserPattern | null {
+    // Si no hay datos, retornar null
+    if (data.length === 0) return null;
+    
     const sleepPerformance = data.map(workout => ({
       sleep: workout.sleep,
       performance: workout.intensity
@@ -562,6 +580,9 @@ class MLService {
   }
 
   private findNutritionPattern(data: WorkoutData[]): UserPattern | null {
+    // Si no hay datos, retornar null
+    if (data.length === 0) return null;
+    
     const nutritionPerformance = data.map(workout => ({
       nutrition: workout.nutrition.calories,
       performance: workout.intensity
@@ -614,6 +635,9 @@ class MLService {
 
   private inferUserGoals(data: WorkoutData[]): string[] {
     const goals: string[] = [];
+    
+    // Si no hay datos, retornar objetivo general
+    if (data.length === 0) return ['general_fitness'];
     
     const avgIntensity = data.reduce((sum, workout) => sum + workout.intensity, 0) / data.length;
     const strengthWorkouts = data.filter(w => w.type === 'strength').length;

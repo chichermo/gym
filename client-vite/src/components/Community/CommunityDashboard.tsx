@@ -36,10 +36,17 @@ import {
   CheckCircle,
   AlertCircle,
   Info,
-  X
+  X,
+  ArrowLeft,
+  Target,
+  Award,
+  Users2,
+  MessageSquare
 } from 'lucide-react';
 import { AnimatedCard, AnimatedText, AnimatedButton } from '../Animations/AnimatedComponents';
 import { Toast, LoadingSpinner, PulseButton } from '../Animations/MicroInteractions';
+import CommunityOnboarding from './CommunityOnboarding';
+import CommunitySummary from './CommunitySummary';
 
 interface Post {
   id: string;
@@ -113,10 +120,37 @@ const CommunityDashboard: React.FC = () => {
   const [toastType, setToastType] = useState<'success' | 'error' | 'warning' | 'info'>('success');
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState<'all' | 'workouts' | 'photos' | 'videos'>('all');
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [showDetailedView, setShowDetailedView] = useState(false);
 
   useEffect(() => {
     initializeData();
+    // Mostrar onboarding si es la primera vez
+    const hasSeenOnboarding = localStorage.getItem('community-onboarding-completed');
+    if (!hasSeenOnboarding) {
+      setShowOnboarding(true);
+    }
   }, []);
+
+  const showNotification = (message: string, type: 'success' | 'error' | 'warning' | 'info' = 'success') => {
+    setToastMessage(message);
+    setToastType(type);
+    setShowToast(true);
+  };
+
+  const handleOnboardingComplete = () => {
+    setShowOnboarding(false);
+    localStorage.setItem('community-onboarding-completed', 'true');
+    showNotification('¡Comunidad configurada exitosamente!', 'success');
+  };
+
+  const handleViewDetails = () => {
+    setShowDetailedView(true);
+  };
+
+  const handleBackToSummary = () => {
+    setShowDetailedView(false);
+  };
 
   const initializeData = () => {
     // Mock data for posts
@@ -150,19 +184,21 @@ const CommunityDashboard: React.FC = () => {
         userName: 'Ana Runner',
         userAvatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face',
         userLevel: 'Nivel 8',
-        content: '¡Nuevo récord personal! 10km en 45 minutos 🏃‍♀️ La constancia es la clave del éxito.',
-        media: {
-          type: 'image',
-          url: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&h=400&fit=crop'
+        content: '¡Nuevo récord personal! 🏃‍♀️ 10km en 45 minutos. La constancia es la clave del éxito.',
+        workoutData: {
+          type: 'Carrera',
+          duration: 45,
+          calories: 450,
+          exercises: ['Carrera continua']
         },
-        likes: 42,
+        likes: 31,
         comments: 12,
-        shares: 7,
+        shares: 5,
         isLiked: true,
         isBookmarked: true,
         timestamp: new Date(Date.now() - 4 * 60 * 60 * 1000),
         location: 'Parque Central',
-        tags: ['#running', '#récord', '#constancia'],
+        tags: ['#running', '#récord', '#motivación'],
         privacy: 'public'
       },
       {
@@ -171,19 +207,20 @@ const CommunityDashboard: React.FC = () => {
         userName: 'Miguel Yoga',
         userAvatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
         userLevel: 'Nivel 12',
-        content: 'Sesión de yoga matutina completada 🧘‍♂️ Paz mental y flexibilidad física. ¿Practicas yoga?',
+        content: 'Sesión de yoga matutina completa. 🧘‍♂️ Flexibilidad y paz mental. ¿Alguien más practica yoga?',
         media: {
-          type: 'video',
-          url: 'https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4'
+          type: 'image',
+          url: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=400&h=300&fit=crop'
         },
         likes: 18,
-        comments: 5,
+        comments: 6,
         shares: 2,
         isLiked: false,
         isBookmarked: false,
         timestamp: new Date(Date.now() - 6 * 60 * 60 * 1000),
-        tags: ['#yoga', '#paz', '#flexibilidad'],
-        privacy: 'friends'
+        location: 'Casa',
+        tags: ['#yoga', '#flexibilidad', '#paz'],
+        privacy: 'public'
       }
     ];
 
@@ -194,14 +231,14 @@ const CommunityDashboard: React.FC = () => {
         name: 'Carlos Fitness',
         avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
         level: 'Nivel 15',
-        followers: 1247,
-        following: 892,
+        followers: 1240,
+        following: 890,
         posts: 156,
         achievements: 23,
         isFollowing: true,
         isOnline: true,
         lastActive: new Date(),
-        bio: 'Entrenador personal certificado. Amante del fitness y la vida saludable 💪',
+        bio: 'Entrenador personal certificado. Pasión por el fitness y la motivación.',
         location: 'Madrid, España',
         interests: ['Fuerza', 'Cardio', 'Nutrición']
       },
@@ -210,116 +247,89 @@ const CommunityDashboard: React.FC = () => {
         name: 'Ana Runner',
         avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face',
         level: 'Nivel 8',
-        followers: 892,
-        following: 445,
+        followers: 890,
+        following: 567,
         posts: 89,
         achievements: 15,
         isFollowing: false,
         isOnline: false,
-        lastActive: new Date(Date.now() - 30 * 60 * 1000),
-        bio: 'Corredora amateur. Compitiendo en mi primera maratón este año 🏃‍♀️',
+        lastActive: new Date(Date.now() - 2 * 60 * 60 * 1000),
+        bio: 'Corredora amateur. Amo los retos y superar mis límites.',
         location: 'Barcelona, España',
-        interests: ['Running', 'Maratón', 'Trail']
-      },
-      {
-        id: 'user3',
-        name: 'Miguel Yoga',
-        avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
-        level: 'Nivel 12',
-        followers: 567,
-        following: 234,
-        posts: 67,
-        achievements: 18,
-        isFollowing: true,
-        isOnline: true,
-        lastActive: new Date(),
-        bio: 'Instructor de yoga. Enseñando paz y equilibrio desde hace 5 años 🧘‍♂️',
-        location: 'Valencia, España',
-        interests: ['Yoga', 'Meditación', 'Bienestar']
+        interests: ['Running', 'Triatlón', 'Trail']
       }
     ];
 
     // Mock data for challenges
     const mockChallenges: Challenge[] = [
       {
-        id: '1',
+        id: 'challenge1',
         title: 'Desafío de 30 Días',
-        description: 'Entrena todos los días durante 30 días consecutivos',
+        description: 'Entrena 30 días consecutivos y gana puntos extra',
         type: 'streak',
-        participants: 1247,
+        participants: 1240,
         daysLeft: 15,
-        reward: 'Insignia de Constancia',
+        reward: '500 puntos + Insignia Especial',
         isJoined: true,
         isCompleted: false,
         progress: 50
       },
       {
-        id: '2',
-        title: 'Foto del Entrenamiento',
-        description: 'Comparte una foto de tu entrenamiento de hoy',
+        id: 'challenge2',
+        title: 'Foto del Progreso',
+        description: 'Comparte tu progreso físico con la comunidad',
         type: 'photo',
-        participants: 892,
-        daysLeft: 3,
-        reward: '50 Puntos de Experiencia',
+        participants: 890,
+        daysLeft: 7,
+        reward: '300 puntos + Insignia de Progreso',
         isJoined: false,
         isCompleted: false,
         progress: 0
-      },
-      {
-        id: '3',
-        title: 'Video de Ejercicio',
-        description: 'Graba un video ejecutando tu ejercicio favorito',
-        type: 'video',
-        participants: 445,
-        daysLeft: 7,
-        reward: 'Moneda Virtual x100',
-        isJoined: true,
-        isCompleted: true,
-        progress: 100
       }
     ];
 
     setPosts(mockPosts);
     setUsers(mockUsers);
     setChallenges(mockChallenges);
-    setCurrentUser(mockUsers[0]); // Set current user
-  };
-
-  const showNotification = (message: string, type: 'success' | 'error' | 'warning' | 'info' = 'success') => {
-    setToastMessage(message);
-    setToastType(type);
-    setShowToast(true);
+    setCurrentUser(mockUsers[0]);
   };
 
   const handleLikePost = (postId: string) => {
-    setPosts(prev => prev.map(post => 
+    setPosts(posts.map(post => 
       post.id === postId 
-        ? { ...post, likes: post.isLiked ? post.likes - 1 : post.likes + 1, isLiked: !post.isLiked }
+        ? { ...post, isLiked: !post.isLiked, likes: post.isLiked ? post.likes - 1 : post.likes + 1 }
         : post
     ));
     showNotification('Post actualizado', 'success');
   };
 
-  const handleBookmarkPost = (postId: string) => {
-    setPosts(prev => prev.map(post => 
-      post.id === postId 
-        ? { ...post, isBookmarked: !post.isBookmarked }
-        : post
-    ));
-    showNotification('Post guardado', 'success');
-  };
-
-  const handleFollowUser = (userId: string) => {
-    setUsers(prev => prev.map(user => 
-      user.id === userId 
-        ? { ...user, isFollowing: !user.isFollowing, followers: user.isFollowing ? user.followers - 1 : user.followers + 1 }
-        : user
-    ));
-    showNotification('Usuario actualizado', 'success');
+  const handleCreatePost = () => {
+    if (newPostContent.trim()) {
+      const newPost: Post = {
+        id: Date.now().toString(),
+        userId: currentUser?.id || 'user1',
+        userName: currentUser?.name || 'Usuario',
+        userAvatar: currentUser?.avatar || '',
+        userLevel: currentUser?.level || 'Nivel 1',
+        content: newPostContent,
+        likes: 0,
+        comments: 0,
+        shares: 0,
+        isLiked: false,
+        isBookmarked: false,
+        timestamp: new Date(),
+        tags: [],
+        privacy: selectedPrivacy
+      };
+      setPosts([newPost, ...posts]);
+      setNewPostContent('');
+      setShowCreatePost(false);
+      showNotification('Post creado exitosamente', 'success');
+    }
   };
 
   const handleJoinChallenge = (challengeId: string) => {
-    setChallenges(prev => prev.map(challenge => 
+    setChallenges(challenges.map(challenge => 
       challenge.id === challengeId 
         ? { ...challenge, isJoined: !challenge.isJoined }
         : challenge
@@ -327,144 +337,189 @@ const CommunityDashboard: React.FC = () => {
     showNotification('Desafío actualizado', 'success');
   };
 
-  const handleCreatePost = () => {
-    if (!newPostContent.trim()) {
-      showNotification('El contenido no puede estar vacío', 'error');
-      return;
-    }
-
-    const newPost: Post = {
-      id: Date.now().toString(),
-      userId: currentUser?.id || 'user1',
-      userName: currentUser?.name || 'Usuario',
-      userAvatar: currentUser?.avatar || '',
-      userLevel: currentUser?.level || 'Nivel 1',
-      content: newPostContent,
-      likes: 0,
-      comments: 0,
-      shares: 0,
-      isLiked: false,
-      isBookmarked: false,
-      timestamp: new Date(),
-      tags: [],
-      privacy: selectedPrivacy
-    };
-
-    setPosts(prev => [newPost, ...prev]);
-    setNewPostContent('');
-    setShowCreatePost(false);
-    showNotification('Post creado exitosamente', 'success');
+  const handleFollowUser = (userId: string) => {
+    setUsers(users.map(user => 
+      user.id === userId 
+        ? { ...user, isFollowing: !user.isFollowing, followers: user.isFollowing ? user.followers - 1 : user.followers + 1 }
+        : user
+    ));
+    showNotification('Usuario actualizado', 'success');
   };
 
-  const formatTimeAgo = (date: Date) => {
-    const now = new Date();
-    const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
-    
-    if (diffInMinutes < 1) return 'Ahora';
-    if (diffInMinutes < 60) return `hace ${diffInMinutes} min`;
-    if (diffInMinutes < 1440) return `hace ${Math.floor(diffInMinutes / 60)}h`;
-    return `hace ${Math.floor(diffInMinutes / 1440)}d`;
-  };
+  // Vista simplificada (por defecto)
+  if (!showDetailedView) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-pink-900 to-slate-900 p-6">
+        {/* Header */}
+        <AnimatedText delay={0.1}>
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center gap-3">
+              <div className="p-3 bg-white/10 backdrop-blur-2xl rounded-2xl border border-white/20">
+                <Users className="w-8 h-8 text-pink-400" />
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold text-white">Comunidad</h1>
+                <p className="text-gray-300">Conecta con otros fitness lovers</p>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-3">
+              <AnimatedButton delay={0.2} asButton={false}>
+                <PulseButton
+                  onClick={() => setShowOnboarding(true)}
+                  className="px-4 py-2 bg-white/10 backdrop-blur-2xl border border-white/20 rounded-xl hover:bg-white/20 transition-all duration-300"
+                >
+                  <Info className="w-4 h-4 text-white" />
+                </PulseButton>
+              </AnimatedButton>
+              
+              <AnimatedButton delay={0.3} asButton={false}>
+                <PulseButton
+                  onClick={() => setShowCreatePost(true)}
+                  className="px-6 py-3 bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded-2xl hover:from-pink-600 hover:to-purple-600 transition-all duration-300"
+                >
+                  <div className="flex items-center gap-2">
+                    <Plus className="w-5 h-5" />
+                    Crear Post
+                  </div>
+                </PulseButton>
+              </AnimatedButton>
+            </div>
+          </div>
+        </AnimatedText>
 
-  const getPrivacyIcon = (privacy: string) => {
-    switch (privacy) {
-      case 'public': return <Globe className="w-4 h-4" />;
-      case 'friends': return <Users className="w-4 h-4" />;
-      case 'private': return <Lock className="w-4 h-4" />;
-      default: return <Globe className="w-4 h-4" />;
-    }
-  };
+        {/* Vista Resumida */}
+        <CommunitySummary
+          posts={posts}
+          users={users}
+          challenges={challenges}
+          onViewDetails={handleViewDetails}
+          onCreatePost={() => setShowCreatePost(true)}
+        />
 
-  const getChallengeIcon = (type: string) => {
-    switch (type) {
-      case 'workout': return <Zap className="w-5 h-5" />;
-      case 'photo': return <Camera className="w-5 h-5" />;
-      case 'video': return <Video className="w-5 h-5" />;
-      case 'streak': return <TrendingUp className="w-5 h-5" />;
-      default: return <Trophy className="w-5 h-5" />;
-    }
-  };
+        {/* Toast Notifications */}
+        {showToast && (
+          <div className="fixed top-4 right-4 z-50">
+            <Toast
+              message={toastMessage}
+              type={toastType}
+              onClose={() => setShowToast(false)}
+            />
+          </div>
+        )}
 
+        {/* Onboarding */}
+        <CommunityOnboarding
+          isOpen={showOnboarding}
+          onClose={() => setShowOnboarding(false)}
+          onComplete={handleOnboardingComplete}
+        />
+
+        {/* Create Post Modal */}
+        {showCreatePost && (
+          <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              className="bg-gradient-to-br from-slate-900 via-pink-900 to-slate-900 rounded-3xl p-6 max-w-2xl w-full border border-white/20 backdrop-blur-2xl"
+            >
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-white">Crear Post</h2>
+                <button
+                  onClick={() => setShowCreatePost(false)}
+                  className="p-2 hover:bg-white/10 rounded-xl transition-colors"
+                >
+                  <X className="w-5 h-5 text-gray-400" />
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                <textarea
+                  value={newPostContent}
+                  onChange={(e) => setNewPostContent(e.target.value)}
+                  placeholder="¿Qué quieres compartir con la comunidad?"
+                  className="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-white placeholder-gray-400 resize-none h-32 focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                />
+
+                <div className="flex items-center gap-4">
+                  <select
+                    value={selectedPrivacy}
+                    onChange={(e) => setSelectedPrivacy(e.target.value as any)}
+                    className="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-white focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                  >
+                    <option value="public">🌍 Público</option>
+                    <option value="friends">👥 Amigos</option>
+                    <option value="private">🔒 Privado</option>
+                  </select>
+                </div>
+
+                <div className="flex items-center justify-end gap-3">
+                  <PulseButton
+                    onClick={() => setShowCreatePost(false)}
+                    className="px-6 py-3 bg-white/10 text-white rounded-xl hover:bg-white/20 transition-all duration-300"
+                  >
+                    Cancelar
+                  </PulseButton>
+                  <PulseButton
+                    onClick={handleCreatePost}
+                    disabled={!newPostContent.trim()}
+                    className="px-6 py-3 bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded-xl hover:from-pink-600 hover:to-purple-600 transition-all duration-300 disabled:opacity-50"
+                  >
+                    Publicar
+                  </PulseButton>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // Vista detallada (cuando el usuario hace clic en "Ver Detalles")
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-6">
-      {/* Header */}
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-pink-900 to-slate-900 p-6">
+      {/* Header con botón de regreso */}
       <AnimatedText delay={0.1}>
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-3">
+            <PulseButton
+              onClick={handleBackToSummary}
+              className="p-2 bg-white/10 backdrop-blur-2xl border border-white/20 rounded-xl hover:bg-white/20 transition-all duration-300"
+            >
+              <ArrowRight className="w-5 h-5 text-white rotate-180" />
+            </PulseButton>
             <div className="p-3 bg-white/10 backdrop-blur-2xl rounded-2xl border border-white/20">
-              <Users className="w-8 h-8 text-white" />
+              <Users className="w-8 h-8 text-pink-400" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-white">Comunidad BRO FIT</h1>
-              <p className="text-gray-300">Conecta, comparte y motiva con otros fitness lovers</p>
+              <h1 className="text-3xl font-bold text-white">Comunidad Completa</h1>
+              <p className="text-gray-300">Todas las funcionalidades sociales</p>
             </div>
-          </div>
-          
-          <div className="flex items-center gap-3">
-            <AnimatedButton delay={0.2} asButton={false}>
-              <PulseButton
-                onClick={() => setShowCreatePost(true)}
-                className="px-4 py-2 bg-purple-500/20 border border-purple-500/30 text-purple-300 rounded-xl hover:bg-purple-500/30 transition-all duration-300"
-              >
-                <div className="flex items-center gap-2">
-                  <Plus className="w-4 h-4" />
-                  Crear Post
-                </div>
-              </PulseButton>
-            </AnimatedButton>
           </div>
         </div>
       </AnimatedText>
 
-      {/* Search and Filter */}
-      <AnimatedCard delay={0.15}>
-        <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl p-4 mb-6">
-          <div className="flex items-center gap-4">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Buscar usuarios, posts, desafíos..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-purple-500/50"
-              />
-            </div>
-            
-            <select
-              value={filterType}
-              onChange={(e) => setFilterType(e.target.value as any)}
-              className="px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:border-purple-500/50"
-            >
-              <option value="all">Todos</option>
-              <option value="workouts">Entrenamientos</option>
-              <option value="photos">Fotos</option>
-              <option value="videos">Videos</option>
-            </select>
-          </div>
-        </div>
-      </AnimatedCard>
-
-      {/* Tabs */}
+      {/* Tabs de Navegación */}
       <AnimatedCard delay={0.2}>
-        <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl p-2 mb-6">
-          <div className="flex space-x-2">
+        <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-2xl p-2 mb-6">
+          <div className="flex gap-2">
             {[
-              { id: 'feed', label: 'Feed', icon: <Users className="w-4 h-4" /> },
-              { id: 'discover', label: 'Descubrir', icon: <Search className="w-4 h-4" /> },
-              { id: 'challenges', label: 'Desafíos', icon: <Trophy className="w-4 h-4" /> },
-              { id: 'friends', label: 'Amigos', icon: <UserPlus className="w-4 h-4" /> }
+              { id: 'feed', label: 'Feed', icon: MessageSquare },
+              { id: 'discover', label: 'Descubrir', icon: Users2 },
+              { id: 'challenges', label: 'Desafíos', icon: Trophy },
+              { id: 'friends', label: 'Amigos', icon: Heart }
             ].map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
-                className={`flex items-center gap-2 px-4 py-3 rounded-xl transition-all duration-300 ${
+                className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-300 ${
                   activeTab === tab.id
-                    ? 'bg-purple-500/20 border border-purple-500/30 text-purple-300'
+                    ? 'bg-pink-500/20 border border-pink-500/30 text-pink-300'
                     : 'text-gray-300 hover:text-white hover:bg-white/10'
                 }`}
               >
-                {tab.icon}
+                <tab.icon className="w-4 h-4" />
                 {tab.label}
               </button>
             ))}
@@ -472,89 +527,71 @@ const CommunityDashboard: React.FC = () => {
         </div>
       </AnimatedCard>
 
-      {/* Content based on active tab */}
-      {activeTab === 'feed' && (
-        <div className="space-y-6">
-          {posts.map((post, index) => (
-            <AnimatedCard key={post.id} delay={0.3 + index * 0.1}>
-              <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl p-6">
-                {/* Post Header */}
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-3">
-                    <img
-                      src={post.userAvatar}
-                      alt={post.userName}
-                      className="w-12 h-12 rounded-full object-cover border-2 border-purple-500/30"
-                    />
-                    <div>
-                      <div className="flex items-center gap-2">
+      {/* Contenido según tab activo */}
+      <div className="space-y-6">
+        {activeTab === 'feed' && (
+          <div className="space-y-6">
+            {posts.map((post, index) => (
+              <AnimatedCard key={post.id} delay={0.3 + index * 0.1}>
+                <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl p-6">
+                  {/* Header del post */}
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                      <img
+                        src={post.userAvatar}
+                        alt={post.userName}
+                        className="w-12 h-12 rounded-full object-cover"
+                      />
+                      <div>
                         <h3 className="font-semibold text-white">{post.userName}</h3>
-                        <span className="text-xs bg-purple-500/20 text-purple-300 px-2 py-1 rounded-full">
-                          {post.userLevel}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-2 text-sm text-gray-400">
-                        {getPrivacyIcon(post.privacy)}
-                        <span>{formatTimeAgo(post.timestamp)}</span>
-                        {post.location && (
-                          <>
-                            <MapPin className="w-3 h-3" />
-                            <span>{post.location}</span>
-                          </>
-                        )}
+                        <p className="text-sm text-gray-300">{post.userLevel}</p>
                       </div>
                     </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-gray-400">
+                        {post.timestamp.toLocaleDateString()}
+                      </span>
+                      <button className="p-1 hover:bg-white/10 rounded-lg transition-colors">
+                        <MoreHorizontal className="w-4 h-4 text-gray-400" />
+                      </button>
+                    </div>
                   </div>
-                  
-                  <button className="p-2 text-gray-400 hover:text-white transition-colors">
-                    <MoreHorizontal className="w-5 h-5" />
-                  </button>
-                </div>
 
-                {/* Post Content */}
-                <div className="mb-4">
-                  <p className="text-white mb-3">{post.content}</p>
-                  
-                  {/* Workout Data */}
-                  {post.workoutData && (
-                    <div className="bg-purple-500/10 border border-purple-500/20 rounded-xl p-4 mb-3">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Zap className="w-4 h-4 text-purple-400" />
-                        <span className="text-purple-300 font-semibold">{post.workoutData.type}</span>
-                      </div>
-                      <div className="grid grid-cols-3 gap-4 text-sm">
-                        <div>
-                          <div className="text-white font-semibold">{post.workoutData.duration} min</div>
-                          <div className="text-gray-400">Duración</div>
-                        </div>
-                        <div>
-                          <div className="text-white font-semibold">{post.workoutData.calories} cal</div>
-                          <div className="text-gray-400">Calorías</div>
-                        </div>
-                        <div>
-                          <div className="text-white font-semibold">{post.workoutData.exercises.length}</div>
-                          <div className="text-gray-400">Ejercicios</div>
-                        </div>
-                      </div>
+                  {/* Contenido del post */}
+                  <p className="text-white mb-4">{post.content}</p>
+
+                  {/* Media del post */}
+                  {post.media && (
+                    <div className="mb-4">
+                      <img
+                        src={post.media.url}
+                        alt="Post media"
+                        className="w-full rounded-2xl object-cover"
+                      />
                     </div>
                   )}
 
-                  {/* Media */}
-                  {post.media && (
-                    <div className="mb-3">
-                      {post.media.type === 'image' ? (
-                        <img
-                          src={post.media.url}
-                          alt="Post media"
-                          className="w-full h-64 object-cover rounded-xl"
-                        />
-                      ) : (
-                        <video
-                          src={post.media.url}
-                          controls
-                          className="w-full h-64 object-cover rounded-xl"
-                        />
-                      )}
+                  {/* Datos del workout */}
+                  {post.workoutData && (
+                    <div className="bg-gradient-to-r from-pink-500/10 to-purple-500/10 border border-pink-500/20 rounded-2xl p-4 mb-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Target className="w-5 h-5 text-pink-400" />
+                        <span className="font-semibold text-white">{post.workoutData.type}</span>
+                      </div>
+                      <div className="grid grid-cols-3 gap-4 text-sm">
+                        <div>
+                          <span className="text-gray-300">Duración:</span>
+                          <p className="text-white">{post.workoutData.duration} min</p>
+                        </div>
+                        <div>
+                          <span className="text-gray-300">Calorías:</span>
+                          <p className="text-white">{post.workoutData.calories}</p>
+                        </div>
+                        <div>
+                          <span className="text-gray-300">Ejercicios:</span>
+                          <p className="text-white">{post.workoutData.exercises.length}</p>
+                        </div>
+                      </div>
                     </div>
                   )}
 
@@ -562,313 +599,162 @@ const CommunityDashboard: React.FC = () => {
                   {post.tags.length > 0 && (
                     <div className="flex flex-wrap gap-2 mb-4">
                       {post.tags.map((tag, idx) => (
-                        <span
-                          key={idx}
-                          className="text-xs bg-blue-500/20 text-blue-300 px-2 py-1 rounded-full"
-                        >
+                        <span key={idx} className="px-3 py-1 bg-pink-500/20 border border-pink-500/30 rounded-full text-pink-300 text-sm">
                           {tag}
                         </span>
                       ))}
                     </div>
                   )}
-                </div>
 
-                {/* Post Actions */}
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-6">
-                    <button
-                      onClick={() => handleLikePost(post.id)}
-                      className={`flex items-center gap-2 transition-colors ${
-                        post.isLiked ? 'text-red-400' : 'text-gray-400 hover:text-red-400'
-                      }`}
-                    >
-                      <Heart className={`w-5 h-5 ${post.isLiked ? 'fill-current' : ''}`} />
-                      <span className="text-sm">{post.likes}</span>
-                    </button>
-                    
-                    <button className="flex items-center gap-2 text-gray-400 hover:text-blue-400 transition-colors">
-                      <MessageCircle className="w-5 h-5" />
-                      <span className="text-sm">{post.comments}</span>
-                    </button>
-                    
-                    <button className="flex items-center gap-2 text-gray-400 hover:text-green-400 transition-colors">
-                      <Share2 className="w-5 h-5" />
-                      <span className="text-sm">{post.shares}</span>
-                    </button>
-                  </div>
-                  
-                  <button
-                    onClick={() => handleBookmarkPost(post.id)}
-                    className={`transition-colors ${
-                      post.isBookmarked ? 'text-yellow-400' : 'text-gray-400 hover:text-yellow-400'
-                    }`}
-                  >
-                    <Bookmark className={`w-5 h-5 ${post.isBookmarked ? 'fill-current' : ''}`} />
-                  </button>
-                </div>
-              </div>
-            </AnimatedCard>
-          ))}
-        </div>
-      )}
-
-      {activeTab === 'discover' && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {users.map((user, index) => (
-            <AnimatedCard key={user.id} delay={0.3 + index * 0.1}>
-              <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl p-6">
-                <div className="text-center mb-4">
-                  <div className="relative inline-block">
-                    <img
-                      src={user.avatar}
-                      alt={user.name}
-                      className="w-20 h-20 rounded-full object-cover border-4 border-purple-500/30"
-                    />
-                    <div className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-white ${
-                      user.isOnline ? 'bg-green-500' : 'bg-gray-500'
-                    }`}></div>
-                  </div>
-                  <h3 className="text-lg font-semibold text-white mt-3">{user.name}</h3>
-                  <span className="text-sm bg-purple-500/20 text-purple-300 px-3 py-1 rounded-full">
-                    {user.level}
-                  </span>
-                </div>
-                
-                <div className="text-center mb-4">
-                  <p className="text-gray-300 text-sm mb-3">{user.bio}</p>
-                  <div className="flex items-center justify-center gap-1 text-sm text-gray-400">
-                    <MapPin className="w-3 h-3" />
-                    <span>{user.location}</span>
-                  </div>
-                </div>
-                
-                <div className="grid grid-cols-3 gap-2 text-center mb-4">
-                  <div>
-                    <div className="text-white font-semibold">{user.followers}</div>
-                    <div className="text-xs text-gray-400">Seguidores</div>
-                  </div>
-                  <div>
-                    <div className="text-white font-semibold">{user.posts}</div>
-                    <div className="text-xs text-gray-400">Posts</div>
-                  </div>
-                  <div>
-                    <div className="text-white font-semibold">{user.achievements}</div>
-                    <div className="text-xs text-gray-400">Logros</div>
-                  </div>
-                </div>
-                
-                <div className="flex flex-wrap gap-1 mb-4">
-                  {user.interests.slice(0, 3).map((interest, idx) => (
-                    <span
-                      key={idx}
-                      className="text-xs bg-blue-500/20 text-blue-300 px-2 py-1 rounded-full"
-                    >
-                      {interest}
-                    </span>
-                  ))}
-                </div>
-                
-                <AnimatedButton delay={0.4} asButton={false}>
-                  <PulseButton
-                    onClick={() => handleFollowUser(user.id)}
-                    className={`w-full px-4 py-2 rounded-xl transition-all duration-300 ${
-                      user.isFollowing
-                        ? 'bg-red-500/20 border border-red-500/30 text-red-300 hover:bg-red-500/30'
-                        : 'bg-purple-500/20 border border-purple-500/30 text-purple-300 hover:bg-purple-500/30'
-                    }`}
-                  >
-                    {user.isFollowing ? 'Dejar de Seguir' : 'Seguir'}
-                  </PulseButton>
-                </AnimatedButton>
-              </div>
-            </AnimatedCard>
-          ))}
-        </div>
-      )}
-
-      {activeTab === 'challenges' && (
-        <div className="space-y-6">
-          {challenges.map((challenge, index) => (
-            <AnimatedCard key={challenge.id} delay={0.3 + index * 0.1}>
-              <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl p-6">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="p-3 bg-yellow-500/20 rounded-xl">
-                      {getChallengeIcon(challenge.type)}
+                  {/* Acciones del post */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-6">
+                      <button
+                        onClick={() => handleLikePost(post.id)}
+                        className={`flex items-center gap-2 transition-colors ${
+                          post.isLiked ? 'text-pink-400' : 'text-gray-400 hover:text-pink-400'
+                        }`}
+                      >
+                        <Heart className={`w-5 h-5 ${post.isLiked ? 'fill-current' : ''}`} />
+                        <span>{post.likes}</span>
+                      </button>
+                      <button className="flex items-center gap-2 text-gray-400 hover:text-blue-400 transition-colors">
+                        <MessageCircle className="w-5 h-5" />
+                        <span>{post.comments}</span>
+                      </button>
+                      <button className="flex items-center gap-2 text-gray-400 hover:text-green-400 transition-colors">
+                        <Share2 className="w-5 h-5" />
+                        <span>{post.shares}</span>
+                      </button>
                     </div>
-                    <div>
-                      <h3 className="text-lg font-semibold text-white">{challenge.title}</h3>
-                      <p className="text-gray-300 text-sm">{challenge.description}</p>
-                    </div>
-                  </div>
-                  
-                  <div className="text-right">
-                    <div className="text-sm text-gray-400">{challenge.daysLeft} días</div>
-                    <div className="text-xs text-gray-500">{challenge.participants} participantes</div>
+                    <button className="text-gray-400 hover:text-yellow-400 transition-colors">
+                      <Bookmark className="w-5 h-5" />
+                    </button>
                   </div>
                 </div>
-                
-                <div className="mb-4">
-                  <div className="flex items-center justify-between text-sm mb-2">
-                    <span className="text-gray-300">Progreso</span>
-                    <span className="text-white font-semibold">{challenge.progress}%</span>
-                  </div>
-                  <div className="w-full bg-gray-700 rounded-full h-2">
-                    <div 
-                      className="bg-yellow-500 h-2 rounded-full transition-all duration-300"
-                      style={{ width: `${challenge.progress}%` }}
-                    ></div>
-                  </div>
-                </div>
-                
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Trophy className="w-4 h-4 text-yellow-400" />
-                    <span className="text-sm text-gray-300">{challenge.reward}</span>
-                  </div>
-                  
-                  <AnimatedButton delay={0.4} asButton={false}>
-                    <PulseButton
-                      onClick={() => handleJoinChallenge(challenge.id)}
-                      className={`px-4 py-2 rounded-xl transition-all duration-300 ${
-                        challenge.isJoined
-                          ? 'bg-green-500/20 border border-green-500/30 text-green-300'
-                          : 'bg-yellow-500/20 border border-yellow-500/30 text-yellow-300 hover:bg-yellow-500/30'
-                      }`}
-                    >
-                      {challenge.isCompleted ? (
-                        <div className="flex items-center gap-2">
-                          <CheckCircle className="w-4 h-4" />
-                          Completado
-                        </div>
-                      ) : challenge.isJoined ? (
-                        'En Progreso'
-                      ) : (
-                        'Unirse'
+              </AnimatedCard>
+            ))}
+          </div>
+        )}
+
+        {activeTab === 'discover' && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {users.map((user, index) => (
+              <AnimatedCard key={user.id} delay={0.3 + index * 0.1}>
+                <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl p-6">
+                  <div className="text-center">
+                    <div className="relative mb-4">
+                      <img
+                        src={user.avatar}
+                        alt={user.name}
+                        className="w-20 h-20 rounded-full object-cover mx-auto"
+                      />
+                      {user.isOnline && (
+                        <div className="absolute bottom-0 right-0 w-4 h-4 bg-green-400 rounded-full border-2 border-white"></div>
                       )}
-                    </PulseButton>
-                  </AnimatedButton>
-                </div>
-              </div>
-            </AnimatedCard>
-          ))}
-        </div>
-      )}
-
-      {activeTab === 'friends' && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {users.filter(user => user.isFollowing).map((user, index) => (
-            <AnimatedCard key={user.id} delay={0.3 + index * 0.1}>
-              <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl p-6">
-                <div className="text-center mb-4">
-                  <div className="relative inline-block">
-                    <img
-                      src={user.avatar}
-                      alt={user.name}
-                      className="w-16 h-16 rounded-full object-cover border-2 border-green-500/30"
-                    />
-                    <div className={`absolute -bottom-1 -right-1 w-3 h-3 rounded-full border-2 border-white ${
-                      user.isOnline ? 'bg-green-500' : 'bg-gray-500'
-                    }`}></div>
-                  </div>
-                  <h3 className="text-white font-semibold mt-2">{user.name}</h3>
-                  <span className="text-xs text-gray-400">
-                    {user.isOnline ? 'En línea' : `Última vez ${formatTimeAgo(user.lastActive)}`}
-                  </span>
-                </div>
-                
-                <div className="flex justify-center">
-                  <AnimatedButton delay={0.4} asButton={false}>
-                    <PulseButton className="px-4 py-2 bg-blue-500/20 border border-blue-500/30 text-blue-300 rounded-xl hover:bg-blue-500/30 transition-all duration-300">
-                      <div className="flex items-center gap-2">
-                        <MessageCircle className="w-4 h-4" />
-                        Mensaje
+                    </div>
+                    <h3 className="font-semibold text-white mb-1">{user.name}</h3>
+                    <p className="text-sm text-gray-300 mb-3">{user.level}</p>
+                    <p className="text-sm text-gray-400 mb-4">{user.bio}</p>
+                    
+                    <div className="grid grid-cols-3 gap-4 mb-4 text-sm">
+                      <div>
+                        <p className="text-white font-semibold">{user.followers}</p>
+                        <p className="text-gray-400">Seguidores</p>
                       </div>
-                    </PulseButton>
-                  </AnimatedButton>
-                </div>
-              </div>
-            </AnimatedCard>
-          ))}
-        </div>
-      )}
+                      <div>
+                        <p className="text-white font-semibold">{user.posts}</p>
+                        <p className="text-gray-400">Posts</p>
+                      </div>
+                      <div>
+                        <p className="text-white font-semibold">{user.achievements}</p>
+                        <p className="text-gray-400">Logros</p>
+                      </div>
+                    </div>
 
-      {/* Create Post Modal */}
-      {showCreatePost && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <AnimatedCard delay={0.1}>
-            <div className="bg-white/10 backdrop-blur-2xl border border-white/20 rounded-3xl p-6 w-full max-w-2xl">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-semibold text-white">Crear Post</h2>
-                <button
-                  onClick={() => setShowCreatePost(false)}
-                  className="text-gray-400 hover:text-white transition-colors"
-                >
-                  <X className="w-6 h-6" />
-                </button>
-              </div>
-              
-              <div className="mb-4">
-                <textarea
-                  value={newPostContent}
-                  onChange={(e) => setNewPostContent(e.target.value)}
-                  placeholder="¿Qué quieres compartir con la comunidad?"
-                  className="w-full h-32 p-4 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-purple-500/50 resize-none"
-                />
-              </div>
-              
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-4">
-                  <button className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors">
-                    <Image className="w-5 h-5" />
-                    Foto
-                  </button>
-                  <button className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors">
-                    <Video className="w-5 h-5" />
-                    Video
-                  </button>
-                  <button className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors">
-                    <Smile className="w-5 h-5" />
-                    Emoji
-                  </button>
+                    <PulseButton
+                      onClick={() => handleFollowUser(user.id)}
+                      className={`w-full px-4 py-2 rounded-xl transition-all duration-300 ${
+                        user.isFollowing
+                          ? 'bg-gray-500/20 text-gray-300'
+                          : 'bg-gradient-to-r from-pink-500 to-purple-500 text-white hover:from-pink-600 hover:to-purple-600'
+                      }`}
+                    >
+                      {user.isFollowing ? 'Siguiendo' : 'Seguir'}
+                    </PulseButton>
+                  </div>
                 </div>
-                
-                <div className="flex items-center gap-2">
-                  <select
-                    value={selectedPrivacy}
-                    onChange={(e) => setSelectedPrivacy(e.target.value as any)}
-                    className="px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white text-sm focus:outline-none focus:border-purple-500/50"
+              </AnimatedCard>
+            ))}
+          </div>
+        )}
+
+        {activeTab === 'challenges' && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {challenges.map((challenge, index) => (
+              <AnimatedCard key={challenge.id} delay={0.3 + index * 0.1}>
+                <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <Trophy className="w-6 h-6 text-yellow-400" />
+                    <h3 className="text-xl font-semibold text-white">{challenge.title}</h3>
+                  </div>
+                  
+                  <p className="text-gray-300 mb-4">{challenge.description}</p>
+                  
+                  <div className="space-y-3 mb-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-400">Participantes:</span>
+                      <span className="text-white">{challenge.participants}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-400">Días restantes:</span>
+                      <span className="text-white">{challenge.daysLeft}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-400">Recompensa:</span>
+                      <span className="text-yellow-400 text-sm">{challenge.reward}</span>
+                    </div>
+                  </div>
+
+                  {challenge.isJoined && (
+                    <div className="mb-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm text-gray-400">Progreso:</span>
+                        <span className="text-white">{challenge.progress}%</span>
+                      </div>
+                      <div className="w-full bg-gray-700 rounded-full h-2">
+                        <div
+                          className="bg-gradient-to-r from-pink-500 to-purple-500 h-2 rounded-full transition-all duration-1000"
+                          style={{ width: `${challenge.progress}%` }}
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  <PulseButton
+                    onClick={() => handleJoinChallenge(challenge.id)}
+                    className={`w-full px-4 py-3 rounded-xl transition-all duration-300 ${
+                      challenge.isJoined
+                        ? 'bg-gray-500/20 text-gray-300'
+                        : 'bg-gradient-to-r from-pink-500 to-purple-500 text-white hover:from-pink-600 hover:to-purple-600'
+                    }`}
                   >
-                    <option value="public">Público</option>
-                    <option value="friends">Amigos</option>
-                    <option value="private">Privado</option>
-                  </select>
+                    {challenge.isJoined ? 'Abandonar' : 'Unirse'}
+                  </PulseButton>
                 </div>
-              </div>
-              
-              <div className="flex justify-end gap-3">
-                <AnimatedButton delay={0.2} asButton={false}>
-                  <PulseButton
-                    onClick={() => setShowCreatePost(false)}
-                    className="px-4 py-2 bg-gray-500/20 border border-gray-500/30 text-gray-300 rounded-xl hover:bg-gray-500/30 transition-all duration-300"
-                  >
-                    Cancelar
-                  </PulseButton>
-                </AnimatedButton>
-                
-                <AnimatedButton delay={0.3} asButton={false}>
-                  <PulseButton
-                    onClick={handleCreatePost}
-                    className="px-4 py-2 bg-purple-500/20 border border-purple-500/30 text-purple-300 rounded-xl hover:bg-purple-500/30 transition-all duration-300"
-                  >
-                    Publicar
-                  </PulseButton>
-                </AnimatedButton>
-              </div>
-            </div>
-          </AnimatedCard>
-        </div>
-      )}
+              </AnimatedCard>
+            ))}
+          </div>
+        )}
+
+        {activeTab === 'friends' && (
+          <div className="text-center py-12">
+            <Users2 className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+            <h3 className="text-xl font-semibold text-white mb-2">Gestionar Amigos</h3>
+            <p className="text-gray-300">Próximamente: Funcionalidades avanzadas de gestión de amigos</p>
+          </div>
+        )}
+      </div>
 
       {/* Toast Notifications */}
       {showToast && (
@@ -880,6 +766,13 @@ const CommunityDashboard: React.FC = () => {
           />
         </div>
       )}
+
+      {/* Onboarding */}
+      <CommunityOnboarding
+        isOpen={showOnboarding}
+        onClose={() => setShowOnboarding(false)}
+        onComplete={handleOnboardingComplete}
+      />
     </div>
   );
 };

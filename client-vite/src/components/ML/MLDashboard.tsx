@@ -28,127 +28,12 @@ import {
   Lock,
   Unlock,
   Repeat,
-  BrainCircuit,
-  Cpu,
-  Database,
-  Network,
-  Code,
-  TestTube,
-  Flask,
-  Microscope,
-  Telescope,
-  Satellite,
-  Rocket,
-  Atom,
-  Dna,
-  Helix,
-  Neuron,
-  Synapse,
-  Circuit,
-  Chip,
-  Server,
-  Cloud,
-  Wifi,
-  Bluetooth,
-  Radio,
-  Antenna,
-  Router,
-  Modem,
-  Switch,
-  Hub,
-  Node,
-  Cluster,
-  Grid,
-  Matrix,
-  Array,
-  Vector,
-  Tensor,
-  Scalar,
-  Gradient,
-  Momentum,
-  Velocity,
-  Acceleration,
-  Force,
-  Energy,
-  Power,
-  Frequency,
-  Amplitude,
-  Phase,
-  Wavelength,
-  Resonance,
-  Oscillation,
-  Vibration,
-  Harmonic,
-  Wave,
-  Pulse,
-  Noise,
-  Amplifier,
-  Modulator,
-  Demodulator,
-  Encoder,
-  Decoder,
-  Compressor,
-  Decompressor,
-  Encryptor,
-  Decryptor,
-  Hash,
-  Checksum,
-  Parity,
-  Redundancy,
-  Backup,
-  Restore,
-  Sync,
-  Async,
-  Parallel,
-  Serial,
-  Concurrent,
-  Sequential,
-  Recursive,
-  Iterative,
-  Linear,
-  NonLinear,
-  Deterministic,
-  Stochastic,
-  Probabilistic,
-  Statistical,
-  Bayesian,
-  Frequentist,
-  MaximumLikelihood,
-  ExpectationMaximization,
-  GradientDescent,
-  StochasticGradientDescent,
-  Adam,
-  RMSprop,
-  Nesterov,
-  AdaGrad,
-  AdaDelta,
-  AdamW,
-  Lion,
-  Sophia,
-  RAdam,
-  Lookahead,
-  RectifiedAdam,
-  NovoGrad,
-  AdaBelief,
-  DiffGrad,
-  AdaBound,
-  AMSBound,
-  AdaMod,
-  RAdamW,
-  AdaBeliefW,
-  DiffGradW,
-  AdaBoundW,
-  AMSBoundW,
-  AdaModW,
-  RAdamWW,
-  AdaBeliefWW,
-  DiffGradWW,
-  AdaBoundWW,
-  AMSBoundWW,
-  AdaModWW
+  ArrowRight
 } from 'lucide-react';
 import { AnimatedCard, AnimatedText, AnimatedButton } from '../Animations/AnimatedComponents';
 import { Toast, LoadingSpinner, PulseButton } from '../Animations/MicroInteractions';
+import MLOnboarding from './MLOnboarding';
+import MLSummary from './MLSummary';
 import mlService from '../../services/MLService';
 
 interface PredictionCard {
@@ -171,9 +56,16 @@ const MLDashboard: React.FC = () => {
   const [toastMessage, setToastMessage] = useState('');
   const [toastType, setToastType] = useState<'success' | 'error' | 'warning' | 'info'>('success');
   const [activeTab, setActiveTab] = useState<'predictions' | 'patterns' | 'analytics' | 'models'>('predictions');
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [showDetailedView, setShowDetailedView] = useState(false);
 
   useEffect(() => {
     initializeData();
+    // Mostrar onboarding si es la primera vez
+    const hasSeenOnboarding = localStorage.getItem('ml-onboarding-completed');
+    if (!hasSeenOnboarding) {
+      setShowOnboarding(true);
+    }
   }, []);
 
   const initializeData = async () => {
@@ -216,6 +108,107 @@ const MLDashboard: React.FC = () => {
     setToastType(type);
     setShowToast(true);
   };
+
+  const handleOnboardingComplete = () => {
+    setShowOnboarding(false);
+    localStorage.setItem('ml-onboarding-completed', 'true');
+    showNotification('¡ML Dashboard configurado exitosamente!', 'success');
+  };
+
+  const handleViewDetails = () => {
+    setShowDetailedView(true);
+  };
+
+  const handleBackToSummary = () => {
+    setShowDetailedView(false);
+  };
+
+  const handleRunAnalysis = () => {
+    showNotification('Ejecutando análisis de ML...', 'info');
+    setTimeout(() => {
+      showNotification('Análisis completado exitosamente', 'success');
+    }, 2000);
+  };
+
+  // Datos mock para el resumen
+  const mockPredictions = [
+    {
+      id: '1',
+      title: 'Ganancia de Fuerza',
+      value: '+12.5%',
+      confidence: 94,
+      description: 'Se predice un aumento del 12.5% en tu fuerza máxima en las próximas 4 semanas basado en tu progreso actual.'
+    },
+    {
+      id: '2',
+      title: 'Riesgo de Lesión',
+      value: 'Bajo',
+      confidence: 87,
+      description: 'Tu riesgo de lesión es bajo. Continúa con tu rutina actual.'
+    },
+    {
+      id: '3',
+      title: 'Tiempo Óptimo',
+      value: '7:00 AM',
+      confidence: 92,
+      description: 'El mejor momento para entrenar es a las 7:00 AM según tus patrones de energía.'
+    }
+  ];
+
+  const mockModels = [
+    {
+      id: '1',
+      name: 'Modelo de Rendimiento',
+      type: 'performance',
+      status: 'Activo',
+      isActive: true
+    },
+    {
+      id: '2',
+      name: 'Modelo de Lesiones',
+      type: 'injury',
+      status: 'Activo',
+      isActive: true
+    },
+    {
+      id: '3',
+      name: 'Modelo de Nutrición',
+      type: 'nutrition',
+      status: 'Activo',
+      isActive: true
+    },
+    {
+      id: '4',
+      name: 'Modelo de Recuperación',
+      type: 'recovery',
+      status: 'Inactivo',
+      isActive: false
+    }
+  ];
+
+  const mockAnalytics = [
+    {
+      id: '1',
+      title: 'Análisis de Patrones',
+      description: 'Identificación de tendencias de rendimiento',
+      value: 'Completado',
+      time: 'Hace 2h'
+    },
+    {
+      id: '2',
+      title: 'Predicción de Recuperación',
+      description: 'Estimación de tiempo de descanso óptimo',
+      value: 'Completado',
+      time: 'Hace 4h'
+    },
+    {
+      id: '3',
+      title: 'Optimización de Nutrición',
+      description: 'Ajuste de macronutrientes',
+      value: 'En proceso',
+      time: 'Hace 6h'
+    }
+  ];
 
   const handleTrainModels = async () => {
     setIsTraining(true);
@@ -332,351 +325,468 @@ const MLDashboard: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-6">
-      {/* Header */}
-      <AnimatedText delay={0.1}>
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-3">
-            <div className="p-3 bg-white/10 backdrop-blur-2xl rounded-2xl border border-white/20">
-              <Brain className="w-8 h-8 text-white" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold text-white">Machine Learning Avanzado</h1>
-              <p className="text-gray-300">Predicciones inteligentes y análisis de patrones</p>
-            </div>
-          </div>
-          
-          <div className="flex items-center gap-3">
-                         <AnimatedButton delay={0.2} asButton={false}>
-               <PulseButton
-                 onClick={handleTrainModels}
-                 disabled={isTraining}
-                 className="px-4 py-2 bg-teal-500/20 border border-teal-500/30 text-teal-300 rounded-xl hover:bg-teal-500/30 transition-all duration-300 disabled:opacity-50"
-               >
-                <div className="flex items-center gap-2">
-                  {isTraining ? <LoadingSpinner size="small" /> : <Cpu className="w-4 h-4" />}
-                  {isTraining ? 'Entrenando...' : 'Entrenar Modelos'}
-                </div>
-              </PulseButton>
-            </AnimatedButton>
-            
-            <AnimatedButton delay={0.3} asButton={false}>
-              <PulseButton
-                onClick={handleAddMockData}
-                className="px-4 py-2 bg-blue-500/20 border border-blue-500/30 text-blue-300 rounded-xl hover:bg-blue-500/30 transition-all duration-300"
-              >
-                <div className="flex items-center gap-2">
-                  <Database className="w-4 h-4" />
-                  Agregar Datos
-                </div>
-              </PulseButton>
-            </AnimatedButton>
-          </div>
-        </div>
-      </AnimatedText>
-
-      {/* Tab Navigation */}
-      <AnimatedCard delay={0.15}>
-        <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl p-4 mb-6">
-          <div className="flex items-center gap-2">
-            {[
-              { id: 'predictions', label: 'Predicciones', icon: <TrendingUp className="w-4 h-4" /> },
-              { id: 'patterns', label: 'Patrones', icon: <Activity className="w-4 h-4" /> },
-              { id: 'analytics', label: 'Analytics', icon: <BarChart3 className="w-4 h-4" /> },
-              { id: 'models', label: 'Modelos', icon: <Brain className="w-4 h-4" /> }
-            ].map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
-                                 className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-300 ${
-                   activeTab === tab.id
-                     ? 'bg-teal-500/20 border border-teal-500/30 text-teal-300'
-                     : 'text-gray-300 hover:text-white hover:bg-white/10'
-                 }`}
-              >
-                {tab.icon}
-                {tab.label}
-              </button>
-            ))}
-          </div>
-        </div>
-      </AnimatedCard>
-
-      {/* Loading State */}
-      {isLoading && (
-        <AnimatedCard delay={0.1}>
-          <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl p-8 text-center">
-            <LoadingSpinner size="large" />
-            <p className="text-white mt-4">Analizando datos con IA...</p>
-          </div>
-        </AnimatedCard>
-      )}
-
-      {/* Content */}
-      {!isLoading && (
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-teal-900 to-slate-900 p-6">
+      {/* Vista simplificada (por defecto) */}
+      {!showDetailedView ? (
         <>
-          {/* Predictions Tab */}
-          {activeTab === 'predictions' && (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {predictionCards.map((card, index) => {
-                const prediction = predictions[card.type];
+          {/* Header */}
+          <AnimatedText delay={0.1}>
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center gap-3">
+                <div className="p-3 bg-white/10 backdrop-blur-2xl rounded-2xl border border-white/20">
+                  <Brain className="w-8 h-8 text-teal-400" />
+                </div>
+                <div>
+                  <h1 className="text-3xl font-bold text-white">Machine Learning</h1>
+                  <p className="text-gray-300">Predicciones inteligentes y análisis avanzado</p>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-3">
+                <AnimatedButton delay={0.2} asButton={false}>
+                  <PulseButton
+                    onClick={() => setShowOnboarding(true)}
+                    className="px-4 py-2 bg-white/10 backdrop-blur-2xl border border-white/20 rounded-xl hover:bg-white/20 transition-all duration-300"
+                  >
+                    <Info className="w-4 h-4 text-white" />
+                  </PulseButton>
+                </AnimatedButton>
                 
-                return (
-                  <AnimatedCard key={card.type} delay={0.2 + index * 0.1}>
-                    <div className={`bg-gradient-to-br ${card.color} backdrop-blur-2xl border ${card.borderColor} rounded-3xl p-6 h-full`}>
-                      <div className="flex items-center gap-3 mb-4">
-                        <div className={`p-3 bg-white/10 rounded-2xl ${card.textColor}`}>
-                          {card.icon}
-                        </div>
-                        <div>
-                          <h3 className="text-xl font-semibold text-white">{card.title}</h3>
-                          <p className="text-gray-300 text-sm">{card.description}</p>
-                        </div>
-                      </div>
-                      
-                      {prediction ? (
-                        <div className="space-y-4">
-                          <div className="flex items-center justify-between">
-                            <span className="text-white font-semibold">Predicción:</span>
-                            <span className={`text-lg font-bold ${card.textColor}`}>
-                              {typeof prediction.value === 'number' ? prediction.value.toFixed(1) : prediction.value}
-                            </span>
-                          </div>
-                          
-                          <div className="flex items-center justify-between">
-                            <span className="text-gray-300">Confianza:</span>
-                            <span className={`font-semibold ${getConfidenceColor(prediction.confidence)}`}>
-                              {getConfidenceText(prediction.confidence)} ({(prediction.confidence * 100).toFixed(0)}%)
-                            </span>
-                          </div>
-                          
-                          {prediction.factors.length > 0 && (
+                <AnimatedButton delay={0.3} asButton={false}>
+                  <PulseButton
+                    onClick={handleRunAnalysis}
+                    className="px-6 py-3 bg-gradient-to-r from-teal-500 to-cyan-500 text-white rounded-2xl hover:from-teal-600 hover:to-cyan-600 transition-all duration-300"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Activity className="w-5 h-5" />
+                      Ejecutar Análisis
+                    </div>
+                  </PulseButton>
+                </AnimatedButton>
+              </div>
+            </div>
+          </AnimatedText>
+
+          {/* Vista Resumida */}
+          <MLSummary
+            predictions={mockPredictions}
+            models={mockModels}
+            analytics={mockAnalytics}
+            onViewDetails={handleViewDetails}
+            onRunAnalysis={handleRunAnalysis}
+            isLoading={isLoading}
+          />
+
+          {/* Toast Notifications */}
+          {showToast && (
+            <div className="fixed top-4 right-4 z-50">
+              <Toast
+                message={toastMessage}
+                type={toastType}
+                onClose={() => setShowToast(false)}
+              />
+            </div>
+          )}
+
+          {/* Onboarding */}
+          <MLOnboarding
+            isOpen={showOnboarding}
+            onClose={() => setShowOnboarding(false)}
+            onComplete={handleOnboardingComplete}
+          />
+        </>
+      ) : (
+        // Vista detallada (cuando el usuario hace clic en "Ver Detalles")
+        <>
+          {/* Header con botón de regreso */}
+          <AnimatedText delay={0.1}>
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center gap-3">
+                <PulseButton
+                  onClick={handleBackToSummary}
+                  className="p-2 bg-white/10 backdrop-blur-2xl border border-white/20 rounded-xl hover:bg-white/20 transition-all duration-300"
+                >
+                  <ArrowRight className="w-5 h-5 text-white rotate-180" />
+                </PulseButton>
+                <div className="p-3 bg-white/10 backdrop-blur-2xl rounded-2xl border border-white/20">
+                  <Brain className="w-8 h-8 text-teal-400" />
+                </div>
+                <div>
+                  <h1 className="text-3xl font-bold text-white">ML Dashboard Completo</h1>
+                  <p className="text-gray-300">Todas las funcionalidades de Machine Learning</p>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-3">
+                <AnimatedButton delay={0.2} asButton={false}>
+                  <PulseButton
+                    onClick={handleTrainModels}
+                    disabled={isTraining}
+                    className="px-4 py-2 bg-teal-500/20 border border-teal-500/30 text-teal-300 rounded-xl hover:bg-teal-500/30 transition-all duration-300 disabled:opacity-50"
+                  >
+                    <div className="flex items-center gap-2">
+                      {isTraining ? <LoadingSpinner size="small" /> : <RefreshCw className="w-4 h-4" />}
+                      {isTraining ? 'Entrenando...' : 'Entrenar Modelos'}
+                    </div>
+                  </PulseButton>
+                </AnimatedButton>
+                
+                <AnimatedButton delay={0.3} asButton={false}>
+                  <PulseButton
+                    onClick={handleAddMockData}
+                    className="px-4 py-2 bg-blue-500/20 border border-blue-500/30 text-blue-300 rounded-xl hover:bg-blue-500/30 transition-all duration-300"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Upload className="w-4 h-4" />
+                      Agregar Datos
+                    </div>
+                  </PulseButton>
+                </AnimatedButton>
+              </div>
+            </div>
+          </AnimatedText>
+
+          {/* Tab Navigation */}
+          <AnimatedCard delay={0.15}>
+            <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl p-4 mb-6">
+              <div className="flex items-center gap-2">
+                {[
+                  { id: 'predictions', label: 'Predicciones', icon: <TrendingUp className="w-4 h-4" /> },
+                  { id: 'patterns', label: 'Patrones', icon: <Activity className="w-4 h-4" /> },
+                  { id: 'analytics', label: 'Analytics', icon: <BarChart3 className="w-4 h-4" /> },
+                  { id: 'models', label: 'Modelos', icon: <Brain className="w-4 h-4" /> }
+                ].map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id as any)}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-300 ${
+                      activeTab === tab.id
+                        ? 'bg-teal-500/20 border border-teal-500/30 text-teal-300'
+                        : 'text-gray-300 hover:text-white hover:bg-white/10'
+                    }`}
+                  >
+                    {tab.icon}
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </AnimatedCard>
+
+          {/* Loading State */}
+          {isLoading && (
+            <AnimatedCard delay={0.1}>
+              <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl p-8 text-center">
+                <LoadingSpinner size="large" />
+                <p className="text-white mt-4">Analizando datos con IA...</p>
+              </div>
+            </AnimatedCard>
+          )}
+
+          {/* Content */}
+          {!isLoading && (
+            <>
+              {/* Predictions Tab */}
+              {activeTab === 'predictions' && (
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {predictionCards.map((card, index) => {
+                    const prediction = predictions[card.type];
+                    
+                    return (
+                      <AnimatedCard key={card.type} delay={0.2 + index * 0.1}>
+                        <div className={`bg-gradient-to-br ${card.color} backdrop-blur-2xl border ${card.borderColor} rounded-3xl p-6 h-full`}>
+                          <div className="flex items-center gap-3 mb-4">
+                            <div className={`p-3 bg-white/10 rounded-2xl ${card.textColor}`}>
+                              {card.icon}
+                            </div>
                             <div>
-                              <span className="text-gray-300 text-sm">Factores:</span>
-                              <div className="flex flex-wrap gap-1 mt-1">
-                                {prediction.factors.slice(0, 3).map((factor: string, idx: number) => (
-                                  <span key={idx} className="text-xs bg-white/10 text-white px-2 py-1 rounded-full">
-                                    {factor}
-                                  </span>
-                                ))}
+                              <h3 className="text-xl font-semibold text-white">{card.title}</h3>
+                              <p className="text-gray-300 text-sm">{card.description}</p>
+                            </div>
+                          </div>
+                          
+                          {prediction ? (
+                            <div className="space-y-4">
+                              <div className="flex items-center justify-between">
+                                <span className="text-white font-semibold">Predicción:</span>
+                                <span className={`text-lg font-bold ${card.textColor}`}>
+                                  {typeof prediction.value === 'number' ? prediction.value.toFixed(1) : 
+                                   typeof prediction.value === 'object' ? 'Ver detalles' :
+                                   prediction.value}
+                                </span>
                               </div>
+                              
+                              <div className="flex items-center justify-between">
+                                <span className="text-gray-300">Confianza:</span>
+                                <span className={`font-semibold ${getConfidenceColor(prediction.confidence)}`}>
+                                  {getConfidenceText(prediction.confidence)} ({(prediction.confidence * 100).toFixed(0)}%)
+                                </span>
+                              </div>
+                              
+                              {prediction.factors.length > 0 && (
+                                <div>
+                                  <span className="text-gray-300 text-sm">Factores:</span>
+                                  <div className="flex flex-wrap gap-1 mt-1">
+                                    {prediction.factors.slice(0, 3).map((factor: string, idx: number) => (
+                                      <span key={idx} className="text-xs bg-white/10 text-white px-2 py-1 rounded-full">
+                                        {factor}
+                                      </span>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+                              
+                              {/* Nutrition Details */}
+                              {prediction.type === 'nutrition' && typeof prediction.value === 'object' && (
+                                <div className="space-y-3">
+                                  <span className="text-gray-300 text-sm">Plan de Nutrición:</span>
+                                  <div className="space-y-2">
+                                    {Object.entries(prediction.value).map(([meal, nutrition]: [string, any]) => (
+                                      <div key={meal} className="bg-white/5 rounded-lg p-3">
+                                        <h4 className="text-white font-semibold text-sm capitalize mb-2">
+                                          {meal === 'preWorkout' ? 'Pre-entrenamiento' :
+                                           meal === 'postWorkout' ? 'Post-entrenamiento' : 'Diario'}
+                                        </h4>
+                                        <div className="grid grid-cols-2 gap-2 text-xs">
+                                          <div className="text-gray-300">
+                                            <span>Calorías:</span>
+                                            <span className="text-white ml-1">{nutrition.calories}</span>
+                                          </div>
+                                          <div className="text-gray-300">
+                                            <span>Proteína:</span>
+                                            <span className="text-white ml-1">{nutrition.protein}g</span>
+                                          </div>
+                                          <div className="text-gray-300">
+                                            <span>Carbohidratos:</span>
+                                            <span className="text-white ml-1">{nutrition.carbs}g</span>
+                                          </div>
+                                          <div className="text-gray-300">
+                                            <span>Grasas:</span>
+                                            <span className="text-white ml-1">{nutrition.fats}g</span>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+                              
+                              {prediction.recommendations.length > 0 && (
+                                <div>
+                                  <span className="text-gray-300 text-sm">Recomendaciones:</span>
+                                  <ul className="mt-1 space-y-1">
+                                    {prediction.recommendations.slice(0, 2).map((rec: string, idx: number) => (
+                                      <li key={idx} className="text-xs text-white flex items-start gap-2">
+                                        <CheckCircle className="w-3 h-3 mt-0.5 flex-shrink-0" />
+                                        {rec}
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              )}
+                            </div>
+                          ) : (
+                            <div className="text-center text-gray-400 py-8">
+                              <Info className="w-8 h-8 mx-auto mb-2" />
+                              <p>Predicción no disponible</p>
                             </div>
                           )}
-                          
-                          {prediction.recommendations.length > 0 && (
-                            <div>
-                              <span className="text-gray-300 text-sm">Recomendaciones:</span>
-                              <ul className="mt-1 space-y-1">
-                                {prediction.recommendations.slice(0, 2).map((rec: string, idx: number) => (
-                                  <li key={idx} className="text-xs text-white flex items-start gap-2">
-                                    <CheckCircle className="w-3 h-3 mt-0.5 flex-shrink-0" />
-                                    {rec}
-                                  </li>
-                                ))}
-                              </ul>
-                            </div>
-                          )}
+                        </div>
+                      </AnimatedCard>
+                    );
+                  })}
+                </div>
+              )}
+
+              {/* Patterns Tab */}
+              {activeTab === 'patterns' && (
+                <div className="space-y-6">
+                  <AnimatedCard delay={0.2}>
+                    <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl p-6">
+                      <h2 className="text-xl font-semibold text-white mb-4">Patrones Detectados</h2>
+                      
+                      {patterns.length > 0 ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {patterns.map((pattern, index) => (
+                            <motion.div
+                              key={pattern.id}
+                              className="bg-white/5 rounded-xl border border-white/10 p-4"
+                              initial={{ opacity: 0, y: 20 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ delay: index * 0.1 }}
+                            >
+                              <div className="flex items-center gap-2 mb-3">
+                                <Activity className="w-5 h-5 text-blue-400" />
+                                <span className="font-semibold text-white">{pattern.pattern}</span>
+                              </div>
+                              
+                              <div className="space-y-2">
+                                <div className="flex items-center justify-between">
+                                  <span className="text-gray-300 text-sm">Confianza:</span>
+                                  <span className={`text-sm font-semibold ${getConfidenceColor(pattern.confidence)}`}>
+                                    {(pattern.confidence * 100).toFixed(0)}%
+                                  </span>
+                                </div>
+                                
+                                <div className="flex items-center justify-between">
+                                  <span className="text-gray-300 text-sm">Impacto:</span>
+                                  <span className={`text-sm font-semibold ${
+                                    pattern.impact === 'positive' ? 'text-green-400' :
+                                    pattern.impact === 'negative' ? 'text-red-400' : 'text-yellow-400'
+                                  }`}>
+                                    {pattern.impact === 'positive' ? 'Positivo' :
+                                     pattern.impact === 'negative' ? 'Negativo' : 'Neutral'}
+                                  </span>
+                                </div>
+                              </div>
+                              
+                              {pattern.recommendations.length > 0 && (
+                                <div className="mt-3">
+                                  <span className="text-gray-300 text-sm">Recomendaciones:</span>
+                                  <ul className="mt-1 space-y-1">
+                                    {pattern.recommendations.map((rec: string, idx: number) => (
+                                      <li key={idx} className="text-xs text-white flex items-start gap-2">
+                                        <CheckCircle className="w-3 h-3 mt-0.5 flex-shrink-0" />
+                                        {rec}
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              )}
+                            </motion.div>
+                          ))}
                         </div>
                       ) : (
                         <div className="text-center text-gray-400 py-8">
-                          <Info className="w-8 h-8 mx-auto mb-2" />
-                          <p>Predicción no disponible</p>
+                          <Activity className="w-8 h-8 mx-auto mb-2" />
+                          <p>No se han detectado patrones aún</p>
+                          <p className="text-sm">Completa más entrenamientos para detectar patrones</p>
                         </div>
                       )}
                     </div>
                   </AnimatedCard>
-                );
-              })}
-            </div>
-          )}
+                </div>
+              )}
 
-          {/* Patterns Tab */}
-          {activeTab === 'patterns' && (
-            <div className="space-y-6">
-              <AnimatedCard delay={0.2}>
-                <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl p-6">
-                  <h2 className="text-xl font-semibold text-white mb-4">Patrones Detectados</h2>
+              {/* Analytics Tab */}
+              {activeTab === 'analytics' && (
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <AnimatedCard delay={0.2}>
+                    <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl p-6">
+                      <h2 className="text-xl font-semibold text-white mb-4">Métricas de ML</h2>
+                      
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="text-center">
+                          <div className="text-2xl font-bold text-purple-400">{analytics.totalModels || 5}</div>
+                          <div className="text-sm text-gray-400">Modelos Activos</div>
+                        </div>
+                        <div className="text-center">
+                          <div className="text-2xl font-bold text-blue-400">{analytics.totalPredictions || 0}</div>
+                          <div className="text-sm text-gray-400">Predicciones</div>
+                        </div>
+                        <div className="text-center">
+                          <div className="text-2xl font-bold text-green-400">{(analytics.averageAccuracy * 100).toFixed(0) || 87}%</div>
+                          <div className="text-sm text-gray-400">Precisión Promedio</div>
+                        </div>
+                        <div className="text-center">
+                          <div className="text-2xl font-bold text-yellow-400">{analytics.patternsFound || 0}</div>
+                          <div className="text-sm text-gray-400">Patrones Encontrados</div>
+                        </div>
+                      </div>
+                    </div>
+                  </AnimatedCard>
                   
-                  {patterns.length > 0 ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {patterns.map((pattern, index) => (
-                        <motion.div
-                          key={pattern.id}
-                          className="bg-white/5 rounded-xl border border-white/10 p-4"
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: index * 0.1 }}
-                        >
-                          <div className="flex items-center gap-2 mb-3">
-                            <Activity className="w-5 h-5 text-blue-400" />
-                            <span className="font-semibold text-white">{pattern.pattern}</span>
-                          </div>
-                          
-                          <div className="space-y-2">
-                            <div className="flex items-center justify-between">
-                              <span className="text-gray-300 text-sm">Confianza:</span>
-                              <span className={`text-sm font-semibold ${getConfidenceColor(pattern.confidence)}`}>
-                                {(pattern.confidence * 100).toFixed(0)}%
-                              </span>
+                  <AnimatedCard delay={0.3}>
+                    <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl p-6">
+                      <h2 className="text-xl font-semibold text-white mb-4">Estado del Sistema</h2>
+                      
+                      <div className="space-y-4">
+                        <div className="flex items-center justify-between">
+                          <span className="text-gray-300">Estado de Entrenamiento:</span>
+                          <span className={`font-semibold ${isTraining ? 'text-yellow-400' : 'text-green-400'}`}>
+                            {isTraining ? 'Entrenando...' : 'Disponible'}
+                          </span>
+                        </div>
+                        
+                        <div className="flex items-center justify-between">
+                          <span className="text-gray-300">Puntos de Datos:</span>
+                          <span className="font-semibold text-white">{analytics.dataPoints || 0}</span>
+                        </div>
+                        
+                        <div className="flex items-center justify-between">
+                          <span className="text-gray-300">Última Actualización:</span>
+                          <span className="text-sm text-gray-400">
+                            {analytics.lastTraining ? new Date(analytics.lastTraining).toLocaleDateString('es-ES') : 'N/A'}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </AnimatedCard>
+                </div>
+              )}
+
+              {/* Models Tab */}
+              {activeTab === 'models' && (
+                <div className="space-y-6">
+                  <AnimatedCard delay={0.2}>
+                    <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl p-6">
+                      <h2 className="text-xl font-semibold text-white mb-4">Modelos de Machine Learning</h2>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {[
+                          { name: 'Performance Predictor', accuracy: 0.87, features: 5, predictions: 150 },
+                          { name: 'Injury Risk Analyzer', accuracy: 0.92, features: 4, predictions: 120 },
+                          { name: 'Optimal Time Predictor', accuracy: 0.85, features: 4, predictions: 90 },
+                          { name: 'Nutrition Optimizer', accuracy: 0.89, features: 5, predictions: 180 },
+                          { name: 'Recovery Predictor', accuracy: 0.91, features: 5, predictions: 110 }
+                        ].map((model, index) => (
+                          <motion.div
+                            key={model.name}
+                            className="bg-white/5 rounded-xl border border-white/10 p-4"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: index * 0.1 }}
+                          >
+                            <div className="flex items-center gap-2 mb-3">
+                              <Brain className="w-5 h-5 text-purple-400" />
+                              <span className="font-semibold text-white">{model.name}</span>
                             </div>
                             
-                            <div className="flex items-center justify-between">
-                              <span className="text-gray-300 text-sm">Impacto:</span>
-                              <span className={`text-sm font-semibold ${
-                                pattern.impact === 'positive' ? 'text-green-400' :
-                                pattern.impact === 'negative' ? 'text-red-400' : 'text-yellow-400'
-                              }`}>
-                                {pattern.impact === 'positive' ? 'Positivo' :
-                                 pattern.impact === 'negative' ? 'Negativo' : 'Neutral'}
-                              </span>
+                            <div className="space-y-2">
+                              <div className="flex items-center justify-between">
+                                <span className="text-gray-300 text-sm">Precisión:</span>
+                                <span className="text-sm font-semibold text-green-400">
+                                  {(model.accuracy * 100).toFixed(0)}%
+                                </span>
+                              </div>
+                              
+                              <div className="flex items-center justify-between">
+                                <span className="text-gray-300 text-sm">Características:</span>
+                                <span className="text-sm font-semibold text-blue-400">{model.features}</span>
+                              </div>
+                              
+                              <div className="flex items-center justify-between">
+                                <span className="text-gray-300 text-sm">Predicciones:</span>
+                                <span className="text-sm font-semibold text-yellow-400">{model.predictions}</span>
+                              </div>
                             </div>
-                          </div>
-                          
-                          {pattern.recommendations.length > 0 && (
+                            
                             <div className="mt-3">
-                              <span className="text-gray-300 text-sm">Recomendaciones:</span>
-                              <ul className="mt-1 space-y-1">
-                                {pattern.recommendations.map((rec: string, idx: number) => (
-                                  <li key={idx} className="text-xs text-white flex items-start gap-2">
-                                    <CheckCircle className="w-3 h-3 mt-0.5 flex-shrink-0" />
-                                    {rec}
-                                  </li>
-                                ))}
-                              </ul>
+                              <div className="w-full bg-gray-700 rounded-full h-2">
+                                <div 
+                                  className="bg-green-500 h-2 rounded-full transition-all duration-300"
+                                  style={{ width: `${model.accuracy * 100}%` }}
+                                ></div>
+                              </div>
                             </div>
-                          )}
-                        </motion.div>
-                      ))}
+                          </motion.div>
+                        ))}
+                      </div>
                     </div>
-                  ) : (
-                    <div className="text-center text-gray-400 py-8">
-                      <Activity className="w-8 h-8 mx-auto mb-2" />
-                      <p>No se han detectado patrones aún</p>
-                      <p className="text-sm">Completa más entrenamientos para detectar patrones</p>
-                    </div>
-                  )}
+                  </AnimatedCard>
                 </div>
-              </AnimatedCard>
-            </div>
-          )}
-
-          {/* Analytics Tab */}
-          {activeTab === 'analytics' && (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <AnimatedCard delay={0.2}>
-                <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl p-6">
-                  <h2 className="text-xl font-semibold text-white mb-4">Métricas de ML</h2>
-                  
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-purple-400">{analytics.totalModels || 5}</div>
-                      <div className="text-sm text-gray-400">Modelos Activos</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-blue-400">{analytics.totalPredictions || 0}</div>
-                      <div className="text-sm text-gray-400">Predicciones</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-green-400">{(analytics.averageAccuracy * 100).toFixed(0) || 87}%</div>
-                      <div className="text-sm text-gray-400">Precisión Promedio</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-yellow-400">{analytics.patternsFound || 0}</div>
-                      <div className="text-sm text-gray-400">Patrones Encontrados</div>
-                    </div>
-                  </div>
-                </div>
-              </AnimatedCard>
-              
-              <AnimatedCard delay={0.3}>
-                <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl p-6">
-                  <h2 className="text-xl font-semibold text-white mb-4">Estado del Sistema</h2>
-                  
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <span className="text-gray-300">Estado de Entrenamiento:</span>
-                      <span className={`font-semibold ${isTraining ? 'text-yellow-400' : 'text-green-400'}`}>
-                        {isTraining ? 'Entrenando...' : 'Disponible'}
-                      </span>
-                    </div>
-                    
-                    <div className="flex items-center justify-between">
-                      <span className="text-gray-300">Puntos de Datos:</span>
-                      <span className="font-semibold text-white">{analytics.dataPoints || 0}</span>
-                    </div>
-                    
-                    <div className="flex items-center justify-between">
-                      <span className="text-gray-300">Última Actualización:</span>
-                      <span className="text-sm text-gray-400">
-                        {analytics.lastTraining ? new Date(analytics.lastTraining).toLocaleDateString('es-ES') : 'N/A'}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </AnimatedCard>
-            </div>
-          )}
-
-          {/* Models Tab */}
-          {activeTab === 'models' && (
-            <div className="space-y-6">
-              <AnimatedCard delay={0.2}>
-                <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl p-6">
-                  <h2 className="text-xl font-semibold text-white mb-4">Modelos de Machine Learning</h2>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {[
-                      { name: 'Performance Predictor', accuracy: 0.87, features: 5, predictions: 150 },
-                      { name: 'Injury Risk Analyzer', accuracy: 0.92, features: 4, predictions: 120 },
-                      { name: 'Optimal Time Predictor', accuracy: 0.85, features: 4, predictions: 90 },
-                      { name: 'Nutrition Optimizer', accuracy: 0.89, features: 5, predictions: 180 },
-                      { name: 'Recovery Predictor', accuracy: 0.91, features: 5, predictions: 110 }
-                    ].map((model, index) => (
-                      <motion.div
-                        key={model.name}
-                        className="bg-white/5 rounded-xl border border-white/10 p-4"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: index * 0.1 }}
-                      >
-                        <div className="flex items-center gap-2 mb-3">
-                          <Brain className="w-5 h-5 text-purple-400" />
-                          <span className="font-semibold text-white">{model.name}</span>
-                        </div>
-                        
-                        <div className="space-y-2">
-                          <div className="flex items-center justify-between">
-                            <span className="text-gray-300 text-sm">Precisión:</span>
-                            <span className="text-sm font-semibold text-green-400">
-                              {(model.accuracy * 100).toFixed(0)}%
-                            </span>
-                          </div>
-                          
-                          <div className="flex items-center justify-between">
-                            <span className="text-gray-300 text-sm">Características:</span>
-                            <span className="text-sm font-semibold text-blue-400">{model.features}</span>
-                          </div>
-                          
-                          <div className="flex items-center justify-between">
-                            <span className="text-gray-300 text-sm">Predicciones:</span>
-                            <span className="text-sm font-semibold text-yellow-400">{model.predictions}</span>
-                          </div>
-                        </div>
-                        
-                        <div className="mt-3">
-                          <div className="w-full bg-gray-700 rounded-full h-2">
-                            <div 
-                              className="bg-green-500 h-2 rounded-full transition-all duration-300"
-                              style={{ width: `${model.accuracy * 100}%` }}
-                            ></div>
-                          </div>
-                        </div>
-                      </motion.div>
-                    ))}
-                  </div>
-                </div>
-              </AnimatedCard>
-            </div>
+              )}
+            </>
           )}
         </>
       )}
